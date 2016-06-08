@@ -1,0 +1,10 @@
+*.pyc
+*.so
+.ipynb_checkpoints
+
+tex/msc_atmo_polster.aux
+tex/msc_atmo_polster.bbl
+tex/msc_atmo_polster.blg
+tex/msc_atmo_polster.log
+tex/msc_atmo_polster.tuc
+tex/msc_atmo_polster.pdf

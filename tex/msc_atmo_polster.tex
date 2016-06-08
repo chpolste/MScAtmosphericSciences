@@ -1,0 +1,361 @@
+% All custom styles etc. are given CamelCase names
+
+\define\DocTitle{Towards a Physical Retrieval of Thermodynamic Atmospheric Profiles from a Ground-based Microwave Radiometer}
+\define\DocTitleFooter{Towards a Physical Retrieval of Thermodynamic Atmospheric Profiles ...}
+\define\DocSubtitle{}
+\define\Author{Christopher Polster}
+\define\DateOfCompletion{2016-07-??} % TODO
+
+\mainlanguage[en]
+\hyphenation{}
+
+% DIN-A4 Paper
+\setuppapersize[A4]
+\setuplayout[
+        backspace=35mm,
+        width=150mm,
+        header=0mm,
+        footer=0mm
+        ]
+
+% Create links in Table of Contents and set pdf metadata
+\setupinteraction[
+        state=start,
+        color=black,
+        contrastcolor=black,
+        style=normal,
+        focus=standard,
+        title={\DocTitle},
+        subtitle={\DocSubtitle},
+        author={\Author}
+        ]
+\placebookmarks[chapter,section,subsection]
+
+% Titles for TOC and Refs
+\setupheadtext[
+        content={Table of Contents},
+        pubs=References
+        ]
+
+% Fonts
+% Text uses serif font
+\setupbodyfont[11pt,serif]
+\definebodyfontenvironment[11pt][a=12pt,b=13pt,c=14pt,d=20pt]
+
+% Headings etc. are sans-serif
+\definefont[CoverHeadingFont][dejavusans at 19pt]
+\definefont[AbstractHeadingFont][dejavusans at 11pt]
+\definefont[ChapterFont][dejavusans at 20pt]
+\definefont[SectionFont][dejavusans at 13pt]
+\definefont[SubsectionFont][dejavusans at 12pt]
+\definefont[TOCHeadingFont][dejavusans at 11pt][2]
+\definefont[PageNumberFont][dejavusans at 10pt]
+\definefont[FooterFont][dejavusans at 8pt]
+\definefont[FigureFont][dejavusans at 8.5pt][1.1] % the 1.1 is line height
+\definefont[FigureCaptionFont][dejavusansbold at 8.5pt][1.1]
+
+% Styles for headings etc.
+\definealternativestyle[FigureStyle][\FigureFont]
+\definealternativestyle[FigureCaptionStyle][\FigureCaptionStyle]
+\definealternativestyle[TOCStyle][\TOCHeadingFont]
+\definealternativestyle[ChapterStyle][\ChapterFont]
+\definealternativestyle[SectionStyle][\SectionFont]
+\definealternativestyle[SubsectionStyle][\SubsectionFont]
+
+% Don't reset section numbering in new chapter
+\definestructureresetset[nosecreset][1,1,0][1] % [part, chapter, section][default]
+\setuphead[sectionresetset=nosecreset]
+% No chapter numbering, apply heading styles
+\setuphead[chapter][number=no,style=ChapterStyle,page=yes]
+\setuphead[section][style=SectionStyle,sectionsegments=section]
+\setuphead[subsection][style=SubsectionStyle,sectionsegments=section:subsection]
+
+% Footnotes
+\define[1]\footnotebrack{\narrownobreakspace\high{[#1]}}
+\setupnotation[footnote][alternative=text]
+\setupfootnotes[
+        way=bytext,
+        frameoffset=0mm,
+        topframe=on,
+        rule=off,
+        toffset=1mm,
+        roffset=-14cm,
+        before={\blank[7mm]},
+        textcommand=\footnotebrack
+        ] % fixes weird spacing when only one line of footnote
+
+% Table of contents
+\setuplist[chapter][style=TOCStyle]
+\setupcombinedlist[section,subsection][alternative=c]
+\setuplist[section][width=9mm]
+\setuplist[subsection][width=9mm,margin=9mm]
+
+% Figures
+\setupexternalfigures[directory=figures/]
+\setupcaptions[figure][
+        style={FigureStyle},
+        suffix={:},
+        headstyle={FigureCaptionStyle},
+        prefixsegments=none,
+        width=fit,
+        way=bytext,
+        spaceafter=2mm
+        ]
+
+% Bibliography
+\setupbibtex[database=literature,sort=author]
+\setuppublications[criterium=text,alternative=apa-de,sorttype=bbl,refcommand=authoryear]
+\setuppublicationlist[artauthoretallimit=40]
+\setupcite[authoryears][pubsep={; },lastpubsep={; },inbetween={ }]
+
+
+% Section block setups
+% This could probably be solved more elegantly, but it worked for my
+% bachelor's thesis and I don't see the point in redoing something that works.
+
+% Cover
+\definesectionblock[CoverSectionBlock][,]
+\setupsectionblock[CoverSectionBlock][page=right]
+\startsectionblockenvironment[CoverSectionBlock]
+    \setupinterlinespace[line=14pt]
+    \setupwhitespace[medium]
+    \raggedcenter
+\stopsectionblockenvironment
+
+% Frontmatter: Table of Contents
+\setupsectionblock[frontpart][page=right]
+\startsectionblockenvironment[frontpart]
+    \setupwhitespace[0.5em]
+    \page[right]
+\stopsectionblockenvironment
+
+\definesectionblock[AbstractSectionBlock][,]
+\setupsectionblock[AbstractSectionBlock][page=right]
+\startsectionblockenvironment[AbstractSectionBlock]
+    \setuppagenumbering[state=stop,alternative=doublesided]
+    \setupinterlinespace[line=1.5em]
+    \setupwhitespace[big]
+    \setupnarrower[middle=10mm]
+    \page[right]
+\stopsectionblockenvironment
+
+% Bodymatter: all text
+\setupsectionblock[bodypart][page=no]
+\startsectionblockenvironment[bodypart]
+    \setuplayout[footerdistance=8mm,footer=6mm]
+    \setcounter[userpage][1] % Reset page counter
+    \setuppagenumbering[
+            state=start,
+            location={footer,right},
+            left={},
+            right={},
+            alternative=doublesided,
+            style=\PageNumberFont
+            ]
+    \setupfootertexts[{\FooterFont {\DocTitleFooter}}]
+                     [pagenumber]
+                     [pagenumber]
+                     [{\FooterFont Master's Thesis of {\Author} (2016)}]
+    \setupbackgrounds[footer][text][topframe=on]
+    \setupwhitespace[medium]
+    \setupinterlinespace[line=1.5em]
+\stopsectionblockenvironment
+
+% Appendix
+\setupsectionblock[appendix][page=no]
+\startsectionblockenvironment[appendix]
+    \setuplayout[footerdistance=8mm,footer=6mm]
+    \setuppagenumbering[alternative=doublesided,style=\PageNumberFont]
+    \setupfootertexts[{\FooterFont {\DocTitleFooter}}]
+                     [pagenumber]
+                     [pagenumber]
+                     [{\FooterFont Master's Thesis of {\Author} (2016)}]
+    \setupbackgrounds[footer][text][topframe=on]
+    \setuphead[section][conversion=R]
+    \setupwhitespace[medium]
+    \setupinterlinespace[line=1.5em]
+    \resetnumber[figure]
+    \setupcaptions[figure][numberconversion=Romannumerals]
+\stopsectionblockenvironment
+
+% Backmatter: References
+\setupsectionblock[backpart][page=no]
+\startsectionblockenvironment[backpart]
+    \setuppagenumbering[alternative=doublesided,style=\PageNumberFont]
+    \setuplayout[footerdistance=8mm,footer=6mm]
+    \setupfootertexts[{\FooterFont {\DocTitleFooter}}]
+                     [pagenumber]
+                     [pagenumber]
+                     [{\FooterFont Master's Thesis of {\Author} (2016)}]
+    \setupbackgrounds[footer][text][topframe=on]
+    \setupwhitespace[medium]
+    \setupinterlinespace[line=1.5em]
+\stopsectionblockenvironment
+
+% Acknowledgements
+\definesectionblock[AcknowledgementSectionBlock][,]
+\setupsectionblock[AcknowledgementSectionBlock][page=right]
+\startsectionblockenvironment[AcknowledgementSectionBlock]
+    \setuppagenumbering[state=stop,alternative=singlesided]
+    \setupbackgrounds[footer][text][topframe=off]
+    \setupinterlinespace[line=1.5em]
+    \setupwhitespace[medium]
+\stopsectionblockenvironment
+
+\starttext
+
+\startsectionblock[CoverSectionBlock]
+
+    \dontleavehmode
+    \blank[10mm]
+    \dontleavehmode
+    \externalfigure[acinn_logo][height=15mm] % TODO: find high-resolution logo
+    \blank[2mm]
+    University of Innsbruck \break
+    Institute of Atmospheric and Cryospheric Sciences
+    \blank[10mm]
+    \dontleavehmode
+    \blackrule[width=5cm,height=0.5mm]
+    \blank[30mm]
+
+    {\CoverHeadingFont \strut 
+    Towards a Physical Retrieval of \blank[5mm]
+    Thermodynamic Atmospheric Profiles from a \blank[5mm]
+    Ground-based Microwave Radiometer
+    \strut}
+
+    %{\CoverHeadingFont \strut \DocSubtitle \strut}
+
+    \blank[30mm]
+
+    \dontleavehmode
+    \blackrule[width=5cm,height=0.5mm]
+
+    \blank[10mm]
+
+    {\bold Master's Thesis in Atmospheric Sciences}
+
+    \blank[10mm]
+
+    Submitted to the Faculty of Geo- and Atmospheric Sciences \break
+    in Partial Fulfillment of the Requirements for the Degree of Master of Science
+
+    \blank[5mm]
+
+    by {\bold \Author}
+
+    \blank[15mm]
+
+    Innsbruck, \DateOfCompletion
+
+    \blank[15mm]
+
+    Advisor: Prof. Dr. Mathias Rotach \break
+    Second Advisor: ??? % TODO
+\stopsectionblock
+
+\startsectionblock[AbstractSectionBlock]
+
+    \dontleavehmode
+    \startsubject[title=Declaration]
+    I confirm that this is my own work and the use of all material from other
+    sources has been properly and fully acknowledged.
+        \dontleavehmode
+        \blank[1mm]
+
+        Innsbruck, \DateOfCompletion
+
+        \vfill
+
+        \hbox{\Author}
+        
+        %\hbox{student number}
+
+        %\hbox{Email}
+    \stopsubject
+
+    \page[right]
+
+    \dontleavehmode
+    \blank[10mm]
+    \startnarrower
+        {\AbstractHeadingFont Abstract}
+        
+        ...
+
+        \dontleavehmode\blank[1cm]
+        {\AbstractHeadingFont Zusammenfassung}
+
+        ...
+
+        \stopnarrower
+
+
+\stopsectionblock
+
+\startfrontmatter
+    \completecontent
+\stopfrontmatter
+
+
+\startbodymatter
+
+    \startchapter[title=Introduction]
+        %\input motivation
+    \stopchapter
+
+    \startchapter[title=Retrieval Techniques]
+
+    \stopchapter
+
+    \startchapter[title=Radiative Transfer Modelling]
+
+    \stopchapter
+
+    \startchapter[title=1D-VAR Retrievals of Synthetic Data]
+
+    \stopchapter
+
+    \startchapter[title=A Case Study with Real Observations]
+
+    \stopchapter
+
+    \startchapter[title=Outlook]
+
+    \stopchapter
+
+    \startchapter[title=Conclusions]
+
+    \stopchapter
+
+\stopbodymatter
+
+\startappendices
+
+    \startchapter[title=Appendix]
+        %\input anhang
+    \stopchapter
+
+\stopappendices
+
+\startbackmatter
+
+    \completepublications
+    \page[left]
+
+\stopbackmatter
+
+\startsectionblock[AcknowledgementSectionBlock]
+    \page[empty,force]
+
+    \startsubject[title=Acknowledgements,page=yes]
+        Mathias, ...
+
+        Parents, ...
+    \stopsubject
+    %\page[empty,force]
+    %\page[empty,force]
+
+\stopsectionblock
+
+\stoptext
