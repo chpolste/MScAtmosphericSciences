@@ -1,0 +1,91 @@
+\startsection[title=The Radiative Transfer Equation]
+
+    General form, absorption only, Rayleigh-Jeans.
+
+\stopsection
+
+
+\startsection[title=Atmospheric Extinction]
+
+    Neglecting scattering. Existing absorption models.
+
+    \startsubsection[title=Oxygen Absorption]
+
+    \stopsubsection
+
+    \startsubsection[title=Water Vapor Absorption]
+
+    \stopsubsection
+
+    \startsubsection[title=Absorption by Liquid Water]
+
+        Rayleigh-approximation. Problems during precipitation.
+
+    \stopsubsection
+
+    \startsubsection[title=Extinction by Other Constituents]
+
+    \stopsubsection
+
+    \startsubsection[title=Fast Absorption Prediction]
+
+    \stopsubsection
+
+\stopsection
+
+
+\startsection[title=Representation of the Atmospheric State]
+
+    \startsubsection[title=The Choice of State Vector Variables]
+
+        Combining water vapor and LWC into \math{\mathrm{log}(q_{tot})} to
+        reduce dimensionality, enforce positivity and better error
+        characteristics.
+
+    \stopsubsection
+
+    \startsubsection[title=Vertical Discretization and Interpolation]
+
+        Smoothing. Compromise between resolution necessary for numerical model
+        and actual information content. Inclusion of upper atmosphere or not.
+
+    \stopsubsection
+
+\stopsection
+
+
+\startsection[title=Calculating the Jacobian]
+
+    Weighting functions/averaging kernels. Truncation of the jacobian at upper
+    levels.
+
+    \startsubsection[title=Finite Differences]
+
+        Can be used with every model. Problems with selection of perturbations,
+        non-linearity.
+        
+    \stopsubsection
+
+    \startsubsection[title=Symbolic Differentiation]
+
+        Non-differentiable parameterizations (LWC).
+
+    \stopsubsection
+
+    \startsubsection[title=Automatic Differentiation]
+
+        Computation graphs. Backwards mode automatic differentiation.
+        
+    \stopsubsection
+
+\stopsection
+
+
+\startsection[title=A Numerical Model]
+
+    Custom implementation of Liebe gas absorption, Turner et al. cloud
+    absorption and mix of automatic and symbolic differentiation to calculate
+    accurate jacobians.
+
+\stopsection
+

@@ -207,16 +207,16 @@
 \startsectionblock[CoverSectionBlock]
 
     \dontleavehmode
-    \blank[10mm]
+    \blank[5mm]
     \dontleavehmode
     \externalfigure[acinn_logo][height=15mm] % TODO: find high-resolution logo
     \blank[2mm]
     University of Innsbruck \break
     Institute of Atmospheric and Cryospheric Sciences
-    \blank[10mm]
+    \blank[20mm]
     \dontleavehmode
     \blackrule[width=5cm,height=0.5mm]
-    \blank[30mm]
+    \blank[20mm]
 
     {\CoverHeadingFont \strut 
     Towards a Physical Retrieval of \blank[5mm]
@@ -226,12 +226,12 @@
 
     %{\CoverHeadingFont \strut \DocSubtitle \strut}
 
-    \blank[30mm]
+    \blank[20mm]
 
     \dontleavehmode
     \blackrule[width=5cm,height=0.5mm]
 
-    \blank[10mm]
+    \blank[20mm]
 
     {\bold Master's Thesis in Atmospheric Sciences}
 
@@ -301,31 +301,31 @@
 \startbodymatter
 
     \startchapter[title=Introduction]
-        %\input motivation
+        \input ch_introduction
     \stopchapter
 
     \startchapter[title=Retrieval Techniques]
-
+        \input ch_retrieval
     \stopchapter
 
     \startchapter[title=Radiative Transfer Modelling]
-
+        \input ch_radiative_transfer
     \stopchapter
 
-    \startchapter[title=1D-VAR Retrievals of Synthetic Data]
-
+    \startchapter[title=Retrievals of Synthetic Data]
+        \input ch_synthetic_data
     \stopchapter
 
     \startchapter[title=A Case Study with Real Observations]
-
+        \input ch_real_data
     \stopchapter
 
     \startchapter[title=Outlook]
-
+        \input ch_outlook
     \stopchapter
 
     \startchapter[title=Conclusions]
-
+        \input ch_conclusions
     \stopchapter
 
 \stopbodymatter
@@ -333,7 +333,7 @@
 \startappendices
 
     \startchapter[title=Appendix]
-        %\input anhang
+        \input appendix
     \stopchapter
 
 \stopappendices

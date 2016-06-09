@@ -1,0 +1,74 @@
+\startsection[title=Bayesian Statistics]
+    \startsubsection[title=Bayes' theorem]
+        \startformula
+            P(x|y) = \frac{P(y|x) P(x)}{P(y)}
+        \stopformula
+
+        \math{P(x|y)} likelihood
+
+        \math{P(y|x)} posterior
+
+        \math{P(x)} prior
+
+        \math{P(y)} normalization, can be obtained by integrating \math{P(y|x)P(x)} over all possible states \math{x}.
+    \stopsubsection
+
+    \startsubsection[title=The Multidimensional Gaussian Distribution]
+
+    \stopsubsection
+
+\stopsection
+
+
+\startsection[title=Regression Statistical Retrieval]
+
+    Based on climatology, where to get climatology from. Mention Kernel
+    Methods, ...
+    
+    \startsubsection[title=Linear Regression]
+
+    \stopsubsection
+
+    \startsubsection[title=Neural Network]
+
+    \stopsubsection
+
+\stopsection
+
+\startsection[title=Physical Statistical Retrieval]
+
+    Directly use Bayes' theorem, use cost function.
+
+    \startsubsection[title=1D-VAR]
+
+        Gaussian Error Assumption, linearize forward model → jacobian/adjoint,
+        analytic solution for cost function minimization.
+
+    \stopsubsection
+
+    \startsubsection[title=Constructing the Prior]
+
+        Choosing the prior (=background) state. Constructing the covariance
+        matrix.
+
+    \stopsubsection
+
+    \startsubsection[title=Introducing Constraints by Regularization]
+
+        Introduce penalties to cost function. Advantage: Simpler to set up
+        than modifying prior, but no representation of additional knowledge
+        in posterior.
+
+        Example: Hewison, penalizing high LWC.
+
+    \stopsubsection
+
+\stopsection
+
+
+\startsection[title=Comparison of Techniques]
+
+    Ease of use, computational efficiency, inclusion of additional information.
+
+\stopsection
+
