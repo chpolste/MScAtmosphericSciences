@@ -1,10 +1,10 @@
 % All custom styles etc. are given CamelCase names
 
-\define\DocTitle{Towards a Physical Retrieval of Thermodynamic Atmospheric Profiles from a Ground-based Microwave Radiometer}
-\define\DocTitleFooter{Towards a Physical Retrieval of Thermodynamic Atmospheric Profiles ...}
-\define\DocSubtitle{}
+\define\DocTitleFooter{Bayesian Retrieval of Thermodynamic Atmospheric Profiles from a Ground-based MWR}
 \define\Author{Christopher Polster}
 \define\DateOfCompletion{2016-07-??} % TODO
+
+\input mycommands
 
 \mainlanguage[en]
 \hyphenation{}
@@ -25,9 +25,9 @@
         contrastcolor=black,
         style=normal,
         focus=standard,
-        title={\DocTitle},
-        subtitle={\DocSubtitle},
-        author={\Author}
+        title={Bayesian Retrieval of Thermodynamic Atmospheric Profiles from a Ground-based Microwave Radiometer},
+        subtitle={Masters's Thesis, 2016},
+        author={Christopher Polster},
         ]
 \placebookmarks[chapter,section,subsection]
 
@@ -102,9 +102,12 @@
         spaceafter=2mm
         ]
 
+% Formulas
+\setupformulae[way=bytext,prefixsegments=none]
+
 % Bibliography
 \setupbibtex[database=literature,sort=author]
-\setuppublications[criterium=text,alternative=apa-de,sorttype=bbl,refcommand=authoryear]
+\setuppublications[criterium=text,alternative=apa,sorttype=bbl,refcommand=authoryear]
 \setuppublicationlist[artauthoretallimit=40]
 \setupcite[authoryears][pubsep={; },lastpubsep={; },inbetween={ }]
 
@@ -219,8 +222,8 @@
     \blank[20mm]
 
     {\CoverHeadingFont \strut 
-    Towards a Physical Retrieval of \blank[5mm]
-    Thermodynamic Atmospheric Profiles from a \blank[5mm]
+    Bayesian Retrieval of Thermodynamic\blank[5mm]
+    Atmospheric Profiles from a \blank[5mm]
     Ground-based Microwave Radiometer
     \strut}
 
@@ -251,7 +254,6 @@
     \blank[15mm]
 
     Advisor: Prof. Dr. Mathias Rotach \break
-    Second Advisor: ??? % TODO
 \stopsectionblock
 
 \startsectionblock[AbstractSectionBlock]
@@ -304,7 +306,7 @@
         \input ch_introduction
     \stopchapter
 
-    \startchapter[title=Retrieval Techniques]
+    \startchapter[title=Retrieval Theory]
         \input ch_retrieval
     \stopchapter
 

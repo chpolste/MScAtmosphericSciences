@@ -1,56 +1,195 @@
+Formulate retrieval problem.
+
+Introduce optimal estimation and regression mention Kernel Methods, ... as
+alternative regression methods.
+
 \startsection[title=Bayesian Statistics]
-    \startsubsection[title=Bayes' theorem]
-        \startformula
-            P(x|y) = \frac{P(y|x) P(x)}{P(y)}
-        \stopformula
 
-        \math{P(x|y)} likelihood
+    The Bayesian view of statistics is ideal for the formulation of retrieval
+    problems. 
 
-        \math{P(y|x)} posterior
+    Conditional probability, diachronic interpreation, subjective priors,
+    making assumptions explicit, focus on pdf from which values can be
+    extracted due to different criteria, pdf carries uncertainty estimates, ...
 
-        \math{P(x)} prior
-
-        \math{P(y)} normalization, can be obtained by integrating \math{P(y|x)P(x)} over all possible states \math{x}.
-    \stopsubsection
-
-    \startsubsection[title=The Multidimensional Gaussian Distribution]
-
-    \stopsubsection
-
-\stopsection
-
-
-\startsection[title=Regression Statistical Retrieval]
-
-    Based on climatology, where to get climatology from. Mention Kernel
-    Methods, ...
+    Central role: Bayes' theorem.
     
-    \startsubsection[title=Linear Regression]
+    \placeformula[eq_ret_bayes]
+    \startformula
+        P(x|y) = \frac{P(y|x) P(x)}{P(y)}
+    \stopformula
 
-    \stopsubsection
+    $P(x|y)$ likelihood
 
-    \startsubsection[title=Neural Network]
+    $P(y|x)$ posterior
 
-    \stopsubsection
+    $P(x)$ prior
+
+    $P(y)$ normalization, can be obtained by integrating $P(y|x)P(x)$
+    over all possible states $x$.
 
 \stopsection
 
-\startsection[title=Physical Statistical Retrieval]
+\startsection[title=The Multivariate Gaussian Distribution]
 
-    Directly use Bayes' theorem, use cost function.
+    Bayesian view relies heavily on probablility density functions. In a
+    theoretical framework it is desireable to work with pdfs that allow
+    analytic solutions for a given problem. The most commonly used pdf is the
+    Gaussian distribution:
 
-    \startsubsection[title=1D-VAR]
+    \placeformula[ret_gauss]
+    \startformula
+        \GAUSS{\VECX}{\MEANVEC}{\COVMAT}
+        = \frac{1}{(2 \pi)^{N/2} \det(\COVMAT)^{1/2}}
+          \exp \left( -\frac{1}{2}(\VECX - \MEANVEC)^\top \COVMAT^{-1} (\VECX - \MEANVEC) \right)
+    \stopformula
+
+    where $\VECX, \MEANVEC \in \REALS^N$ and $\COVMAT \in \REALS^{N
+    \times N}$ and the exponenial function is applied component-wise.
+
+    The assumption that a continuous variable follows a Gaussian distribution
+    is not only popular due to its well understood analytic behavior. central
+    limit theorem, maximum entropy.
+
+    The mean vector $\MEANVEC$ of the Gaussian distribution is the
+    location of its maximum. The covariance matrix $\COVMAT$ determines
+    the shape of the distribution. For a proper Gaussian distribution, it is
+    always a symmetric positive definite matrix. When all off-diagonal elements
+    of $\COVMAT$ are zero, each component of the multidimensional
+    distribution is independent from the others. If nonzero off-diagonal
+    elements exist, some or all componentes are correlated.
+
+    Transformation in eigenspace.
+
+    Properties: Product of Gaussian distributions Maximum likelihood
+    estimators. Plot stuff.
+
+    cite Bishop, Rodgers
+
+\stopsection
+
+
+\startsection[title=Optimal Estimation]
+
+    Reference Rodgers, explain how it fits together.
+
+    The optimal estimation approach directly uses Bayes' theorem
+    \ineq{eq_ret_bayes} to obtain the posterior probability distribution
+    $\POSTERIOR$ using a forward model and prior information of the state
+    vector.
+
+    Call it physical retrieval because it uses the forward model.
+
+    The assumptions for the prior {\PDF} and the likelihood function
+    are that they are Gaussian.
+
+    Justify assumptions.
+
+    The prior $\PRIOR$ should contain all knowledge about the state vector
+    before the measurement is evaluated. This knowledge might come from
+    a climatology, output from a NWP model, information from other instruments
+    and any combination of these sources. The construction of an optimal prior
+    is not an easy task and will be discussed in section \in[ret_constprior].
+    In any case, due to the assumption that the {\PDF} is Gaussian it will have
+    the form:
+
+    \placeformula[eq_ret_optprior]
+    \startformula
+        \PRIOR = \GAUSS{\VECX}{\MEANVECA}{\COVMATA}
+    \stopformula
+
+    The subscript stands for \quotation{a-priori}.
+
+    The likelihood function $\LIKELIHOOD$ expresses the confidence that the
+    observation $\VECY$ result of a state $\VECX$. This confidence is
+    quantified with the help of the forward model, which can be formulated as:
+
+    \placeformula[eq_ret_fwdmodel]
+    \startformula
+        \VECY = \FWD(\VECX) + \ERR
+    \stopformula
+
+    Where $\FWD$ is the forward model operator and $\ERR$ is an error term,
+    arising from measurement noise, inaccuracies of the forward model,
+    interpolation errors and possibly other terms. Again, the assumption is
+    that the errors are Gaussian, centered around a systematic bias
+    $\MEANVECERR$ and with a convariance matrix $\COVMATERR$:
+
+    \placeformula[eq_ret_opterrpdf]
+    \startformula
+        P(\ERR) = \GAUSS{\ERR}{\MEANVECERR}{\COVMATERR}
+    \stopformula
+
+    A discussion of how $\MEANVECERR$ and $\COVMATERR$ can be determined is
+    given in section \in[rtm_errors]. Substituting \ineq{eq_ret_fwdmodel}
+    into \ineq{eq_ret_opterrpdf} and changing the independent variable of
+    the {\PDF} results in the likelihood function:
+    
+    \placesubformula
+    \startformula
+    \startalign[n=3,align={right,middle,left}]
+        \NC P(\VECY - \FWD(\VECX)) = \NC \GAUSS{\VECY - \FWD(\VECX)}{\MEANVECERR}{\COVMATERR} \NC \NR
+        \NC = \NC \GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR} \NC = \LIKELIHOOD \NR[eq_ret_optlikelihood][]
+    \stopalign
+    \stopformula
+
+    Knowing \ineq{eq_ret_optprior} and \ineq{eq_ret_optlikelihood} the
+    posterior {\PDF} is given by:
+
+    \placeformula[eq_ret_optposterior]
+    \startformula
+        \POSTERIOR
+        = \frac{\LIKELIHOOD \PRIOR}{\NORMALIZATION}
+        = \frac{\GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR}~\GAUSS{\VECX}{\MEANVECA}{\COVMATA}}{\NORMALIZATION}
+    \stopformula
+
+    \startsubsection[title=The Maximum A-Posteriori Solution]
 
         Gaussian Error Assumption, linearize forward model → jacobian/adjoint,
         analytic solution for cost function minimization.
 
+        Where does 1D-VAR come from?
+
     \stopsubsection
 
-    \startsubsection[title=Constructing the Prior]
+    \startsubsection[title={Constructing the Prior},reference=ret_constprior]
 
         Choosing the prior (=background) state. Constructing the covariance
         matrix.
 
+    \stopsubsection
+
+    \startsubsection[title=A Generalization to Multiple Measurements]
+
+        As shown by \cite[Rodgers2000] in chapter 4.1.1, there is a more
+        general way to construct the posterior {\PDF} $\POSTERIOR$. If $n$
+        measurements $\VECY_i$ are available that can be related to the state
+        vector by forward models $\FWD_i$ and the forward model errors are
+        pairwise independent, then Bayes' theorem takes the form
+
+        \startformula
+        \startalign[n=2,align={right,left}]
+            \NC P(\VECX|\VECY_1,\dots,\VECY_n) =
+                \NC \frac{P(\VECY_1,\dots,\VECY_n|\VECX)\PRIOR}{P(\VECY_1,\dots,\VECY_n)} \NR
+            \NC = \NC \frac{\PRIOR}{P(\VECY_1,\dots,\VECY_n)} \prod_{i=1}^n P(\VECY_i|x) \NR
+            \NC = \NC \frac{\PRIOR}{P(\VECY_1,\dots,\VECY_n)}
+                \prod_{i=1}^n \GAUSS{\VECY_i}{\FWD_i(\VECX) + \MEANVEC_i}{\COVMAT_i} \EQCOMMA \NR
+        \stopalign
+        \stopformula
+
+        where the independence property of the forward model errors has been
+        used for the second identity. With this formulation, any measurements
+        that give information on the state vector can be included in the
+        optimal estimation procedure. This includes the a-priori knowledge,
+        which might be interpreted as a \quotation{virtual measurement} having
+        the identity function as a forward model and the prior state
+        uncertainties as errors. In this interpretation, no prior knowledge
+        is explicitly included in the model, i.e. $\PRIOR$ is constant, and the
+        maximum a-posteriori solution is equivalent to a maximum likelihood
+        solution.
+
+        Is this used in the thesis? % TODO
+        
     \stopsubsection
 
     \startsubsection[title=Introducing Constraints by Regularization]
@@ -59,9 +198,32 @@
         than modifying prior, but no representation of additional knowledge
         in posterior.
 
-        Example: Hewison, penalizing high LWC.
+        Example: \cite[Hewison2006], penalizing high LWC and references
+        therein.
 
     \stopsubsection
+
+\stopsection
+
+
+\startsection[title=Linear Regression]
+
+    Based on climatology, where to get climatology from.
+
+    \startsubsection[title=Quantifying Uncertainty]
+
+    \stopsubsection
+
+    \startsubsection[title=Including Additional Information]
+
+    \stopsubsection
+    
+\stopsection
+
+
+\startsection[title=Neural Network Regression]
+
+        
 
 \stopsection
 
