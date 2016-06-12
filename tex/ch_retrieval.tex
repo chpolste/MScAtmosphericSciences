@@ -59,10 +59,22 @@ alternative regression methods.
     distribution is independent from the others. If nonzero off-diagonal
     elements exist, some or all componentes are correlated.
 
-    Transformation in eigenspace.
+    \startsubsection[title=Maximum Likelihood Estimators for the Parameters]
 
-    Properties: Product of Gaussian distributions Maximum likelihood
-    estimators. Plot stuff.
+    \stopsubsection
+
+    \startsubsection[title=Marginalization,reference=ret_gauss_margin]
+
+    \stopsubsection
+
+    \startsubsection[title=Diagonalization of the Covariance Matrix]
+
+        Transformation into eigenspace.
+
+    \stopsubsection
+
+    
+    Plot stuff.
 
     cite Bishop, Rodgers
 
@@ -143,10 +155,16 @@ alternative regression methods.
         = \frac{\GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR}~\GAUSS{\VECX}{\MEANVECA}{\COVMATA}}{\NORMALIZATION}
     \stopformula
 
-    \startsubsection[title=The Maximum A-Posteriori Solution]
+    Because the forward model is a nonlinear function, the marginalization
+    cannot be carried out by the calculation from \in[ret_gauss_margin]. First,
+    the forward model has to be linearized.
+
+    \startsubsection[title=An Iterative Solution]
 
         Gaussian Error Assumption, linearize forward model → jacobian/adjoint,
         analytic solution for cost function minimization.
+
+        Show equivalence of MAP by finding maximum.
 
         Where does 1D-VAR come from?
 
@@ -194,6 +212,8 @@ alternative regression methods.
 
     \startsubsection[title=Introducing Constraints by Regularization]
 
+        Refer to cost function version of MAP solution.
+
         Introduce penalties to cost function. Advantage: Simpler to set up
         than modifying prior, but no representation of additional knowledge
         in posterior.
@@ -208,13 +228,21 @@ alternative regression methods.
 
 \startsection[title=Linear Regression]
 
-    Based on climatology, where to get climatology from.
+    Based on climatology, where to get climatology from. Idea: approximate
+    the inverse model from climatology instead of introducting a numerical
+    physical model.
 
     \startsubsection[title=Quantifying Uncertainty]
+
+        Transformation into eigensystem, diagonal covariance.
 
     \stopsubsection
 
     \startsubsection[title=Including Additional Information]
+
+        Adding regressors. No explicit forward model or error estimate needed.
+        Who has done it? Problem: no constraint, rather a suggestion. Known
+        elements of state vector are not enforced.
 
     \stopsubsection
     
@@ -223,7 +251,9 @@ alternative regression methods.
 
 \startsection[title=Neural Network Regression]
 
-        
+    Who has used it? Non-linearity. Extrapolation problems. No error estimates
+    from common formulation. Choice of hidden layer and activation functions.
+    Advantage in resolving low level inversions?
 
 \stopsection
 

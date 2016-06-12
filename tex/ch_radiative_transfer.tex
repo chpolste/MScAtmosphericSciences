@@ -1,6 +1,6 @@
 \startsection[title=The Radiative Transfer Equation]
 
-    General form, absorption only, Rayleigh-Jeans.
+    General form, absorption only, Rayleigh-Jeans → Brightness Temperatures.
 
 \stopsection
 
@@ -9,25 +9,26 @@
 
     Neglecting scattering. Existing absorption models.
 
-    \startsubsection[title=Oxygen Absorption]
+    \startsubsection[title=Gaseous Absorption]
+
+        Molecule transitions. Oxygen, Water vapor. What about nitrogen or CO2?
+        Included in Liebe Model or negligible? I think Hewison had nitrogen as
+        well.
 
     \stopsubsection
 
-    \startsubsection[title=Water Vapor Absorption]
+    \startsubsection[title=Liquid Water Extinction]
 
-    \stopsubsection
-
-    \startsubsection[title=Absorption by Liquid Water]
-
-        Rayleigh-approximation. Problems during precipitation.
-
-    \stopsubsection
-
-    \startsubsection[title=Extinction by Other Constituents]
+        Rayleigh-approximation. Problems during precipitation due to
+        scattering.
 
     \stopsubsection
 
     \startsubsection[title=Fast Absorption Prediction]
+
+        Fitting a polynomial to the absorption at a specific line to speed up
+        calculations and simplify derivatives. Evaluate FAP performance for
+        each line of the HATPRO.
 
     \stopsubsection
 
@@ -35,6 +36,10 @@
 
 
 \startsection[title=Representation of the Atmospheric State]
+
+    Discretization in the vertical, selecting state vector variables:
+    compromise between dimensionality and information content (including
+    forward model needs).
 
     \startsubsection[title=The Choice of State Vector Variables]
 
@@ -83,15 +88,29 @@
 
 \startsection[title=A Numerical Model]
 
+    Custom implementation of a line-by-line model with a mix of automatic and
+    symbolic differentiation to calculate accurate and fast jacobians.
+    Specializing in one model per frequency allows additional optimizations
+    and optimizied FAPs.
+
     \startsubsection[title=Implementation]
 
-    Custom implementation of Liebe gas absorption, Turner et al. cloud
-    absorption and mix of automatic and symbolic differentiation to calculate
-    accurate jacobians.
+        Custom implementation of Liebe gas absorption, Turner et al. cloud
+        absorption.
+
+    \stopsubsection
+
+    \startsubsection[title=Comparison with MonoRTM]
+
+        Introduce MonoRTM wrapper. Statistical comparison of brightness
+        temperatures (variablility and bias) as well as jacobians for some
+        radiosonde subset.
 
     \stopsubsection
 
     \startsubsection[title={Characterizing Errors},reference=rtm_errors]
+
+        Building part of the forward model covariance matrix.
 
     \stopsubsection
 
