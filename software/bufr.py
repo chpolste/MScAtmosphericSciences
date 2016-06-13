@@ -2,8 +2,7 @@ import os, subprocess, json, datetime
 from collections import namedtuple, OrderedDict
 
 import numpy as np
-
-from raso.profile import Profile
+import pandas as pd
 
 
 __all__ = ["BUFRReader"]
@@ -39,18 +38,10 @@ class BUFRReader:
 
     def read(self, path):
         """Obtain Profile instances for the content of a BUFR file."""
-        import pandas as pd
         dump = self.dump(path)
         metadata, *profiles = parser.parse(dump["messages"])
         out = []
         for columns, units in profiles:
-            # Load data into dataframe, sort and apply simple quality control
-            df = (pd.DataFrame.from_dict(columns, orient="columns", dtype=float)
-                    .sort_values(by="time", ascending=True)
-                    .dropna(how="any", axis="index")
-                    .drop_duplicates(keep="first")
-                    )
-            if "time" in df: df["time"] = df["time"].astype(int)
             # Check for appropriate units
             assert "time" not in units or units["time"] == "s"
             assert "p" not in units or units["p"] == "Pa"
@@ -59,8 +50,16 @@ class BUFRReader:
             assert "Td" not in units or units["Td"] == "K"
             assert "ff" not in units or units["ff"] == "m/s"
             assert "dd" not in units or units["dd"] == "deg"
-            out.append(Profile.from_dataframe(df, metadata=metadata))
-        return out
+            # Load data into dataframe, sort and apply simple quality control
+            df = (pd.DataFrame.from_dict(columns, orient="columns", dtype=float)
+                    .sort_values(by="time", ascending=True)
+                    .dropna(how="any", axis="index")
+                    .drop_duplicates(keep="first")
+                    )
+            if "time" in df: df["time"] = df["time"].astype(int)
+            # Convert pressure to hPa
+            if "p" in df: df["p"] = df["p"] / 100
+        return df, metadata
 
 
 class MessageStateParser:

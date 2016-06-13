@@ -20,6 +20,8 @@ Lvap        J/kg/K      Latent heat of evaporation
 import inspect
 from collections import OrderedDict
 
+import numpy as np
+
 
 class ArgNameDispatch:
     """Generic function that dispatches on argument names.
@@ -102,6 +104,7 @@ Tpot.register(lambda T, p: T*(pref/p)**(Rdry/cp))
 # Relative humidity
 RH = ArgNameDispatch("RH")
 RH.register(lambda e, es: 100 * e/es)
+RH.register(lambda T, Td: RH(e(Td=Td), es=es(T=T)))
 
 # Dry air partial pressure
 pd = ArgNameDispatch("pd")
