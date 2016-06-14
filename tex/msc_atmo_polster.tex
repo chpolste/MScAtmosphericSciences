@@ -1,4 +1,4 @@
-% All custom styles etc. are given CamelCase names
+\usecolors[xwi]
 
 \define\DocTitleFooter{Bayesian Retrieval of Thermodynamic Atmospheric Profiles from a Ground-based MWR}
 \define\Author{Christopher Polster}
@@ -104,6 +104,8 @@
 
 % Formulas
 \setupformulae[way=bytext,prefixsegments=none]
+% Increase spacing around binary relation symbols (default is 5mu plus 5mu).
+\thickmuskip=10mu plus 5mu
 
 % Bibliography
 \setupbibtex[database=literature,sort=author]

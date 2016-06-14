@@ -6,6 +6,16 @@
 \akronym{PDF}{probability density function}
 
 
+% Highlighting terms in formulas
+\define[2]\mathbox{
+    \inframed[frame=on,
+              framecolor=#1,
+              frameoffset=1pt,
+              corner=round,
+              rulethickness=1pt,
+              ]{$#2$}}
+
+
 % Punctuation in formulas
 \define\EQSTOP{{\rm ~.}}
 \define\EQCOMMA{{\rm ~,}}
@@ -17,21 +27,26 @@
 \define\ZEROVEC{{\bf 0}}
 \define\VECX{{\bf x}}
 \define\VECY{{\bf y}}
+\define\VECB{{\bf b}}
 
 % Forward model
 \define\FWD{{\bf F}}
+\define\FWDJAC{{\bf K}}
 \define\ERR{{\bf \epsilon}}
 
 % Gaussian
 \define[3]\GAUSS{\rm N(#1|#2, #3)}
+\define[3]\GAUSSEXP{\rm (#1 - #2)^\top #3^{-1} (#1 - #2)}
 
 \define\MEANVEC{{\bf \mu}}
 \define\MEANVECX{\MEANVEC_\VECX}
+\define\MEANVECY{\MEANVEC_\VECY}
 \define\MEANVECA{\MEANVEC_a}
 \define\MEANVECERR{\MEANVEC_\ERR}
 
 \define\COVMAT{{\bf \Sigma}}
 \define\COVMATX{\COVMAT_\VECX}
+\define\COVMATY{\COVMAT_\VECY}
 \define\COVMATA{\COVMAT_a}
 \define\COVMATERR{\COVMAT_\ERR}
 
