@@ -3,6 +3,9 @@ Formulate retrieval problem.
 Introduce optimal estimation and regression mention Kernel Methods, ... as
 alternative regression methods.
 
+Math is heavily influenced by Rodgers and Bishop, important calculations are
+repeated to achieve consistent notation and naming conventions throughout.
+
 \startsection[title=Bayesian Statistics]
 
     The Bayesian view of statistics is ideal for the formulation of retrieval
@@ -88,55 +91,125 @@ alternative regression methods.
 
     \startsubsection[title={Bayes' Theorem for Gaussians},reference=ret_bayes_gauss]
 
-        Because of the Gaussian's convenient analytic properties, calculating
-        the posterior distribution $\POSTERIOR$ as the product of a conditional
-        distribution $\LIKELIHOOD$ (the likelihood function) and a marginal
-        distribution $\PRIOR$ (the prior) is analytically possible under two
-        assumptions: the dependence of the conditional distribution's mean is
-        linear with respect to the prior's argument ($\VECX$) and its
-        covariance is independent of $\VECX$. Let
+        A convenient property of Gaussian distributions is that the product of
+        a Gaussian conditional distribution $\LIKELIHOOD$ (the likelihood
+        function) and a Gaussian marginal distribution $\PRIOR$ (the prior) is
+        again Gaussian \cite[authoryears][Bishop2006]. This allows the analytic
+        calculation of the posterior $\POSTERIOR$ if two assumptions hold: the
+        dependence of the conditional distribution's mean is linear with
+        respect to the prior's argument ($\VECX$) and its covariance is
+        independent of $\VECX$. Let
 
         \startformula
         \startalign[n=2,align{right,left}]
-            \NC -2 \ln(\LIKELIHOOD) = \NC \GAUSSEXP{\VECY}{\FWDJAC\VECX - \VECB}{\COVMATY} + c_1 \NR
-            \NC -2 \ln(\PRIOR) = \NC \GAUSSEXP{\VECX}{\MEANVECA}{\COVMATX} + c_2 \NR
+            \NC -2 \ln(\LIKELIHOOD) = \NC
+                \GAUSSEXP{\VECY}{\FWDJAC\VECX - \VECB}{\COVMATERR} + c_1 \NR
+            \NC -2 \ln(\PRIOR) = \NC
+                \GAUSSEXP{\VECX}{\MEANVECA}{\COVMATA} + c_2 \EQSTOP \NR
         \stopalign
         \stopformula
 
-        ...
+        The normalization is contained in $c_1$ and $c_2$ respectively. These
+        {\PDF}s are multivariate Gaussians fulfilling the above assumptions.
+        The posterior distribution is given by:
 
+        \placesubformula
         \startformula
         \startalign[n=2, align{right,left}]
             \NC -2 \ln(\POSTERIOR) = \NC -2 \ln(\LIKELIHOOD \PRIOR) \NR
             \NC = \NC -2 \ln(\LIKELIHOOD) - 2 \ln(\PRIOR) \NR
             \NC = \NC
-                \GAUSSEXP{\VECY}{\FWDJAC - \VECB}{\COVMATY}
-                + \GAUSSEXP{\VECX}{\MEANVECX}{\COVMATX} + c_1 + c_2
+                \GAUSSEXP{\VECY}{\FWDJAC - \VECB}{\COVMATERR}
+                + \GAUSSEXP{\VECX}{\MEANVECX}{\COVMATA} + c_1 + c_2
                 \NR
             \NC = \NC
-                  \VECY^\top \COVMATY^{-1} \VECY
-                - \VECY^\top \COVMATY^{-1} \FWDJAC \VECX
-                - \VECY^\top \COVMATY^{-1} \VECB
+                  \VECY^\top \COVMATERR^{-1} \VECY
+                - \VECY^\top \COVMATERR^{-1} \FWDJAC \VECX
+                - \VECY^\top \COVMATERR^{-1} \VECB
                 \NR
             \NC \NC
-                - \mathbox{cornflowerblue}{\VECX^\top \FWDJAC^\top \COVMATY^{-1} \VECY}
-                + \mathbox{yellowgreen}{\VECX^\top \FWDJAC^\top \COVMATY^{-1} \FWDJAC \VECX}
-                + \mathbox{cornflowerblue}{\VECX^\top \FWDJAC^\top \COVMATY^{-1} \VECB}
+                \mathbox{cornflowerblue}{- \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECY}
+                + \mathbox{yellowgreen}{\VECX^\top \FWDJAC^\top \COVMATERR^{-1} \FWDJAC \VECX}
+                + \mathbox{cornflowerblue}{\VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECB}
                 \NR
             \NC \NC
-                - \VECB^\top \COVMATY^{-1} \VECY
-                + \VECB^\top \COVMATY^{-1} \FWDJAC \VECX
-                + \VECB^\top \COVMATY^{-1} \VECB
-                \NR
+                - \VECB^\top \COVMATERR^{-1} \VECY
+                + \VECB^\top \COVMATERR^{-1} \FWDJAC \VECX
+                + \VECB^\top \COVMATERR^{-1} \VECB
+                \NR[eq_gaussprodexpand]
             \NC \NC
-                + \mathbox{yellowgreen}{\VECX^\top \COVMATX^{-1} \VECX}
-                - \mathbox{cornflowerblue}{\VECX^\top \COVMATX^{-1} \MEANVECA}
-                - \MEANVECA^\top \COVMATX^{-1} \VECX
-                + \MEANVECA^\top \COVMATX^{-1} \MEANVECX
+                + \mathbox{yellowgreen}{\VECX^\top \COVMATA^{-1} \VECX}
+                ~\mathbox{cornflowerblue}{- \VECX^\top \COVMATA^{-1} \MEANVECA}
+                - \MEANVECA^\top \COVMATA^{-1} \VECX
+                + \MEANVECA^\top \COVMATA^{-1} \MEANVECX
                 \NR
-            \NC \NC + c_1 + c_2 \NR
+            \NC \NC + c_1 + c_2 \EQCOMMA \NR
         \stopalign
         \stopformula
+        
+        where the last step is expanding the vector-matrix-vector product.
+        Subscripts are chosen in anticipation of chapter \in[ret_optimest]. The
+        posterior has to be Gaussian, therefore
+
+        \placesubformula
+        \startformula
+        \startalign[n=2,align={right,left}]
+            \NC -2 \ln(\POSTERIOR) = \NC
+                \GAUSSEXP{\VECX}{\MEANVECX}{\COVMATX} + c_3 \NR
+            \NC = \NC
+                 \mathbox{yellowgreen}{\VECX^\top \COVMATX^{-1} \VECX}
+                 ~\mathbox{cornflowerblue}{- \VECX^\top \COVMATX^{-1} \MEANVECX}
+                 - \MEANVECX^\top \COVMATX^{-1} \VECX
+                 + \MEANVECX^\top \COVMATX^{-1} \MEANVECX
+                 + c_3 \NR[eq_gausspostexpand]
+        \stopalign
+        \stopformula
+
+        must be a equivalent representation. Noting that the equivalence must
+        hold for all $\VECX$, an expression for $\COVMATX$ is foundy by
+        matching terms quadratic in $\VECX$ of both forms
+        \ineq{eq_gaussprodexpand} and \ineq{eq_gausspostexpand} (framed in
+        green):
+
+        \placesubformula
+        \startformula
+        \startalign[n=3,align={left,right,left}]
+            \NC \NC - \VECX^\top \COVMATX^{-1} \VECX = \NC
+                \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \FWDJAC \VECX
+                + \VECX^\top \COVMATA^{-1} \VECX
+             = \VECX^\top (\FWDJAC^\top \COVMATERR^{-1} \FWDJAC
+                + \COVMATA^{-1}) \VECX \NR
+            \NC \Rightarrow~~ \NC \COVMATX = \NC
+                (\FWDJAC^\top \COVMATERR^{-1} \FWDJAC + \COVMATA^{-1})^{-1}
+                \EQSTOP \NR[eq_gausspostcov]
+        \stopalign
+        \stopformula
+
+        Matching the linear terms involving $\VECX^\top$ of both forms
+        \ineq{eq_gaussprodexpand} and \ineq{eq_gausspostexpand} (framed in
+        blue) results in an expression for $\MEANVECX$:
+
+        \placesubformula
+        \startformula
+        \startalign[n=3,align={left,right,left}]
+            \NC \NC - \VECX^\top \COVMATX^{-1} \MEANVECX = \NC
+                - \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECY
+                + \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECB
+                - \VECX^\top \COVMATA^{-1} \MEANVECA \NR
+            \NC \NC  = \NC
+                - \VECX^\top (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
+                + \COVMATA^{-1} \MEANVECA) \NR
+            \NC \Rightarrow~~ \NC \MEANVECX = \NC
+                \COVMATX (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
+                + \COVMATA^{-1} \MEANVECA)
+                \EQCOMMA \NR[eq_gausspostmean]
+        \stopalign
+        \stopformula
+
+        where $\COVMATX$ is given by \ineq{eq_gausspostcov}. Equating terms
+        linear in $\VECX$ yields the same result.  An alternative derivation of
+        \ineq{eq_gausspostcov} and \ineq{eq_gausspostmean} is given by
+        \cite[Bishop2006] in chapter 2.3.3.
 
     \stopsubsection
 
@@ -154,7 +227,7 @@ alternative regression methods.
 \stopsection
 
 
-\startsection[title=Optimal Estimation]
+\startsection[title={Optimal Estimation},reference=ret_optimest]
 
     Reference Rodgers, explain how it fits together.
 
