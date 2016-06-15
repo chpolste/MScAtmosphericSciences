@@ -6,7 +6,7 @@ alternative regression methods.
 Math is heavily influenced by Rodgers and Bishop, important calculations are
 repeated to achieve consistent notation and naming conventions throughout.
 
-\startsection[title=Bayesian Statistics]
+\startsection[title={Bayesian Statistics}]
 
     The Bayesian view of statistics is ideal for the formulation of retrieval
     problems. 
@@ -18,7 +18,7 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     Central role: Bayes' theorem.
     
-    \placeformula[eq_ret_bayes]
+    \placeformula[eq:bayes_theorem]
     \startformula
         P(x|y) = \frac{P(y|x) P(x)}{P(y)}
     \stopformula
@@ -32,6 +32,8 @@ repeated to achieve consistent notation and naming conventions throughout.
     $P(y)$ normalization, can be obtained by integrating $P(y|x)P(x)$
     over all possible states $x$.
 
+    \placefigure[bottom][fig:bayes_theorem]{Visualization of Bayes' theorem.} {\externalfigure[bayes_theorem][width=\textwidth]}
+
 \stopsection
 
 \startsection[title=The Multivariate Gaussian Distribution]
@@ -41,7 +43,7 @@ repeated to achieve consistent notation and naming conventions throughout.
     analytic solutions for a given problem. The most commonly used pdf is the
     Gaussian distribution:
 
-    \placeformula[ret_gauss]
+    \placeformula[eq:gaussian]
     \startformula
         \GAUSS{\VECX}{\MEANVEC}{\COVMAT}
         = \frac{1}{(2 \pi)^{N/2} \det(\COVMAT)^{1/2}}
@@ -89,7 +91,7 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \stopsubsection
 
-    \startsubsection[title={Bayes' Theorem for Gaussians},reference=ret_bayes_gauss]
+    \startsubsection[title={Bayes' Theorem for Gaussians},reference=ch:bayes_gauss]
 
         A convenient property of Gaussian distributions is that the product of
         a Gaussian conditional distribution $\LIKELIHOOD$ (the likelihood
@@ -136,7 +138,7 @@ repeated to achieve consistent notation and naming conventions throughout.
                 - \VECB^\top \COVMATERR^{-1} \VECY
                 + \VECB^\top \COVMATERR^{-1} \FWDJAC \VECX
                 + \VECB^\top \COVMATERR^{-1} \VECB
-                \NR[eq_gaussprodexpand]
+                \NR[eq:gaussprodexpand]
             \NC \NC
                 + \mathbox{yellowgreen}{\VECX^\top \COVMATA^{-1} \VECX}
                 ~\mathbox{cornflowerblue}{- \VECX^\top \COVMATA^{-1} \MEANVECA}
@@ -148,8 +150,8 @@ repeated to achieve consistent notation and naming conventions throughout.
         \stopformula
         
         where the last step is expanding the vector-matrix-vector product.
-        Subscripts are chosen in anticipation of chapter \in[ret_optimest]. The
-        posterior has to be Gaussian, therefore
+        Subscripts are chosen in anticipation of chapter
+        \in[ch:optimalestimation]. The posterior has to be Gaussian, therefore
 
         \placesubformula
         \startformula
@@ -161,14 +163,14 @@ repeated to achieve consistent notation and naming conventions throughout.
                  ~\mathbox{cornflowerblue}{- \VECX^\top \COVMATX^{-1} \MEANVECX}
                  - \MEANVECX^\top \COVMATX^{-1} \VECX
                  + \MEANVECX^\top \COVMATX^{-1} \MEANVECX
-                 + c_3 \NR[eq_gausspostexpand]
+                 + c_3 \NR[eq:gausspostexpand]
         \stopalign
         \stopformula
 
         must be a equivalent representation. Noting that the equivalence must
         hold for all $\VECX$, an expression for $\COVMATX$ is foundy by
         matching terms quadratic in $\VECX$ of both forms
-        \ineq{eq_gaussprodexpand} and \ineq{eq_gausspostexpand} (framed in
+        \ineq{eq:gaussprodexpand} and \ineq{eq:gausspostexpand} (highlighted
         green):
 
         \placesubformula
@@ -181,12 +183,12 @@ repeated to achieve consistent notation and naming conventions throughout.
                 + \COVMATA^{-1}) \VECX \NR
             \NC \Rightarrow~~ \NC \COVMATX = \NC
                 (\FWDJAC^\top \COVMATERR^{-1} \FWDJAC + \COVMATA^{-1})^{-1}
-                \EQSTOP \NR[eq_gausspostcov]
+                \EQSTOP \NR[eq:gausspostcov]
         \stopalign
         \stopformula
 
         Matching the linear terms involving $\VECX^\top$ of both forms
-        \ineq{eq_gaussprodexpand} and \ineq{eq_gausspostexpand} (framed in
+        \ineq{eq:gaussprodexpand} and \ineq{eq:gausspostexpand} (highlighted
         blue) results in an expression for $\MEANVECX$:
 
         \placesubformula
@@ -202,13 +204,13 @@ repeated to achieve consistent notation and naming conventions throughout.
             \NC \Rightarrow~~ \NC \MEANVECX = \NC
                 \COVMATX (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
                 + \COVMATA^{-1} \MEANVECA)
-                \EQCOMMA \NR[eq_gausspostmean]
+                \EQCOMMA \NR[eq:gausspostmean]
         \stopalign
         \stopformula
 
-        where $\COVMATX$ is given by \ineq{eq_gausspostcov}. Equating terms
+        where $\COVMATX$ is given by \ineq{eq:gausspostcov}. Equating terms
         linear in $\VECX$ yields the same result.  An alternative derivation of
-        \ineq{eq_gausspostcov} and \ineq{eq_gausspostmean} is given by
+        \ineq{eq:gausspostcov} and \ineq{eq:gausspostmean} is given by
         \cite[Bishop2006] in chapter 2.3.3.
 
     \stopsubsection
@@ -227,12 +229,12 @@ repeated to achieve consistent notation and naming conventions throughout.
 \stopsection
 
 
-\startsection[title={Optimal Estimation},reference=ret_optimest]
+\startsection[title={Optimal Estimation},reference=ch:optimalestimation]
 
     Reference Rodgers, explain how it fits together.
 
     The optimal estimation approach directly uses Bayes' theorem
-    \ineq{eq_ret_bayes} to obtain the posterior probability distribution
+    \ineq{eq:bayes_theorem} to obtain the posterior probability distribution
     $\POSTERIOR$ using a forward model and prior information of the state
     vector.
 
@@ -247,11 +249,11 @@ repeated to achieve consistent notation and naming conventions throughout.
     before the measurement is evaluated. This knowledge might come from
     a climatology, output from a NWP model, information from other instruments
     and any combination of these sources. The construction of an optimal prior
-    is not an easy task and will be discussed in section \in[ret_constprior].
-    In any case, due to the assumption that the {\PDF} is Gaussian it will have
-    the form:
+    is not an easy task and will be discussed in section
+    \in[ch:construct_prior]. In any case, due to the assumption that the
+    {\PDF} is Gaussian it will have the form:
 
-    \placeformula[eq_ret_optprior]
+    \placeformula[eq:optimalest_prior]
     \startformula
         \PRIOR = \GAUSS{\VECX}{\MEANVECA}{\COVMATA}
     \stopformula
@@ -262,7 +264,7 @@ repeated to achieve consistent notation and naming conventions throughout.
     observation $\VECY$ result of a state $\VECX$. This confidence is
     quantified with the help of the forward model, which can be formulated as:
 
-    \placeformula[eq_ret_fwdmodel]
+    \placeformula[eq:forward_model]
     \startformula
         \VECY = \FWD(\VECX) + \ERR
     \stopformula
@@ -273,28 +275,28 @@ repeated to achieve consistent notation and naming conventions throughout.
     that the errors are Gaussian, centered around a systematic bias
     $\MEANVECERR$ and with a convariance matrix $\COVMATERR$:
 
-    \placeformula[eq_ret_opterrpdf]
+    \placeformula[eq:optimalest_errpdf]
     \startformula
         P(\ERR) = \GAUSS{\ERR}{\MEANVECERR}{\COVMATERR}
     \stopformula
 
     A discussion of how $\MEANVECERR$ and $\COVMATERR$ can be determined is
-    given in section \in[rtm_errors]. Substituting \ineq{eq_ret_fwdmodel}
-    into \ineq{eq_ret_opterrpdf} and changing the independent variable of
+    given in section \in[rtm_errors]. Substituting \ineq{eq:forward_model}
+    into \ineq{eq:optimalest_errpdf} and changing the independent variable of
     the {\PDF} results in the likelihood function:
     
     \placesubformula
     \startformula
     \startalign[n=3,align={right,middle,left}]
         \NC P(\VECY - \FWD(\VECX)) = \NC \GAUSS{\VECY - \FWD(\VECX)}{\MEANVECERR}{\COVMATERR} \NC \NR
-        \NC = \NC \GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR} \NC = \LIKELIHOOD \NR[eq_ret_optlikelihood][]
+        \NC = \NC \GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR} \NC = \LIKELIHOOD \NR[eq:optimalest_likelihood][]
     \stopalign
     \stopformula
 
-    Knowing \ineq{eq_ret_optprior} and \ineq{eq_ret_optlikelihood} the
+    Knowing \ineq{eq:optimalest_prior} and \ineq{eq:optimalest_likelihood} the
     posterior {\PDF} is given by:
 
-    \placeformula[eq_ret_optposterior]
+    \placeformula[eq:optimalest_posterior]
     \startformula
         \POSTERIOR
         = \frac{\LIKELIHOOD \PRIOR}{\NORMALIZATION}
@@ -303,7 +305,7 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     Because the forward model is a nonlinear function, the product of the
     Gaussians cannot be carried out using the results from section
-    \in[ret_bayes_gauss]. First, the forward model has to be linearized.
+    \in[ch:bayes_gauss]. First, the forward model has to be linearized.
 
     \startsubsection[title=An Iterative Solution]
 
@@ -316,7 +318,7 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \stopsubsection
 
-    \startsubsection[title={Constructing the Prior},reference=ret_constprior]
+    \startsubsection[title={Constructing the Prior},reference=ch:constructing_prior]
 
         Choosing the prior (=background) state. Constructing the covariance
         matrix.
