@@ -55,6 +55,7 @@ class BUFRReader:
                     .sort_values(by="time", ascending=True)
                     .dropna(how="any", axis="index")
                     .drop_duplicates(keep="first")
+                    .reset_index(drop=True)
                     )
             if "time" in df: df["time"] = df["time"].astype(int)
             # Convert pressure to hPa
