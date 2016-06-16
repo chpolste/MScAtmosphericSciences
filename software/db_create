@@ -2,48 +2,54 @@
 
 source /home/chris/local/miniconda3/bin/activate thesis
 
-python db_import.py raso_fwf ../data/db_parts/raso_fwf.db --pid=1 --size=1
+python db_import.py raso_fwf ../data/amalg.db --pid=1
 
-python db_import.py raso_bufr ../data/db_parts/raso_bufr1.db --pid=3200 --offset=0   --size=150 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr2.db --pid=3350 --offset=150 --size=150 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr3.db --pid=3500 --offset=300 --size=150 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr4.db --pid=3650 --offset=450 --size=150 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr5.db --pid=3800 --offset=600 --size=150 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr6.db --pid=3950 --offset=750 --size=150 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr7.db --pid=4100 --offset=900 --size=150 &
+python db_import.py cosmo7_l2e ../data/amalg.db --pid=1
+
+python db_import.py raso_bufr ../data/db_parts/raso_bufr01.db --pid=3200 --offset=0   --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr02.db --pid=3300 --offset=100 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr03.db --pid=3400 --offset=200 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr04.db --pid=3500 --offset=300 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr05.db --pid=3600 --offset=400 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr06.db --pid=3700 --offset=500 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr07.db --pid=3800 --offset=600 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr08.db --pid=3900 --offset=700 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr09.db --pid=4000 --offset=800 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr10.db --pid=4100 --offset=900 --size=100 &
 
 wait
 
-python <<<'''
-from dbtoolbox import DatabaseToolbox
-DatabaseToolbox("../data/amalg.db").create_tables()
-'''
-
 sqlite3 ../data/amalg.db <<< '''
-ATTACH "../data/db_parts/raso_fwf.db" AS fwf;
-ATTACH "../data/db_parts/raso_bufr1.db" AS bufr1;
-ATTACH "../data/db_parts/raso_bufr2.db" AS bufr2;
-ATTACH "../data/db_parts/raso_bufr3.db" AS bufr3;
-ATTACH "../data/db_parts/raso_bufr4.db" AS bufr4;
-ATTACH "../data/db_parts/raso_bufr5.db" AS bufr5;
-ATTACH "../data/db_parts/raso_bufr6.db" AS bufr6;
-ATTACH "../data/db_parts/raso_bufr7.db" AS bufr7;
+ATTACH "../data/db_parts/raso_bufr01.db" AS bufr01;
+ATTACH "../data/db_parts/raso_bufr02.db" AS bufr02;
+ATTACH "../data/db_parts/raso_bufr03.db" AS bufr03;
+ATTACH "../data/db_parts/raso_bufr04.db" AS bufr04;
+ATTACH "../data/db_parts/raso_bufr05.db" AS bufr05;
+ATTACH "../data/db_parts/raso_bufr06.db" AS bufr06;
+ATTACH "../data/db_parts/raso_bufr07.db" AS bufr07;
+ATTACH "../data/db_parts/raso_bufr08.db" AS bufr08;
+ATTACH "../data/db_parts/raso_bufr09.db" AS bufr09;
+ATTACH "../data/db_parts/raso_bufr10.db" AS bufr10;
 
-INSERT INTO raso SELECT * FROM fwf.raso;
-INSERT INTO raso SELECT * FROM bufr1.raso;
-INSERT INTO raso SELECT * FROM bufr2.raso;
-INSERT INTO raso SELECT * FROM bufr3.raso;
-INSERT INTO raso SELECT * FROM bufr4.raso;
-INSERT INTO raso SELECT * FROM bufr5.raso;
-INSERT INTO raso SELECT * FROM bufr6.raso;
-INSERT INTO raso SELECT * FROM bufr7.raso;
+INSERT INTO raso SELECT * FROM bufr01.raso;
+INSERT INTO raso SELECT * FROM bufr02.raso;
+INSERT INTO raso SELECT * FROM bufr03.raso;
+INSERT INTO raso SELECT * FROM bufr04.raso;
+INSERT INTO raso SELECT * FROM bufr05.raso;
+INSERT INTO raso SELECT * FROM bufr06.raso;
+INSERT INTO raso SELECT * FROM bufr07.raso;
+INSERT INTO raso SELECT * FROM bufr08.raso;
+INSERT INTO raso SELECT * FROM bufr09.raso;
+INSERT INTO raso SELECT * FROM bufr10.raso;
 
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM fwf.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM bufr1.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM bufr2.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM bufr3.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM bufr4.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM bufr5.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM bufr6.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, geopot, T, Td) SELECT parent, p, geopot, T, Td FROM bufr7.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr01.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr02.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr03.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr04.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr05.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr06.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr07.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr08.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr09.rasodata ORDER BY id ASC;
+INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr10.rasodata ORDER BY id ASC;
 '''

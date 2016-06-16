@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS rasodata(
     id INTEGER PRIMARY KEY,
     parent INTEGER REFERENCES raso(id),
     p NUMERIC,
-    geopot NUMERIC,
+    z NUMERIC,
     T NUMERIC,
     Td NUMERIC
 );
@@ -65,9 +65,11 @@ CREATE TABLE IF NOT EXISTS cosmo7data(
     id INTEGER PRIMARY KEY,
     parent INTEGER REFERENCES cosmo7(id),
     p NUMERIC,
-    geopot NUMERIC,
+    z NUMERIC,
     T NUMERIC,
-    Td NUMERIC
+    Td NUMERIC,
+    q NUMERIC,
+    qcld NUMERIC
 );
 
 CREATE TABLE IF NOT EXISTS hatpro(

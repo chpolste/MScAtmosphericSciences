@@ -41,8 +41,8 @@ if __name__ == "__main__":
     if args.data == "raso_fwf":
         files = select_files(sorted(glob("../data/raso_ibk_fwf/*.reduced.txt")))
         colspecs = [(8, 17), (17, 26), (26, 36), (43, 49)]
-        names = ["p", "geopot", "T", "Td"]
-        converters = {"p": errfloat, "geopot": errfloat, "T": errfloat, "Td": errfloat}
+        names = ["p", "z", "T", "Td"]
+        converters = {"p": errfloat, "z": errfloat, "T": errfloat, "Td": errfloat}
         print("raso_fwf | importing {} files to {}".format(len(files), args.output))
         rowcache, profilecache = [], []
         for file in files:
@@ -61,7 +61,7 @@ if __name__ == "__main__":
         print("raso_fwf | writing {} of {} profiles to database... ".format(len(profilecache), len(files)), end="")
         query = "INSERT INTO raso (id, valid, metadata) VALUES (?, ?, ?);"
         db.executemany(query, profilecache)
-        query = "INSERT INTO rasodata (parent, p, geopot, T, Td) VALUES (?, ?, ?, ?, ?);"
+        query = "INSERT INTO rasodata (parent, p, z, T, Td) VALUES (?, ?, ?, ?, ?);"
         db.executemany(query, rowcache)
         print("done!")
 
@@ -96,13 +96,16 @@ if __name__ == "__main__":
         valids, rowcache, profilecache = set(), [], []
         for file in files:
             filename = file.split("/")[-1]
-            df, metadata = reader.read(file)
-            try: df = df[["p", "geopot", "T", "Td"]]
+            df, md = reader.read(file)
+            try: df = df[["p", "z", "T", "Td"]]
             except KeyError: continue
-            valid = metadata["datetime"].timestamp()
+            valid = md["datetime"].timestamp()
             if valid in valids: continue
             valids.add(valid)
-            metadata = {"file": filename, "cloud_cover": metadata["cloud cover"]}
+            metadata = {"file": filename}
+            if md["cloud cover"] is None: pass
+            elif md["cloud cover"] >= 0:
+                metadata["cloudy"] = 1 if md["cloud cover"] != 0 else 0
             profilecache.append([pid, valid, json.dumps(metadata)])
             ps = pd.Series(np.repeat(pid, len(df)), name="parent")
             rowcache.extend(pd.concat([ps, df], axis=1).as_matrix().tolist())
@@ -111,6 +114,33 @@ if __name__ == "__main__":
         print("raso_bufr | writing {} of {} profiles to database... ".format(len(profilecache), len(files)), end="")
         query = "INSERT INTO raso (id, valid, metadata) VALUES (?, ?, ?);"
         db.executemany(query, profilecache)
-        query = "INSERT INTO rasodata (parent, p, geopot, T, Td) VALUES (?, ?, ?, ?, ?);"
+        query = "INSERT INTO rasodata (parent, p, z, T, Td) VALUES (?, ?, ?, ?, ?);"
+        db.executemany(query, rowcache)
+        print("done!")
+
+
+    # COSMO7 Simulated Soundings
+    if args.data == "cosmo7_l2e":
+        from l2e import parse as parse_l2e
+        
+        files = select_files(sorted(glob("../data/raso_cosmo7/*.l2e")))
+        print("cosmo7_l2e | importing {} files to {}".format(len(files), args.output))
+        rowcache, profilecache = [], []
+        for file in files:
+            filename = file.split("/")[-1]
+            with open(file, "r") as f:
+                for valid, run, df in parse_l2e(f, wmonrs=["11120"]):
+                    valid = valid.timestamp()
+                    run = run.timestamp()
+                    metadata = {"file": filename}
+                    metadata["cloudy"] = 1 if (df["qcld"] > 0).any() else 0
+                    profilecache.append([pid, valid, run, json.dumps(metadata)])
+                    ps = pd.Series(np.repeat(pid, len(df)), name="parent")
+                    rowcache.extend(pd.concat([ps, df], axis=1).as_matrix().tolist())
+                    pid = pid + 1
+        print("cosmo7_le2 | writing {} profiles to database... ".format(len(profilecache)), end="")
+        query = "INSERT INTO cosmo7 (id, valid, run, metadata) VALUES (?, ?, ?, ?);"
+        db.executemany(query, profilecache)
+        query = "INSERT INTO cosmo7data (parent, p, z, T, Td, q, qcld) VALUES (?, ?, ?, ?, ?, ?, ?);"
         db.executemany(query, rowcache)
         print("done!")

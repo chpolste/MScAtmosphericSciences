@@ -6,13 +6,13 @@ import formulas as fml
 
 
 def raso(df, *, y="p", ylim=None, title="", size=5, fig=None):
-    """Plot T, Td in (nonskew) T-p or T-geopot diagram.
+    """Plot T, Td in (nonskew) T-p or T-z diagram.
 
     Additionally, relative humidity and potential temperature are plotted.
-    From the given dataframe the p, T, Td and - if selected - geopot columns
+    From the given dataframe the p, T, Td and - if selected - z columns
     are used. RH is calculated from T and Td, Tpot is calculated from T and p.
     """
-    assert y == "p" or y == "geopot"
+    assert y == "p" or y == "z"
     assert ylim is None or len(ylim) == 2
 
     if fig is None:

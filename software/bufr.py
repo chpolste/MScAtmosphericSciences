@@ -45,7 +45,7 @@ class BUFRReader:
             # Check for appropriate units
             assert "time" not in units or units["time"] == "s"
             assert "p" not in units or units["p"] == "Pa"
-            assert "geopot" not in units or units["geopot"] == "gpm"
+            assert "z" not in units or units["z"] == "gpm"
             assert "T" not in units or units["T"] == "K"
             assert "Td" not in units or units["Td"] == "K"
             assert "ff" not in units or units["ff"] == "m/s"
@@ -170,7 +170,7 @@ class Sounding:
     select = {
             "timePeriod": "time",
             "pressure": "p",
-            "geopotentialHeight": "geopot",
+            "geopotentialHeight": "z",
             "airTemperature": "T",
             "dewpointTemperature": "Td",
             "windDirection": "dd",
