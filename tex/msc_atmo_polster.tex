@@ -103,7 +103,8 @@
         ]
 
 % Formulas
-\setupformulae[way=bytext,prefixsegments=none]
+\defineseparatorset[none][][]
+\setupformulas[way=bytext,prefixsegments=none,numberseparatorset=none]
 % Increase spacing around binary relation symbols (default is 5mu plus 5mu).
 \thickmuskip=10mu plus 5mu
 

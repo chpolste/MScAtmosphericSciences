@@ -20,16 +20,16 @@ repeated to achieve consistent notation and naming conventions throughout.
     
     \placeformula[eq:bayes_theorem]
     \startformula
-        P(x|y) = \frac{P(y|x) P(x)}{P(y)}
+        \PROB{x|y} = \frac{\PROB{y|x} \PROB{x}}{\PROB{y}}
     \stopformula
 
-    $P(x|y)$ likelihood
+    $\PROB{x|y}$ likelihood
 
-    $P(y|x)$ posterior
+    $\PROB{y|x}$ posterior
 
-    $P(x)$ prior
+    $\PROB{x}$ prior
 
-    $P(y)$ normalization, can be obtained by integrating $P(y|x)P(x)$
+    $\PROB{y}$ normalization, can be obtained by integrating $\PROB{y|x}\PROB{x}$
     over all possible states $x$.
 
     \placefigure[bottom][fig:bayes_theorem]{Visualization of Bayes' theorem.} {\externalfigure[bayes_theorem][width=\textwidth]}
@@ -122,7 +122,7 @@ repeated to achieve consistent notation and naming conventions throughout.
             \NC = \NC -2 \ln(\LIKELIHOOD) - 2 \ln(\PRIOR) \NR
             \NC = \NC
                 \GAUSSEXP{\VECY}{\FWDJAC - \VECB}{\COVMATERR}
-                + \GAUSSEXP{\VECX}{\MEANVECX}{\COVMATA} + c_1 + c_2
+                + \GAUSSEXP{\VECX}{\MEANVECA}{\COVMATA} + c_1 + c_2
                 \NR
             \NC = \NC
                   \VECY^\top \COVMATERR^{-1} \VECY
@@ -143,7 +143,7 @@ repeated to achieve consistent notation and naming conventions throughout.
                 + \mathbox{yellowgreen}{\VECX^\top \COVMATA^{-1} \VECX}
                 ~\mathbox{cornflowerblue}{- \VECX^\top \COVMATA^{-1} \MEANVECA}
                 - \MEANVECA^\top \COVMATA^{-1} \VECX
-                + \MEANVECA^\top \COVMATA^{-1} \MEANVECX
+                + \MEANVECA^\top \COVMATA^{-1} \MEANVECA
                 \NR
             \NC \NC + c_1 + c_2 \EQCOMMA \NR
         \stopalign
@@ -157,60 +157,60 @@ repeated to achieve consistent notation and naming conventions throughout.
         \startformula
         \startalign[n=2,align={right,left}]
             \NC -2 \ln(\POSTERIOR) = \NC
-                \GAUSSEXP{\VECX}{\MEANVECX}{\COVMATX} + c_3 \NR
+                \GAUSSEXP{\VECX}{\MEANVEC}{\COVMAT} + c_3 \NR
             \NC = \NC
-                 \mathbox{yellowgreen}{\VECX^\top \COVMATX^{-1} \VECX}
-                 ~\mathbox{cornflowerblue}{- \VECX^\top \COVMATX^{-1} \MEANVECX}
-                 - \MEANVECX^\top \COVMATX^{-1} \VECX
-                 + \MEANVECX^\top \COVMATX^{-1} \MEANVECX
+                 \mathbox{yellowgreen}{\VECX^\top \COVMAT^{-1} \VECX}
+                 ~\mathbox{cornflowerblue}{- \VECX^\top \COVMAT^{-1} \MEANVEC}
+                 - \MEANVEC^\top \COVMAT^{-1} \VECX
+                 + \MEANVEC^\top \COVMAT^{-1} \MEANVEC
                  + c_3 \NR[eq:gausspostexpand]
         \stopalign
         \stopformula
 
-        must be a equivalent representation. Noting that the equivalence must
-        hold for all $\VECX$, an expression for $\COVMATX$ is foundy by
+        must ben a equivalent representation. Noting that the equivalence must
+        hold for all $\VECX$, an expression for $\COVMAT$ is foundy by
         matching terms quadratic in $\VECX$ of both forms
-        \ineq{eq:gaussprodexpand} and \ineq{eq:gausspostexpand} (highlighted
+        \ineq{gaussprodexpand} and \ineq{gausspostexpand} (highlighted
         green):
 
         \placesubformula
         \startformula
         \startalign[n=3,align={left,right,left}]
-            \NC \NC - \VECX^\top \COVMATX^{-1} \VECX = \NC
+            \NC \NC - \VECX^\top \COVMAT^{-1} \VECX = \NC
                 \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \FWDJAC \VECX
                 + \VECX^\top \COVMATA^{-1} \VECX
              = \VECX^\top (\FWDJAC^\top \COVMATERR^{-1} \FWDJAC
                 + \COVMATA^{-1}) \VECX \NR
-            \NC \Rightarrow~~ \NC \COVMATX = \NC
+            \NC \Rightarrow~~ \NC \COVMAT = \NC
                 (\FWDJAC^\top \COVMATERR^{-1} \FWDJAC + \COVMATA^{-1})^{-1}
                 \EQSTOP \NR[eq:gausspostcov]
         \stopalign
         \stopformula
 
         Matching the linear terms involving $\VECX^\top$ of both forms
-        \ineq{eq:gaussprodexpand} and \ineq{eq:gausspostexpand} (highlighted
-        blue) results in an expression for $\MEANVECX$:
+        \ineq{gaussprodexpand} and \ineq{gausspostexpand} (highlighted
+        blue) results in an expression for $\MEANVEC$:
 
         \placesubformula
         \startformula
         \startalign[n=3,align={left,right,left}]
-            \NC \NC - \VECX^\top \COVMATX^{-1} \MEANVECX = \NC
+            \NC \NC - \VECX^\top \COVMAT^{-1} \MEANVEC = \NC
                 - \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECY
                 + \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECB
                 - \VECX^\top \COVMATA^{-1} \MEANVECA \NR
             \NC \NC  = \NC
                 - \VECX^\top (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
                 + \COVMATA^{-1} \MEANVECA) \NR
-            \NC \Rightarrow~~ \NC \MEANVECX = \NC
-                \COVMATX (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
+            \NC \Rightarrow~~ \NC \MEANVEC = \NC
+                \COVMAT (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
                 + \COVMATA^{-1} \MEANVECA)
                 \EQCOMMA \NR[eq:gausspostmean]
         \stopalign
         \stopformula
 
-        where $\COVMATX$ is given by \ineq{eq:gausspostcov}. Equating terms
+        where $\COVMAT$ is given by \ineq{gausspostcov}. Equating terms
         linear in $\VECX$ yields the same result.  An alternative derivation of
-        \ineq{eq:gausspostcov} and \ineq{eq:gausspostmean} is given by
+        \ineq{gausspostcov} and \ineq{gausspostmean} is given by
         \cite[Bishop2006] in chapter 2.3.3.
 
     \stopsubsection
@@ -234,7 +234,7 @@ repeated to achieve consistent notation and naming conventions throughout.
     Reference Rodgers, explain how it fits together.
 
     The optimal estimation approach directly uses Bayes' theorem
-    \ineq{eq:bayes_theorem} to obtain the posterior probability distribution
+    \ineq{bayes_theorem} to obtain the posterior probability distribution
     $\POSTERIOR$ using a forward model and prior information of the state
     vector.
 
@@ -261,7 +261,7 @@ repeated to achieve consistent notation and naming conventions throughout.
     The subscript stands for \quotation{a-priori}.
 
     The likelihood function $\LIKELIHOOD$ expresses the confidence that the
-    observation $\VECY$ result of a state $\VECX$. This confidence is
+    observation $\VECY$ is the result of a state $\VECX$. This confidence is
     quantified with the help of the forward model, which can be formulated as:
 
     \placeformula[eq:forward_model]
@@ -277,51 +277,113 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \placeformula[eq:optimalest_errpdf]
     \startformula
-        P(\ERR) = \GAUSS{\ERR}{\MEANVECERR}{\COVMATERR}
+        \PROB{\ERR} = \GAUSS{\ERR}{\MEANVECERR}{\COVMATERR}
     \stopformula
 
     A discussion of how $\MEANVECERR$ and $\COVMATERR$ can be determined is
-    given in section \in[rtm_errors]. Substituting \ineq{eq:forward_model}
-    into \ineq{eq:optimalest_errpdf} and changing the independent variable of
+    given in section \in[rtm_errors]. Substituting \ineq{forward_model}
+    into \ineq{optimalest_errpdf} and changing the independent variable of
     the {\PDF} results in the likelihood function:
     
     \placesubformula
     \startformula
     \startalign[n=3,align={right,middle,left}]
-        \NC P(\VECY - \FWD(\VECX)) = \NC \GAUSS{\VECY - \FWD(\VECX)}{\MEANVECERR}{\COVMATERR} \NC \NR
-        \NC = \NC \GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR} \NC = \LIKELIHOOD \NR[eq:optimalest_likelihood][]
+        \NC \PROB{\VECY - \FWD(\VECX)} = \NC
+            \GAUSS{\VECY - \FWD(\VECX)}{\MEANVECERR}{\COVMATERR} \NC \NR
+        \NC = \NC \GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR} \NC
+            = \LIKELIHOOD \NR[eq:optimalest_likelihood][]
     \stopalign
     \stopformula
 
-    Knowing \ineq{eq:optimalest_prior} and \ineq{eq:optimalest_likelihood} the
-    posterior {\PDF} is given by:
+    Knowing \ineq{optimalest_prior} and \ineq{optimalest_likelihood} the
+    posterior {\PDF} is given by
 
     \placeformula[eq:optimalest_posterior]
     \startformula
         \POSTERIOR
         = \frac{\LIKELIHOOD \PRIOR}{\NORMALIZATION}
-        = \frac{\GAUSS{\VECY}{\FWD(\VECX)+\MEANVECERR}{\COVMATERR}~\GAUSS{\VECX}{\MEANVECA}{\COVMATA}}{\NORMALIZATION}
+        = \frac{\GAUSS{\VECY}{\FWD(\VECX) + \MEANVECERR}{\COVMATERR}
+            ~\GAUSS{\VECX}{\MEANVECA}{\COVMATA}}{\NORMALIZATION} \EQCOMMA
     \stopformula
 
-    Because the forward model is a nonlinear function, the product of the
+    but because the forward model is a nonlinear function, the product of the
     Gaussians cannot be carried out using the results from section
-    \in[ch:bayes_gauss]. First, the forward model has to be linearized.
+    \in[ch:bayes_gauss] yet.
 
     \startsubsection[title=An Iterative Solution]
 
-        Gaussian Error Assumption, linearize forward model → jacobian/adjoint,
-        analytic solution for cost function minimization.
+        Taylor series around a state $\ITER{\MEANVEC}{i}$, throw away higher order
+        terms
 
-        Show equivalence of MAP by finding maximum.
+        \startformula
+            \FWD(\VECX) \approx \FWD(\ITER{\MEANVEC}{i})
+                + \ITER{\FWDJAC}{i} (\VECX - \ITER{\MEANVEC}{i})
+        \stopformula
 
-        Where does 1D-VAR come from?
+        Insert into \ineq{optimalest_posterior} to obtain an expression for
+        the posterior where the mean of the likelihood function is linear in
+        $\VECX$ and \ineq{gausspostcov} and \ineq{gausspostmean} can be used to
+        determine the posterior distribution parameters. Because of the
+        linearization the solutions for $\MEANVEC$ and $\COVMAT$ will not be
+        optimal. Use fixed-point iteration to find the optimal solution,
+        leading to an iterative scheme
+
+        \startsubformulas[eq:gausspostiter]
+        \placesubformula
+        \startformula
+        \startalign[n=3,align={right,left,right}]
+            \NC \ITER{\MEANVEC}{i+1} = \NC
+                \ITER{\COVMAT}{i} (\ITER{\FWDJAC}{i}^\top \COVMATERR^{-1}
+                (\VECY - \MEANVECERR - \FWD(\ITER{\MEANVEC}{i})
+                + \ITER{\FWDJAC}{i} \ITER{\MEANVEC}{i}) + \COVMATA^{-1} \MEANVECA)
+                \EQCOMMA \NC \NR[eq:gausspostmeaniter][a]
+            \NC \ITER{\COVMAT}{i} = \NC
+                (\ITER{\FWDJAC}{i}^\top \COVMATERR^{-1} \ITER{\FWDJAC}{i}
+                + \COVMATA^{-1})^{-1}
+                \EQSTOP \NC \NR[eq:gausspostcoviter][b]
+        \stopalign
+        \stopformula
+        \stopsubformulas
+
+        Using the identity
+
+        \startformula
+            \MEANVECA - \ITER{\COVMAT}{i} \ITER{\FWDJAC}{i}^\top
+            \COVMATERR^{-1} \ITER{\FWDJAC}{i} \MEANVECA =
+            \ITER{\COVMAT}{i} (\ITER{\COVMAT}{i}^{-1}
+            - \ITER{\FWDJAC}{i}^\top \COVMATERR^{-1} \ITER{\FWDJAC}{i})
+            \MEANVECA = \ITER{\COVMAT}{i} \COVMATA^{-1} \MEANVECA \EQCOMMA
+        \stopformula
+
+        it is easily seen that \ineq{gausspostmeaniter} is equivalent to
+        equation 5.9 from \cite[Rodgers2000], which he obtained by finding
+        for the maximum of the posterior {\PDF} with the Gauss-Newton method.
+        The next section expands on this approach by introducing an iterative
+        procedure that is more robust than basic fixed point iteration.
 
     \stopsubsection
 
-    \startsubsection[title={Constructing the Prior},reference=ch:constructing_prior]
+    \startsubsection[title=A Cost Function Approach]
 
-        Choosing the prior (=background) state. Constructing the covariance
-        matrix.
+        Show equivalence of MAP by finding maximum of a cost function. Argue
+        that one still obtains full information about distribution due to
+        Gaussian assumption. Solve nonlinear problem by Levenberg-Marquart,
+        show equivalence to previous result by fixing gamma parameter.
+
+        Where does 1D-VAR come from?
+        
+    \stopsubsection
+
+    \startsubsection[title=Introducing Constraints by Regularization]
+
+        Refer to cost function version of MAP solution.
+
+        Introduce penalties to cost function. Advantage: Simpler to set up
+        than modifying prior, but no representation of additional knowledge
+        in posterior.
+
+        Example: \cite[Hewison2006], penalizing high LWC and references
+        therein.
 
     \stopsubsection
 
@@ -335,10 +397,10 @@ repeated to achieve consistent notation and naming conventions throughout.
 
         \startformula
         \startalign[n=2,align={right,left}]
-            \NC P(\VECX|\VECY_1,\dots,\VECY_n) =
-                \NC \frac{P(\VECY_1,\dots,\VECY_n|\VECX)\PRIOR}{P(\VECY_1,\dots,\VECY_n)} \NR
-            \NC = \NC \frac{\PRIOR}{P(\VECY_1,\dots,\VECY_n)} \prod_{i=1}^n P(\VECY_i|x) \NR
-            \NC = \NC \frac{\PRIOR}{P(\VECY_1,\dots,\VECY_n)}
+            \NC \PROB{\VECX|\VECY_1,\dots,\VECY_n} =
+                \NC \frac{\PROB{\VECY_1,\dots,\VECY_n|\VECX}\PRIOR}{\PROB{\VECY_1,\dots,\VECY_n}} \NR
+            \NC = \NC \frac{\PRIOR}{\PROB{\VECY_1,\dots,\VECY_n}} \prod_{i=1}^n \PROB{\VECY_i|x} \NR
+            \NC = \NC \frac{\PRIOR}{\PROB{\VECY_1,\dots,\VECY_n}}
                 \prod_{i=1}^n \GAUSS{\VECY_i}{\FWD_i(\VECX) + \MEANVEC_i}{\COVMAT_i} \EQCOMMA \NR
         \stopalign
         \stopformula
@@ -358,16 +420,10 @@ repeated to achieve consistent notation and naming conventions throughout.
         
     \stopsubsection
 
-    \startsubsection[title=Introducing Constraints by Regularization]
+    \startsubsection[title={Constructing the Prior},reference=ch:construct_prior]
 
-        Refer to cost function version of MAP solution.
-
-        Introduce penalties to cost function. Advantage: Simpler to set up
-        than modifying prior, but no representation of additional knowledge
-        in posterior.
-
-        Example: \cite[Hewison2006], penalizing high LWC and references
-        therein.
+        Choosing the prior (=background) state. Constructing the covariance
+        matrix.
 
     \stopsubsection
 

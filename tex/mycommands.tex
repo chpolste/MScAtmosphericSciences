@@ -1,4 +1,4 @@
-\define[1]\ineq{(\in[#1])}
+\define[1]\ineq{(\in[eq:#1])}
 
 
 \definesynonyms[akronym][akronyms][\infull]
@@ -20,8 +20,12 @@
 \define\EQSTOP{{\rm ~.}}
 \define\EQCOMMA{{\rm ~,}}
 
-% Derivatives
+% Functions
+\define[3]\GAUSS{\rm N(#1|#2, #3)}
+\define[3]\GAUSSEXP{\rm (#1 - #2)^\top #3^{-1} (#1 - #2)}
 \define[2]\DERIV{\frac{{\rm d}#1}{{\rm d}#2}}
+\define[1]\PROB{p(#1)}
+\define[2]\ITER{#1_{#2}}
 
 % Variables
 \define\TEMP{T}
@@ -48,27 +52,23 @@
 % Forward model
 \define\FWD{{\bf F}}
 \define\FWDJAC{{\bf K}}
-\define\ERR{{\bf \epsilon}}
+\define\ERR{{\mathgreekupright \bf \epsilon}}
 
-% Gaussian
-\define[3]\GAUSS{\rm N(#1|#2, #3)}
-\define[3]\GAUSSEXP{\rm (#1 - #2)^\top #3^{-1} (#1 - #2)}
-
-\define\MEANVEC{{\bf \mu}}
+\define\MEANVEC{{\mathgreekupright \bf \mu}}
 \define\MEANVECX{\MEANVEC_\VECX}
 \define\MEANVECY{\MEANVEC_\VECY}
 \define\MEANVECA{\MEANVEC_a}
 \define\MEANVECERR{\MEANVEC_\ERR}
 
-\define\COVMAT{{\bf \Sigma}}
+\define\COVMAT{{\mathgreekupright \bf \Sigma}}
 \define\COVMATX{\COVMAT_\VECX}
 \define\COVMATY{\COVMAT_\VECY}
 \define\COVMATA{\COVMAT_a}
-\define\COVMATL{\COVMAT_{\sl L}}
 \define\COVMATERR{\COVMAT_\ERR}
 
 % Bayes
-\define\POSTERIOR{P(\VECX|\VECY)}
-\define\LIKELIHOOD{P(\VECY|\VECX)}
-\define\PRIOR{P(\VECX)}
-\define\NORMALIZATION{P(\VECY)}
+\define\POSTERIOR{\PROB{\VECX|\VECY}}
+\define\LIKELIHOOD{\PROB{\VECY|\VECX}}
+\define\PRIOR{\PROB{\VECX}}
+\define\NORMALIZATION{\PROB{\VECY}}
+
