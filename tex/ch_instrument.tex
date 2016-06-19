@@ -8,12 +8,27 @@ Information about Innsbruck location.
 
 \startsection[title=Radiosonde Climatology]
 
-    What available, which resolution.
+    What available, which resolution. Applied ice-liquid-split of water outside
+    of model. KARSTENS ET AL liquid water content.
 
 \stopsection
 
-\startsection[title=COSMO? Simulated Radiosoundings]
+\startsection[title=COSMO7 Simulated Radiosoundings]
 
     Determine prior covariance matrix by comparison with raso.
+
+    In clouds always 100 \% RH. Partition specific cloud content into liquid
+    and solid parts using
+
+    \startformula
+        \QLIQ = \QCLOUD \startcases
+            \NC 0 \MC 233.15 \KELVIN \le \TEMP \NR
+            \NC \frac{\TEMP - 233.15 \KELVIN}{40 \KELVIN}
+                \MC 233.15 \KELVIN \lt \TEMP \lt 273.15 \KELVIN \NR
+            \NC 1 \MC 273.15 \KELVIN \le \TEMP \NR
+        \stopcases
+    \stopformula
+
+    Ice content is thrown away.
 
 \stopsection

@@ -1,6 +1,77 @@
 \startsection[title=The Radiative Transfer Equation]
 
     General form, absorption only, Rayleigh-Jeans → Brightness Temperatures.
+    Discretization.
+
+\stopsection
+
+
+\startsection[title=Representation of the Atmospheric State]
+
+    Discretization in the vertical, selecting state vector variables:
+    compromise between dimensionality and information content (including
+    forward model needs).
+
+    \startsubsection[title=The Choice of State Vector Variables]
+
+        Pressure as fixed variable (recalculated by hydrostatic equilibrium
+        after each iteration, check if this is good approximation when compared
+        to radiosonde measurements). Temperature and humidity as variable
+        state quantities. To reduce dimensionality: use knowledge of qsat to
+        combine water vapor and liquid water content into a single variable
+        qtot. No representation of ice due to negligible absorption in
+        microwave region (see below INSERT REF). The individual components are
+        then recovered by a partition function
+
+        \startformula
+            \DERIV{\QLIQ}{\RHL} = \frac{1}{\QSAT} \startcases
+                \NC 0 \MC s \lt 0.95 \NR
+                \NC \cos \left( \frac{\RHL - 1}{0.05} \frac{\pi}{2} \right)^2
+                    \MC 0.95 \le s \le 1 \EQCOMMA\NR
+                \NC 1 \MC 1 \le s \NR
+            \stopcases
+        \stopformula
+
+        where
+
+        \startformula
+            \RHL = \frac{\QTOT}{\QSAT} = \frac{\QVAP + \QLIQ}{\QSAT} \EQSTOP
+        \stopformula
+
+        Different values than hewison or deblonde, to simplify calculation
+        of qtot from radiosondes and model data: everything over 100 \% RH
+        is assumed to be liquid water (COSMO7 fixes RH at 100 \% in clouds).
+        Integrate, get values for qliq and qvap.
+
+        \startformula
+            \QLIQ(\RHL) = \QSAT \startcases
+                \NC 0 \MC s \lt 0.95 \NR
+                \NC \frac{1}{2} \left( \RHL - 0.95 + \frac{0.05}{\pi}
+                    \sin \left( \frac{\pi \RHL}{0.05} \right) \right)
+                    \MC 0.95 \le s \le 1 \NR
+                \NC \QLIQ(1) + \RHL - 1 \MC 1 \le s \NR
+            \stopcases
+        \stopformula
+
+        and from REF to s = qtot/qsat
+
+        \startformula
+            \QVAP(\RHL) = \QSAT \RHL - \QLIQ(\RHL) \EQSTOP
+        \stopformula
+
+        Additionally: use ln(qtot) in state vector to enforce positivity and
+        better error characteristics.
+
+        \cite[Hewison2006]
+
+    \stopsubsection
+
+    \startsubsection[title=Vertical Discretization and Interpolation]
+
+        Smoothing. Compromise between resolution necessary for numerical model
+        and actual information content. Inclusion of upper atmosphere or not.
+
+    \stopsubsection
 
 \stopsection
 
@@ -29,30 +100,6 @@
         Fitting a polynomial to the absorption at a specific line to speed up
         calculations and simplify derivatives. Evaluate FAP performance for
         each line of the HATPRO.
-
-    \stopsubsection
-
-\stopsection
-
-
-\startsection[title=Representation of the Atmospheric State]
-
-    Discretization in the vertical, selecting state vector variables:
-    compromise between dimensionality and information content (including
-    forward model needs).
-
-    \startsubsection[title=The Choice of State Vector Variables]
-
-        Combining water vapor and LWC into \math{\mathrm{log}(q_{tot})} to
-        reduce dimensionality, enforce positivity and better error
-        characteristics.
-
-    \stopsubsection
-
-    \startsubsection[title=Vertical Discretization and Interpolation]
-
-        Smoothing. Compromise between resolution necessary for numerical model
-        and actual information content. Inclusion of upper atmosphere or not.
 
     \stopsubsection
 
