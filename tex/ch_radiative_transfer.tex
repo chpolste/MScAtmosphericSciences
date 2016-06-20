@@ -3,6 +3,107 @@
     General form, absorption only, Rayleigh-Jeans → Brightness Temperatures.
     Discretization.
 
+    Differential form of RTE without scattering
+
+    \startformula
+        \DERIV{I_\nu}{s} = - I_\nu \ABSCOEF + F \EQCOMMA
+    \stopformula
+
+    where $I_\nu$ is spectral radiance (power per frequency and solid angle in
+    a specific direction), $\ABSCOEF$ is the absorption coefficient of the medium
+    ($0 \lt \ABSCOEF \lt 1$), $F$ is a source term and $s$ is distance in beam
+    direction.
+
+    The only source term considered here is emission according to Planck's law
+
+    \startformula
+        F = \epsilon B_\nu(T) \EQCOMMA
+    \stopformula
+
+    where $\epsilon$ is the emission coefficient of the radiating medium
+    describing its difference to an ideal black body ($0 \lt \epsilon \lt 1$)
+    and $B_\nu(T)$ is the Planck function giving the emitted spectral radiance
+    of a black body. Under the assumption of thermodynamic equilibrium the
+    absorption and emission coefficients are equal (Kirchhoff's law).
+    Substitute into RTE (REFERENCE) to obtain
+
+    \startformula
+        \DERIV{I_\nu}{s} = - \ABSCOEF(I_\nu - B_\nu(T)) \EQSTOP
+    \stopformula
+
+    For temperatures occuring in the atmosphere the Planck function in the
+    microwave region is represented well by the Rayleigh-Jeans approximation
+    which relates the spectral radiance at a given frequency linearly to
+    temperature
+
+    \startformula
+        B_\nu(T) \approx \frac{2 \nu^2 k T}{c^2} \EQSTOP
+    \stopformula
+
+    By expressing the spectral radiance $I_\nu$ with the concept of brightness
+    temperature $\BT$ (which is the temperature a blackbody would have to have
+    in order to reproduce the emission by a grey body) and the Rayleigh-Jeans
+    approximation, the radiative transfer equation can be expressed exclusively
+    in terms of temperatures:
+
+    \startformula
+        \DERIV{\BT}{s} = - \ABSCOEF (\BT - T) \EQSTOP
+    \stopformula
+
+    \startsubsection[title={A Solution for Radiometer Applications}]
+
+        Assumption of horizontally homogeneous atmosphere, relate distance
+        towards radiometer $s$ to height above radiometer $z$
+
+        \startformula
+            \DERIV{s}{z} = - \frac{1}{\cos(\theta)} \EQCOMMA
+        \stopformula
+
+        where the azimuth angle $\theta$ is defined as the deviation from
+        zenith.  Because height increases with height but radiation arriving at
+        the radiometer is downwelling, the sign of the derivative is negative.
+
+        In order to solve the radiative transfer equation after the coordinate
+        transformation, optical depth $\OD$ is introduced
+
+        \startformula
+        \startalign[n=3,align={left,right,left}]
+            \NC \NC \OD(s) = \NC \int_{s_0}^{s} \ABSCOEF(u) \diff u \NR
+            \NC \Rightarrow~ \NC \OD(z) = \NC
+                - \frac{1}{\cos(\theta)} \int_{z_0}^{z} \ABSCOEF(u) \diff u \NR
+            \NC \Rightarrow~ \NC \DERIV{\OD}{z} = \NC
+                - \frac{\ABSCOEF}{\cos(\theta)} \EQCOMMA \NR
+        \stopalign
+        \stopformula
+
+        and REFERENCE is multiplied on both sides by $e^{\OD}$ and
+        rearranged, yielding
+
+        \startformula
+            \DERIV{\BT}{z} e^\OD + \frac{\ABSCOEF \BT e^\OD}{\cos(\theta)}
+            = \DERIV{(\BT e^\OD)}{z}
+            = - \frac{\ABSCOEF T e^\OD}{\cos(\theta)} \EQSTOP
+        \stopformula
+
+        Integrating this from the surface ($z = 0$) to space ($z = \infty$)
+        gives an expression for the brightness temperature measured by the
+        radiometer $\BT(0)$:
+
+        \startformula
+            \BT(0) = \BT(\infty) e^{\OD(\infty)} + \frac{1}{\cos(\theta)}
+                \int_{0}^{\infty} \ABSCOEF(z) T(z) e^{\OD(z)} \diff z \EQSTOP
+        \stopformula
+
+        $T_B(\infty)$ is given by the cosmic background, the absorption
+        coefficient can be determined from the atmospheric profile (see
+        section REFERENCE).
+
+    \stopsubsection
+
+    \startsubsection[title={Vertical Discretization}]
+        
+    \stopsubsection
+
 \stopsection
 
 
@@ -80,28 +181,21 @@
 
     Neglecting scattering. Existing absorption models.
 
-    \startsubsection[title=Gaseous Absorption]
+    Gaseous Absorption: molecule transitions. Oxygen, Water vapor. What about
+    nitrogen or CO2?  Included in Liebe Model or negligible? I think Hewison
+    had nitrogen as well.
 
-        Molecule transitions. Oxygen, Water vapor. What about nitrogen or CO2?
-        Included in Liebe Model or negligible? I think Hewison had nitrogen as
-        well.
+    Liquid Water Extinction: Rayleigh-approximation. Problems during
+    precipitation due to scattering.
 
-    \stopsubsection
+\stopsection
 
-    \startsubsection[title=Liquid Water Extinction]
 
-        Rayleigh-approximation. Problems during precipitation due to
-        scattering.
+\startsection[title=Fast Absorption Prediction]
 
-    \stopsubsection
-
-    \startsubsection[title=Fast Absorption Prediction]
-
-        Fitting a polynomial to the absorption at a specific line to speed up
-        calculations and simplify derivatives. Evaluate FAP performance for
-        each line of the HATPRO.
-
-    \stopsubsection
+    Fitting a polynomial to the absorption at a specific line to speed up
+    calculations and simplify derivatives. Evaluate FAP performance for
+    each line of the HATPRO.
 
 \stopsection
 
