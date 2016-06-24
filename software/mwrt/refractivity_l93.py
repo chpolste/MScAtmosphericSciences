@@ -1,12 +1,6 @@
-"""Gaseous absorption model.
+"""Refractivity model by Liebe et al. (1993).
 
-θ = 300/T
-
-Refractivity:
-N = n - 1
-
-To obtain absorption coefficient: 4*pi*ν/c * Im(N)
-
+Provides models of refractivity by dry air, water vapor and liquid water.
 
 Liebe, H. J., Hufford, G. A., & Cotton, M. G. (1993). Propagation modeling of
     moist air and suspended water/ice particles at frequencies below 1000 GHz.
@@ -17,6 +11,9 @@ Liebe, H. J., Hufford, G. A., & Cotton, M. G. (1993). Propagation modeling of
 from collections import namedtuple
 
 import numpy as np
+
+
+__all__ = ["refractivity_gaseous", "refractivity_lwc"]
 
 
 def van_vleck_weisskopf(νeval, ν, γ, δ):
@@ -114,6 +111,23 @@ def refractivity_H2O(ν, θ, pd, e):
         # Refractivity
         N = N + S * van_vleck_weisskopf(ν, line.ν, γ, 0.0)
     return N
+
+
+def refractivity_gaseous(ν, θ, pd, e):
+    """Complex refractivity due to dry air and water vapor, lines and continuum.  
+
+    ν       GHz     frequency at which refractivity is evaluated
+    θ       -       reciprocal temperature
+    pd      hPa     pressure of dry air
+    e       hPa     pressure of water vapor
+
+    Liebe et al. (1993). Sum of dry nondispersive, O2 lines, dry continuum,
+    H2O lines and H2O continuum terms.
+    """
+    return (  refractivity_dry_nondispersive(ν, θ, pd, e)
+            + refractivity_O2_lines(ν, θ, pd, e)
+            + refractivity_dry_continuum(ν, θ, pd, e)
+            + refractivity_H2O(ν, θ, pd, e))
 
 
 def refractivity_lwc(ν, θ):

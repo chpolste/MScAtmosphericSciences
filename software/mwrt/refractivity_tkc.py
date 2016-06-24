@@ -1,4 +1,4 @@
-"""Turner, Keifel, Caddedu liquid water absorption model.
+"""Turner, Keifel, Caddedu liquid water refractivity model.
 
 Turner, D. D., Kneifel, S., & Cadeddu, M. P. (2016). An Improved Liquid Water
     Absorption Model at Microwave Frequencies for Supercooled Liquid Water
