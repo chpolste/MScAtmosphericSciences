@@ -2,20 +2,22 @@
 
 source /home/chris/local/miniconda3/bin/activate thesis
 
+python db_import.py create_tables ../data/amalg.db
+
 python db_import.py raso_fwf ../data/amalg.db --pid=1
 
-python db_import.py cosmo7_l2e ../data/amalg.db --pid=1
+python db_import.py raso_cosmo7 ../data/amalg.db --pid=1
 
-python db_import.py raso_bufr ../data/db_parts/raso_bufr01.db --pid=3200 --offset=0   --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr02.db --pid=3300 --offset=100 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr03.db --pid=3400 --offset=200 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr04.db --pid=3500 --offset=300 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr05.db --pid=3600 --offset=400 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr06.db --pid=3700 --offset=500 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr07.db --pid=3800 --offset=600 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr08.db --pid=3900 --offset=700 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr09.db --pid=4000 --offset=800 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr10.db --pid=4100 --offset=900 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr01.db --pid=3200 --offset=0   --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr02.db --pid=3280 --offset=80  --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr03.db --pid=3360 --offset=160 --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr04.db --pid=3440 --offset=240 --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr05.db --pid=3520 --offset=320 --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr06.db --pid=3600 --offset=400 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr07.db --pid=3700 --offset=500 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr08.db --pid=3800 --offset=600 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr09.db --pid=4900 --offset=700 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr10.db --pid=4000 --offset=800 &
 
 wait
 

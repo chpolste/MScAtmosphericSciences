@@ -30,15 +30,13 @@ def decifloat(x):
     return float(x)/10.
 
 def decifloatkelvin(x):
-    # Use .2 instead of .15 because values in profiles only have 1 significant
-    # digit after the decimal point
-    return float(x)/10. + 273.2
+    return float(x)/10. + 273.15
 
 def read_profile(f, n):
     colspecs = [(2, 7), (7, 12), (14, 18), (20, 24), (38, 48), (49, 59)]
-    names = ["p", "z", "T", "Td", "q", "qcld"]
+    names = ["p", "z", "T", "Td", "qvap", "qcloud"]
     converters = {"p": decifloat, "z": float, "T": decifloatkelvin,
-            "Td": decifloat, "q": float, "qcld": float}
+            "Td": decifloat, "qvap": float, "qcloud": float}
     df = pd.read_fwf(StringIO(readn(f, n)), colspecs=colspecs, names=names,
             converters=converters, na_values=["-.9999E+04"])
     df["Td"] = df["T"] - df["Td"]
