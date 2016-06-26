@@ -68,7 +68,14 @@ scheme = (
             "Td NUMERIC, "
             "qvap NUMERIC, "
             "precip INTEGER "
-        ");"
+        "); "
+        "CREATE TABLE IF NOT EXISTS nordkette("
+            "valid NUMERIC PRIMARY KEY, "
+            "T_710m NUMERIC,"
+            "T_920m NUMERIC,"
+            "T_1220m NUMERIC,"
+            "T_2270m NUMERIC"
+        "); "
         )
 
 
@@ -110,7 +117,6 @@ def read_raso_fwf(pid, path):
     ps = pd.Series(np.repeat(pid, len(df)), name="profile")
     qvap = fml.qvap(df["p"], df["Td"])
     qliq = fml.qliq(df["z"], df["p"], df["T"], df["Td"])
-    qliq = pd.Series(qliq, name="qliq")
     data = pd.concat([ps, df, qvap, qliq], axis=1).as_matrix().tolist()
     cloudy = 1 if (qliq > 0).any() else 0
     return pid, data, valid, cloudy, file
@@ -146,11 +152,10 @@ def read_bufr_group(pid, paths):
         ps = pd.Series(np.repeat(pid, len(df)), name="profile")
         qvap = fml.qvap(df["p"], df["Td"])
         qliq = fml.qliq(df["z"], df["p"], df["T"], df["Td"])
-        qliq = pd.Series(qliq, name="qliq")
         data = pd.concat([ps, df, qvap, qliq], axis=1).as_matrix().tolist()
         cloudy = 1 if (qliq > 0).any() else 0
         if cloudy and metadata["cloud cover"] == 0:
-            print("Warning: {} | No clouds reported but found by RH criterion.")
+            print("Warning: {} | No clouds reported but found by RH criterion.".format(filename(path)))
         return pid, data, valid, cloudy, filename(path)
 
 
@@ -158,7 +163,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--size", default=None)
 parser.add_argument("--offset", default=None)
 parser.add_argument("--pid", default=1)
-parser.add_argument("data")
+parser.add_argument("--create", action="store_true")
+parser.add_argument("data", nargs="?", default="")
 parser.add_argument("output")
 
 if __name__ == "__main__":
@@ -168,22 +174,22 @@ if __name__ == "__main__":
 
     db = DatabaseToolbox(args.output)
 
-    if args.data == "create_tables":
+    if args.create:
         db.execute(scheme)
 
 
     if args.data == "raso_fwf":
         files = select_files(glob("../data/raso_fwf/*.reduced.txt"))
-        print("raso_fwf | {} | reading {} files".format(
-                args.output, len(files)))
+        print("{} | {} | reading {} files".format(
+                args.data, args.output, len(files)))
         rows, profiles = [], []
         for path in files:
             pid, data, valid, cloudy, file = read_raso_fwf(pid, path)
             profiles.append([pid, "raso", valid, 0., cloudy, file])
             rows.extend(data)
             pid = pid + 1
-        print("raso_fwf | {} | writing {} of {} profiles... ".format(
-                args.output, len(profiles), len(files)), end="")
+        print("{} | {} | writing {} of {} profiles... ".format(
+                args.data, args.output, len(profiles), len(files)), end="")
         # Data is inserted in a dedicated if-block below
 
 
@@ -197,8 +203,8 @@ if __name__ == "__main__":
                 profiles.append([pid, "cosmo7", valid, lead, cloudy, file])
                 rows.extend(data)
             pid = pid + 1
-        print("cosmo7_le2 | {} | writing {} profiles... ".format(
-                args.output, len(profiles)), end="")
+        print("{} | {} | writing {} profiles... ".format(
+                args.data, args.output, len(profiles)), end="")
         # Data is inserted in a dedicated if-block below
 
 
@@ -210,8 +216,8 @@ if __name__ == "__main__":
         groups = groupby(itemgetter(0), (f for f in files if ("309052" in f[1]
                 or "30905" not in f[1])))
         files = select_files(groups.values())
-        print("raso_bufr | {} | reading {} files".format(
-                args.output, len(files)))
+        print("{} | {} | reading {} files".format(
+                args.data, args.output, len(files)))
         rows, profiles = [], []
         for group in files:
             res = read_bufr_group(pid, group)
@@ -220,8 +226,8 @@ if __name__ == "__main__":
             profiles.append([pid, "raso", valid, 0., cloudy, file])
             rows.extend(data)
             pid = pid + 1
-        print("raso_bufr | {} | writing {} profiles... ".format(
-                args.output, len(profiles)), end="")
+        print("{} | {} | writing {} profiles... ".format(
+                args.data, args.output, len(profiles)), end="")
         # Data is inserted in a dedicated if-block below
 
 
@@ -234,4 +240,40 @@ if __name__ == "__main__":
         db.executemany(query, rows)
         print("done!")
 
+    
+    if args.data == "nordkette":
+        files = [
+                "Alpenzoo_710m",
+                "Hungerburg_920m",
+                "Rastlboden_1220m",
+                "Hafelekar_2270m"
+                ]
+        print("nordkette | {} | reading {} files".format(
+                args.output, len(files)))
+        def to_date(d):
+            return (dt.datetime
+                    .strptime(d, "%Y-%m-%d %H:%M:%S")
+                    .replace(tzinfo=dt.timezone.utc)
+                    .timestamp()
+                    )
+        def temperature(x):
+            return (None if not -499 < float(x) < 500
+                    else round(float(x)/10 + 273.15, 2))
+        data = []
+        for station in files:
+            df = pd.read_fwf("../data/stations/TEMPIS_{}.txt".format(station),
+                    colspecs=[(2, 21), (22, 30)],
+                    names=["valid", station],
+                    converters={"valid": to_date, station: temperature},
+                    skiprows=[0]).set_index("valid")
+            data.append(df[station])
+        rows = pd.concat(data, axis=1).reset_index().as_matrix().tolist()
+        print("nordkette | {} | writing {} measurements... ".format(
+                args.output, len(data)), end="")
+        query = ("INSERT INTO nordkette (valid, T_710m, T_920m, T_1220m, "
+                "T_2270m) VALUES (?, ?, ?, ?, ?);")
+        db.executemany(query, rows)
+        print("done!")
+
+    
 

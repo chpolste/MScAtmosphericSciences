@@ -159,6 +159,8 @@ def _(T, qcloud): # Hewison (2006), formula 4.7
     return qcloud * np.maximum(0, np.minimum((T-233)/40, 1))
 @qliq.register
 def _(z, p, T, Td): # Adiabatic LWC model by Karstens et al. (1994)
+    zindex = z.index if hasattr(z, "index") else None
+    ztype = type(z)
     z = np.array(z)
     p = np.array(p)
     T = np.array(T)
@@ -186,7 +188,10 @@ def _(z, p, T, Td): # Adiabatic LWC model by Karstens et al. (1994)
     for cloud in clouds:
         out[cloud] = cloud_lwc(z[cloud], p[cloud], ρ_[cloud], T[cloud], e_[cloud])
     out[T<253.15] = 0
-    return out / ρ_
+    out = out / ρ_
+    if zindex is not None:
+        out = ztype(out, index=zindex) # not pretty but eh
+    return out
 
 qsat = ArgNameDispatch("qsat")
 qsat.register(lambda p, T: qvap(p=p, e=esat(T)))

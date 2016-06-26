@@ -2,22 +2,22 @@
 
 source /home/chris/local/miniconda3/bin/activate thesis
 
-python db_import.py create_tables ../data/amalg.db
+python db_import.py ../data/amalg.db --create
 
-python db_import.py raso_fwf ../data/amalg.db --pid=1
-
+python db_import.py nordkette ../data/amalg.db
 python db_import.py raso_cosmo7 ../data/amalg.db --pid=1
+python db_import.py raso_fwf ../data/amalg.db --pid=6000
 
-python db_import.py raso_bufr ../data/db_parts/raso_bufr01.db --pid=3200 --offset=0   --size=80 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr02.db --pid=3280 --offset=80  --size=80 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr03.db --pid=3360 --offset=160 --size=80 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr04.db --pid=3440 --offset=240 --size=80 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr05.db --pid=3520 --offset=320 --size=80 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr06.db --pid=3600 --offset=400 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr07.db --pid=3700 --offset=500 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr08.db --pid=3800 --offset=600 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr09.db --pid=4900 --offset=700 --size=100 &
-python db_import.py raso_bufr ../data/db_parts/raso_bufr10.db --pid=4000 --offset=800 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr01.db --create --pid=10000 --offset=0   --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr02.db --create --pid=10080 --offset=80  --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr03.db --create --pid=10160 --offset=160 --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr04.db --create --pid=10240 --offset=240 --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr05.db --create --pid=10320 --offset=320 --size=80 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr06.db --create --pid=10400 --offset=400 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr07.db --create --pid=10500 --offset=500 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr08.db --create --pid=10600 --offset=600 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr09.db --create --pid=10700 --offset=700 --size=100 &
+python db_import.py raso_bufr ../data/db_parts/raso_bufr10.db --create --pid=10800 --offset=800 &
 
 wait
 
@@ -32,26 +32,24 @@ ATTACH "../data/db_parts/raso_bufr07.db" AS bufr07;
 ATTACH "../data/db_parts/raso_bufr08.db" AS bufr08;
 ATTACH "../data/db_parts/raso_bufr09.db" AS bufr09;
 ATTACH "../data/db_parts/raso_bufr10.db" AS bufr10;
-
-INSERT INTO raso SELECT * FROM bufr01.raso;
-INSERT INTO raso SELECT * FROM bufr02.raso;
-INSERT INTO raso SELECT * FROM bufr03.raso;
-INSERT INTO raso SELECT * FROM bufr04.raso;
-INSERT INTO raso SELECT * FROM bufr05.raso;
-INSERT INTO raso SELECT * FROM bufr06.raso;
-INSERT INTO raso SELECT * FROM bufr07.raso;
-INSERT INTO raso SELECT * FROM bufr08.raso;
-INSERT INTO raso SELECT * FROM bufr09.raso;
-INSERT INTO raso SELECT * FROM bufr10.raso;
-
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr01.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr02.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr03.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr04.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr05.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr06.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr07.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr08.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr09.rasodata ORDER BY id ASC;
-INSERT INTO rasodata (parent, p, z, T, Td) SELECT parent, p, z, T, Td FROM bufr10.rasodata ORDER BY id ASC;
+INSERT INTO profiles SELECT * FROM bufr01.profiles;
+INSERT INTO profiles SELECT * FROM bufr02.profiles;
+INSERT INTO profiles SELECT * FROM bufr03.profiles;
+INSERT INTO profiles SELECT * FROM bufr04.profiles;
+INSERT INTO profiles SELECT * FROM bufr05.profiles;
+INSERT INTO profiles SELECT * FROM bufr06.profiles;
+INSERT INTO profiles SELECT * FROM bufr07.profiles;
+INSERT INTO profiles SELECT * FROM bufr08.profiles;
+INSERT INTO profiles SELECT * FROM bufr09.profiles;
+INSERT INTO profiles SELECT * FROM bufr10.profiles;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr01.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr02.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr03.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr04.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr05.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr06.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr07.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr08.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr09.profiledata ORDER BY id ASC;
+INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr10.profiledata ORDER BY id ASC;
 '''
