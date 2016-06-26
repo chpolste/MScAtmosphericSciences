@@ -151,7 +151,7 @@ r.register(lambda p, e: 0.622 * e/(p-e))
 # Specific humidity
 qvap = ArgNameDispatch("qvap")
 qvap.register(lambda p, e: 0.622 * e/p)
-qvap.register(lambda p, Td: 0.622 * e(Td)/p)
+qvap.register(lambda p, Td: 0.622 * e(Td=Td)/p)
 
 qliq = ArgNameDispatch("qliq")
 @qliq.register
@@ -194,7 +194,7 @@ def _(z, p, T, Td): # Adiabatic LWC model by Karstens et al. (1994)
     return out
 
 qsat = ArgNameDispatch("qsat")
-qsat.register(lambda p, T: qvap(p=p, e=esat(T)))
+qsat.register(lambda p, T: qvap(p=p, e=esat(T=T)))
 
 # Latent heat of evaporation
 Lvap = ArgNameDispatch("Lvap")

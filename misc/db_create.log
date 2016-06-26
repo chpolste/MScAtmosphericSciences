@@ -1,0 +1,49 @@
+nordkette | ../data/amalg.db | reading 4 files
+nordkette | ../data/amalg.db | writing 4 measurements... done!
+raso_cosmo7 | ../data/amalg.db | reading 349 files
+raso_cosmo7 | ../data/amalg.db | writing 4537 profiles... done!
+raso_fwf | ../data/amalg.db | reading 3168 files
+raso_fwf | ../data/amalg.db | writing 3168 of 3168 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr10.db | reading 143 files
+raso_bufr | ../data/db_parts/raso_bufr10.db | writing 143 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr09.db | reading 100 files
+raso_bufr | ../data/db_parts/raso_bufr09.db | writing 100 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr01.db | reading 80 files
+raso_bufr | ../data/db_parts/raso_bufr01.db | writing 79 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr04.db | reading 80 files
+Warning: 2013122204_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2013122205_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+Warning: 2014010304_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2014010305_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+raso_bufr | ../data/db_parts/raso_bufr04.db | writing 80 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr05.db | reading 80 files
+Warning: 2014011304_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+raso_bufr | ../data/db_parts/raso_bufr05.db | writing 80 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr02.db | reading 80 files
+Warning: 2013072104_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+raso_bufr | ../data/db_parts/raso_bufr02.db | writing 80 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr08.db | reading 100 files
+Warning: 2015070205_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2015070304_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2015082605_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+raso_bufr | ../data/db_parts/raso_bufr08.db | writing 100 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr07.db | reading 100 files
+Warning: 2015021904_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2015021905_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+Warning: 2015022004_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+raso_bufr | ../data/db_parts/raso_bufr07.db | writing 100 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr03.db | reading 80 files
+Warning: 2013081104_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2013092304_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+Warning: 2013092404_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+Warning: 2013092504_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+raso_bufr | ../data/db_parts/raso_bufr03.db | writing 80 profiles... done!
+raso_bufr | ../data/db_parts/raso_bufr06.db | reading 100 files
+Warning: 2014040204_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+Warning: 2014041404_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+Warning: 2015010204_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2015010205_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+Warning: 2015010304_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2015021204_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
+Warning: 2015021205_bufr309052_all.bfr | No clouds reported but found by RH criterion.
+raso_bufr | ../data/db_parts/raso_bufr06.db | writing 100 profiles... done!
