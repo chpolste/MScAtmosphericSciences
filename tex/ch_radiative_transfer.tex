@@ -127,9 +127,9 @@
         \startformula
             \DERIV{\QLIQ}{\RHL} = \frac{1}{\QSAT} \startcases
                 \NC 0 \MC s \lt 0.95 \NR
-                \NC \cos \left( \frac{\RHL - 1}{0.05} \frac{\pi}{2} \right)^2
-                    \MC 0.95 \le s \le 1 \EQCOMMA\NR
-                \NC 1 \MC 1 \le s \NR
+                \NC \cos \left( \frac{\RHL - 1.05}{0.1} \frac{\pi}{2} \right)^2
+                    \MC 0.95 \le s \le 1.05 \EQCOMMA\NR
+                \NC 1 \MC 1.05 \lt s \NR
             \stopcases
         \stopformula
 
@@ -139,25 +139,23 @@
             \RHL = \frac{\QTOT}{\QSAT} = \frac{\QVAP + \QLIQ}{\QSAT} \EQSTOP
         \stopformula
 
-        Different values than hewison or deblonde, to simplify calculation
-        of qtot from radiosondes and model data: everything over 100 \% RH
-        is assumed to be liquid water (COSMO7 fixes RH at 100 \% in clouds).
-        Integrate, get values for qliq and qvap.
+        Hewison, Deblonde, (COSMO7 fixes RH at 100 \% in clouds). Integrate,
+        get values for qliq and qvap.
 
         \startformula
-            \QLIQ(\RHL) = \QSAT \startcases
+            \QLIQ(\RHL) = \startcases
                 \NC 0 \MC s \lt 0.95 \NR
-                \NC \frac{1}{2} \left( \RHL - 0.95 + \frac{0.05}{\pi}
-                    \sin \left( \frac{\pi \RHL}{0.05} \right) \right)
-                    \MC 0.95 \le s \le 1 \NR
-                \NC \QLIQ(1) + \RHL - 1 \MC 1 \le s \NR
+                \NC \frac{\QSAT}{2} \left( \RHL - 0.95 - \frac{0.1}{\pi}
+                    \cos \left( \frac{\pi \RHL}{0.1} \right) \right)
+                    \MC 0.95 \le s \le 1.05 \NR
+                \NC \QLIQ(1.05) + \QSAT (\RHL - 1.05) \MC 1.05 \lt s \NR
             \stopcases
         \stopformula
 
         and from REF to s = qtot/qsat
 
         \startformula
-            \QVAP(\RHL) = \QSAT \RHL - \QLIQ(\RHL) \EQSTOP
+            \QVAP(\RHL) = \QSAT(\RHL) - \QLIQ(\RHL) \EQSTOP
         \stopformula
 
         Additionally: use ln(qtot) in state vector to enforce positivity and

@@ -87,6 +87,7 @@ class ArgNameDispatch:
 # Constants
 
 g = 9.8076 # m/s²
+c0 = 299792458. # m/s
 
 # Dry air thermodynamics
 Rdry = 287. # J/kg/K

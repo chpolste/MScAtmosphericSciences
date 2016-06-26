@@ -12,7 +12,7 @@ refractive index.
 To obtain absorption coefficient: 4*pi*ν/c * Im(N)
 """
 
-import .refractivity_l93 as liebe93
-import .refractivity_tkc as tkc
-
+import mwrt.refractivity_l93 as liebe93
+import mwrt.refractivity_tkc as tkc
+from mwrt.model import MWRTM
 
