@@ -46,6 +46,7 @@ scheme = (
         "CREATE TABLE IF NOT EXISTS hatpro("
             "id INTEGER PRIMARY KEY, "
             "kind TEXT, "
+            "valid NUMERIC, "
             "profile INTEGER, "
             "angle NUMERIC, "
             "f22240 NUMERIC, "
@@ -63,11 +64,10 @@ scheme = (
             "f57300 NUMERIC, "
             "f58000 NUMERIC, "
             "p NUMERIC, "
-            "z NUMERIC, "
             "T NUMERIC, "
-            "Td NUMERIC, "
             "qvap NUMERIC, "
-            "precip INTEGER "
+            "precip INTEGER, "
+            "file TEXT"
         "); "
         "CREATE TABLE IF NOT EXISTS nordkette("
             "valid NUMERIC PRIMARY KEY, "
@@ -157,6 +157,54 @@ def read_bufr_group(pid, paths):
         if cloudy and metadata["cloud cover"] == 0:
             print("Warning: {} | No clouds reported but found by RH criterion.".format(filename(path)))
         return pid, data, valid, cloudy, filename(path)
+
+
+def read_netcdf(file):
+    import xarray
+    xdata = xarray.open_dataset(file)
+    substitutions = [
+            ["n_angle", "elevation_angle"],
+            ["n_date", "date"],
+            ["n_frequency", "frequency"],
+            ["n_height", "height_grid"]
+            ]
+
+    for origin, target in substitutions:
+        xdata.coords[origin] = xdata.data_vars[target]
+    def to_date(d):
+        return (dt.datetime
+                .strptime(str(d), "%Y%m%d%H")
+                .replace(tzinfo=dt.timezone.utc)
+                .timestamp()
+                )
+    df = xdata["brightness_temperatures"].to_dataframe()
+    df = df.ix[~df.index.duplicated(keep="first")]
+    ddf = df.unstack(level=[1,2,3])
+    ddf.columns = ["{:>4}_f{}".format(round(c[2], 1), round(c[3]*1000)) for c in ddf.columns]
+    angles = set([c.split("_")[0] for c in ddf.columns])
+    for a in sorted(angles):
+        data = ddf[list(sorted(c for c in ddf.columns if c.startswith(a)))]
+        psfc = xdata["atmosphere_pressure_sfc"].to_dataframe()["atmosphere_pressure_sfc"]/100
+        psfc.name = "p"
+        Tsfc = xdata["atmosphere_temperature_sfc"].to_dataframe()["atmosphere_temperature_sfc"]
+        Tsfc.name = "T"
+        qsfc = xdata["atmosphere_humidity_sfc"].to_dataframe()["atmosphere_humidity_sfc"] / fml.ρ(p=psfc, T=Tsfc, e=0) # approx
+        qsfc.name = "q"
+        valid = pd.Series(data.index.map(to_date),
+                index=data.index, name="valid")
+        kind = pd.Series(np.repeat("igmk", [len(data)]),
+                index=data.index, name="kind")
+        profile = pd.Series(np.repeat(None, [len(data)]),
+                index=data.index, name="profile")
+        angle = pd.Series(np.repeat(90-float(a), [len(data)]),
+                index=data.index, name="angle")
+        precip = pd.Series(np.repeat(None, [len(data)]),
+                index=data.index, name="precip")
+        fname = pd.Series(np.repeat(filename(file), [len(data)]),
+                index=data.index, name="file")
+        data = pd.concat([kind, valid, profile, angle, data, psfc,
+                Tsfc, qsfc, precip, fname], axis=1)
+        yield data
 
 
 parser = argparse.ArgumentParser()
@@ -275,5 +323,22 @@ if __name__ == "__main__":
         db.executemany(query, rows)
         print("done!")
 
+    if args.data == "igmk":
+        files = glob("../data/hatpro_netcdf/rt*.cdf")
+        print("{} | {} | reading {} files".format(
+                args.data, args.output, len(files)))
+        rows = []
+        for file in sorted(files):
+            for df in read_netcdf(file):
+                rows.extend(df.as_matrix().tolist())
+        print("{} | {} | writing {} rows... ".format(
+                args.data, args.output, len(rows)), end="")
+        query = ("INSERT INTO hatpro (kind, valid, profile, angle, f22240, "
+                "f23040, f23840, f25440, f26240, f27840, f31400, f51260, "
+                "f52280, f53860, f54940, f56660, f57300, f58000, p, T, qvap, "
+                "precip, file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")
+        db.executemany(query, rows)
+        print("done!")
     
 

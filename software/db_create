@@ -5,6 +5,7 @@ source /home/chris/local/miniconda3/bin/activate thesis
 python db_import.py ../data/amalg.db --create
 
 python db_import.py nordkette ../data/amalg.db
+python db_import.py igmk ../data/amalg.db
 python db_import.py raso_cosmo7 ../data/amalg.db --pid=1
 python db_import.py raso_fwf ../data/amalg.db --pid=6000
 
