@@ -50,7 +50,7 @@
         \DERIV{\BT}{s} = - \ABSCOEF (\BT - T) \EQSTOP
     \stopformula
 
-    \startsubsection[title={A Solution for Radiometer Applications}]
+    \startsubsection[title={A Solution for Ground-based Radiometer Applications}]
 
         Assumption of horizontally homogeneous atmosphere, relate distance
         towards radiometer $s$ to height above radiometer $z$
@@ -94,14 +94,16 @@
                 \int_{0}^{\infty} \ABSCOEF(z) T(z) e^{\OD(z)} \diff z \EQSTOP
         \stopformula
 
-        $T_B(\infty)$ is given by the cosmic background, the absorption
-        coefficient can be determined from the atmospheric profile (see
-        section REFERENCE).
+        $T_B(\infty)$ is given by the cosmic background (describe), the
+        absorption coefficient can be determined from the atmospheric profile
+        (see section REFERENCE).
 
     \stopsubsection
 
-    \startsubsection[title={Vertical Discretization}]
-        
+    \startsubsection[title={Numerical Treatment}]
+
+        Discretization, quadrature (trapezoidal rule).
+
     \stopsubsection
 
 \stopsection
@@ -167,8 +169,23 @@
 
     \startsubsection[title=Vertical Discretization and Interpolation]
 
-        Smoothing. Compromise between resolution necessary for numerical model
-        and actual information content. Inclusion of upper atmosphere or not.
+        Smoothing: interpolation scheme is very important and might affect the
+        resulting brightness temperatures calculated by the model. Proposed
+        discretizations: add levels dynamically to keep all extrema, this is
+        good for inversion situations but only applicable if the regions with
+        problematic values are known beforehand, which is not the case for
+        real-time retrievals. When NWP model is used for a-priori, it is
+        convenient to use the model grid, but impossible for stations like
+        Innsbruck where model topography often ends much higher up than
+        actual location of instrument. Generally it is desirable to have higher
+        resolution in the lower atmosphere, where more stuff happens and
+        at which heights the model has high sensitivity, so numerical errors
+        should be kept as small as possible.
+
+        Compromise between resolution necessary for numerical model (as many
+        levels as possible) and actual information content (only few levels).
+        More levels are more expensive to calculate. Inclusion of upper
+        atmosphere or not.
 
     \stopsubsection
 
@@ -193,32 +210,39 @@
 
     Fitting a polynomial to the absorption at a specific line to speed up
     calculations and simplify derivatives. Evaluate FAP performance for
-    each line of the HATPRO.
+    each line of the HATPRO. Training data: synthetic gridded data
+    representative for a wide variety of atmospheric states. Climatology is
+    test dataset. Climatology is not used for training due to profiles being
+    mostly at night and night, therefore temperatures are not representative
+    of whole range of realistic values. Climatology is valuable as independent
+    test set.
 
 \stopsection
 
 
-\startsection[title=Calculating the Jacobian]
+\startsection[title=Linearization]
 
-    Weighting functions/averaging kernels. Truncation of the jacobian at upper
-    levels.
+    Necessary for iterative optimal estimation approach.
 
-    \startsubsection[title=Finite Differences]
+    Possibility of truncating the Jacobian at upper levels.
 
-        Can be used with every model. Problems with selection of perturbations,
-        non-linearity.
-        
-    \stopsubsection
+    \startsubsection[title=Weighting Functions]
 
-    \startsubsection[title=Symbolic Differentiation]
-
-        Non-differentiable parameterizations (LWC).
+        Weighting functions/averaging kernels. Givve examples for different
+        angles.
 
     \stopsubsection
 
-    \startsubsection[title=Automatic Differentiation]
+    \startsubsection[title=Calculating the Jacobian]
 
-        Computation graphs. Backwards mode automatic differentiation.
+        Brute force: can be used with every model. Problems with selection of
+        perturbations, non-linearity (e.g. at liquid water boundary).
+
+        Symbolic differentiation: often unaffordable due to model complexity.
+        Automatic differentiation can help but requires model that is
+        compatible to AD-compiler. Approach here: strip model down to bare
+        essentials, use FAP to allow easy symbolic differentiation of
+        absorption model, thus allowing the exact computation of the Jacobian.
         
     \stopsubsection
 
@@ -232,10 +256,21 @@
     Specializing in one model per frequency allows additional optimizations
     and optimizied FAPs.
 
+    Stripped-down model, includes only the bare minimum of physical processes.
+    This means larger errors, but allows exact linearization.
+
+    Bending due to changing refractive index negligible due to instrument's
+    sensitivity in lower atmosphere?
+
+    Numerical discretization very important for accurate results, high vertical
+    resolution especially in the lower troposphere is required to obtain
+    accurate numerical results.
+
     \startsubsection[title=Implementation]
 
         Custom implementation of Liebe gas absorption, Turner et al. cloud
-        absorption.
+        absorption. 4-th order FAP for each frequency. Caching and autodiff
+        for fast evalutation of Jacobians.
 
     \stopsubsection
 
@@ -250,6 +285,14 @@
     \startsubsection[title={Characterizing Errors},reference={ch:rtm_errors}]
 
         Building part of the forward model covariance matrix.
+
+        Compare exact Jacobian with brute force Jacobian.
+
+        FAP errors: determine from climatology by comparison of exact
+        calculations with FAP predictions.
+
+        Discretization errors: deterine from climatology by comparing
+        interpolated profiles with full resolution profiles.
 
     \stopsubsection
 

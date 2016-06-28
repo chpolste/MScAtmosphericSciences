@@ -34,6 +34,10 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \placefigure[bottom][fig:bayes_theorem]{Visualization of Bayes' theorem.} {\externalfigure[bayes_theorem][width=\textwidth]}
 
+    Describe different kinds of solutions: maximum likelihood, MAP, ...
+
+    Mention Monte Carlo methods.
+
 \stopsection
 
 \startsection[title=The Multivariate Gaussian Distribution]
@@ -65,6 +69,8 @@ repeated to achieve consistent notation and naming conventions throughout.
     distribution is independent from the others. If nonzero off-diagonal
     elements exist, some or all componentes are correlated.
 
+    Discuss possibility of determining mean of Gauss by search for extrema.
+
     Refer to default Bayes/Gaussian plot.
 
     Because the normalization $((2 \pi)^{d/2} \det(\COVMAT)^{1/2})^{-1}$ can
@@ -88,6 +94,8 @@ repeated to achieve consistent notation and naming conventions throughout.
     will be used in subsequent sections.
 
     \startsubsection[title=Maximum Likelihood Estimators for the Parameters]
+        
+        How best to determine mean and cov from a given dataset.
 
     \stopsubsection
 
@@ -217,7 +225,8 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \startsubsection[title=Diagonalization of the Covariance Matrix]
 
-        Transformation into eigenspace.
+        Transformation into eigenspace. Used for uncertainty estimates of
+        linear regression technique.
 
     \stopsubsection
 
@@ -365,12 +374,14 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \startsubsection[title=A Cost Function Approach]
 
-        Show equivalence of MAP by finding maximum of a cost function. Argue
-        that one still obtains full information about distribution due to
-        Gaussian assumption. Solve nonlinear problem by Levenberg-Marquart,
-        show equivalence to previous result by fixing gamma parameter.
+        MAP = finding maximum of a cost function (refer to property of Gaussian
+        that maximum=mean). Argue that one still obtains full information about
+        distribution in case of Gaussian assumption. Solve nonlinear problem by
+        Levenberg-Marquart, show equivalence to previous result by fixing gamma
+        parameter.
 
-        Where does 1D-VAR come from?
+        Explain where 1D-VAR comes from: starting with minimization of
+        variance.
         
     \stopsubsection
 
@@ -378,9 +389,14 @@ repeated to achieve consistent notation and naming conventions throughout.
 
         Refer to cost function version of MAP solution.
 
-        Introduce penalties to cost function. Advantage: Simpler to set up
-        than modifying prior, but no representation of additional knowledge
-        in posterior.
+        Introduce penalties to cost function. Explain how is nothing else than
+        adding additional prior information (interpret each penalty term as its
+        own distribution). Advantage: Simpler to set up than modifying prior,
+        but no representation of additional knowledge in posterior since MAP
+        solution does not give uncertainty and a general analytic solution for
+        the posterior is impossible when PDFs more complicated than Gaussian
+        appear. Mention Monte Carlo as solution but very high associated
+        compuational costs.
 
         Example: \cite[Hewison2006], penalizing high LWC and references
         therein.
@@ -416,7 +432,9 @@ repeated to achieve consistent notation and naming conventions throughout.
         maximum a-posteriori solution is equivalent to a maximum likelihood
         solution.
 
-        Is this used in the thesis? % TODO
+        Give formulas for combined map and cov solution from Rodgers, this
+        might actually be used for the combination of COSMO7 and Nordkette
+        measurements.
         
     \stopsubsection
 
@@ -465,6 +483,7 @@ repeated to achieve consistent notation and naming conventions throughout.
 \startsection[title=Comparison of Techniques]
 
     Ease of use, computational efficiency, inclusion of additional information.
+    Information content of output: uncertainty.
 
 \stopsection
 

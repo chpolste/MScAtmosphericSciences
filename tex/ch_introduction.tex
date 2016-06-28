@@ -2,8 +2,31 @@ Why radiometer measurements → boundary layer, high time resolution.
 
 Applications: Fundamental ABL-research, nowcasting, NWP assimilation, ....
 
-History of application in Innsbruck.
+History of application in Innsbruck: Linear regression techniques, focus on
+inclusion of additional information from different heights. Advantage of
+location in mountains: vertical profiles of the lower atmosphere can be made
+directly with stations along a mountain slope, if surface layer effects are
+taken into account. Linear regression allows very easy integration of such
+measurements, no explicit consideration of surface layer processes necessary.
+But: additional regressors do not constrain the solution, regression training
+might find good correlation and put much weight into such an additional
+regressor, but the retrieved profile is not explicity bound to the measured
+value. Additionally problem of uncertainty assessment, which is addressed here.
+Bayesian technique used here improves on these points: uncertainty assessment
+of retrieved profile and explicit consideration of measurement errors. Also:
+use correlations between adjacent atmospheric layers, while regression
+decouples into a separate problem for each layer.
 
-Goals of this thesis: literature review, building foundation for future work
-in Innsbruck, towards operational retrievals for ABL-research (ibox) and ertel2
-visulalization (mention recently added lidar).
+Goals of this thesis: quick literature review, building foundation for future
+work in Innsbruck, towards operational retrievals for ABL-research (ibox) and
+ertel2 visulalization (mention recently added lidar). Bayesian techniques
+require much more effort up front than regression techniques and seem much more
+subjective in the choice of error margins etc. but actually all these
+assumptions are in a way also included in a regression model, just implicit.
+Making the user aware of these assumptions is important for understanding of
+the results and might be seen as an advantage even though it means more work.
+Bayesian approach is much more powerful than regression, can adapt to
+situations not included in the climatology, can include information from other
+instruments and NWP, which is especially helpful for the retrieval of
+upper-troposphere data.
+
