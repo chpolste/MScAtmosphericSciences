@@ -42,9 +42,10 @@ class MWRTM:
 
     def forward(self, angle):
         """Angle in degrees"""
-        iangle = 1/np.cos(np.deg2rad(angle))
-        # TODO: cosmic background
-        return trapz(self.α.fwd * self.T * np.exp(iangle*self.τ.fwd), self.z)
+        cosangle = np.cos(np.deg2rad(angle))
+        τexp = np.exp(self.τ.fwd/cosangle) # cache this...?
+        cosmic = 2.736 * τexp[-1]
+        return cosmic + trapz(self.α.fwd * self.T * τexp, self.z)/cosangle
 
     def jacobian_T(self, angle):
         """"""
