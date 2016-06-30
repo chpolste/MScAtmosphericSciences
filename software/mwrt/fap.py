@@ -36,9 +36,9 @@ def partition_lnq(p, T, lnq):
 def predictor_data(n):
     """Generate training data for FAP training."""
     from sklearn.utils.extmath import cartesian
-    ps = np.linspace(50, 980, n)
-    Ts = np.linspace(170, 320, n)
-    ss = np.linspace(0.001, 1.3, n)
+    ps = np.linspace(80, 1000, n)
+    Ts = np.linspace(170, 330, n)
+    ss = np.linspace(0.0001, 1.3, n)
     data = cartesian([ps, Ts, ss])
     # Remove some unrealistic data
     remove = (
@@ -74,8 +74,8 @@ class FastAbsorptionPredictor:
     def fit(self, predictors):
         """"""
         self.polyfeatures.fit(predictors)
-        target = self.model(p=predictors[:,0], T=predictors[:,1],
-                lnq=predictors[:,2])
+        target = np.log10(self.model(p=predictors[:,0], T=predictors[:,1],
+                lnq=predictors[:,2]))
         self.regression.fit(self.polyfeatures.transform(predictors), target)
 
     def generate_code(self):
@@ -85,23 +85,23 @@ class FastAbsorptionPredictor:
         powers = self.polyfeatures.powers_
         method_indent = " "*16
         out.append("class {}:\n".format(self.name))
-        out.append('"""Fast Absorption Predictor."""\n\n')
+        out.append('    """Fast Absorption Predictor."""\n\n')
         out.append("    @staticmethod\n")
         out.append("    def forward(p, T, lnq):\n")
-        out.append("        return (\n")
+        out.append("        return 10**(\n")
         out.append(method_indent)
         out.append(method_indent.join(self._generate_terms(coeffs, powers)))
         out.append("                )\n\n")
         out.append("    @staticmethod\n")
         out.append("    def jacobian_T(p, T, lnq):\n")
-        out.append("        return (\n")
+        out.append("        return np.diag(\n")
         out.append(method_indent)
         out.append(method_indent.join(self._generate_terms(
                 *self._derive(coeffs, powers, 1))))
         out.append("                )\n\n")
         out.append("    @staticmethod\n")
         out.append("    def jacobian_lnq(p, T, lnq):\n")
-        out.append("        return (\n")
+        out.append("        return np.diag(\n")
         out.append(method_indent)
         out.append(method_indent.join(self._generate_terms(
                 *self._derive(coeffs, powers, 2))))

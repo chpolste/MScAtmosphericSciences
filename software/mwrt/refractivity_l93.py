@@ -28,7 +28,7 @@ def van_vleck_weisskopf(νeval, ν, γ, δ):
     """
     term1 = (1. - 1j*δ)/(ν - νeval - 1j*γ)
     term2 = (1. + 1j*δ)/(ν + νeval + 1j*γ)
-    return νeval * (term1 + term2)
+    return νeval * (term1 - term2)
 
 
 # Dry-air module (2.2)
@@ -59,9 +59,11 @@ def refractivity_O2_lines(ν, θ, pd, e):
     N = 0.
     for line in O2_lines:
         # Line strength
+        #S = line.a1 / line.ν * pd * θ**3 * np.exp(line.a2*(1-θ))
         S = line.a1 / line.ν * pd * θ**3 * np.exp(line.a2*(1-θ))
         # Width parameter (no mesosphere consideration)
         γ = line.a3 * (pd * θ**line.a4 + 1.10 * e * θ)
+        γ = np.sqrt(γ*γ + (25*0.6e-4)**2)
         # Overlap parameter
         δ = (line.a5 + line.a6 * θ) * (pd+e) * θ**0.8
         # Refractivity

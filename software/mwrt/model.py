@@ -5,6 +5,7 @@ from collections import namedtuple
 
 import numpy as np
 from scipy.integrate import trapz, cumtrapz
+from scipy.interpolate import interp1d
 
 
 # Cache type
@@ -30,10 +31,15 @@ class MWRTM:
         assert "p" in data or p is not None
         assert "T" in data or T is not None
         assert "lnq" in data or lnq is not None
-        self.z = np.array(data["z"]) if "z" in data else np.array(z)
-        self.p = np.array(data["p"]) if "p" in data else np.array(p)
-        self.T = np.array(data["T"]) if "T" in data else np.array(T)
-        self.lnq = np.array(data["lnq"]) if "lnq" in data else np.array(lnq)
+        z = np.array(data["z"]) if "z" in data else np.array(z)
+        p = np.array(data["p"]) if "p" in data else np.array(p)
+        T = np.array(data["T"]) if "T" in data else np.array(T)
+        lnq = np.array(data["lnq"]) if "lnq" in data else np.array(lnq)
+        # Interpolate
+        self.z = np.linspace(z[0], z[-1], 100000)
+        self.p = interp1d(z, p)(self.z)
+        self.T = interp1d(z, T)(self.z)
+        self.lnq = interp1d(z, lnq)(self.z)
         # Absorption prediction
         self.fap = fap
         # Setup cache
@@ -57,16 +63,16 @@ class MWRTM:
         """Calculate absorption coefficients with FAP and store in cache."""
         self.α = Cached(
                 self.fap.forward(self.p, self.T, self.lnq),
-                self.fap.jacobian_T(self.p, self.T, self.lnq),
-                self.fap.jacobian_lnq(self.p, self.T, self.lnq)
+                None, #self.fap.jacobian_T(self.p, self.T, self.lnq),
+                None #self.fap.jacobian_lnq(self.p, self.T, self.lnq)
                 )
 
     def _cache_optical_depth(self):
         """"""
         self.τ = Cached(
                 -cumtrapz(self.α.fwd, self.z, initial=0),
-                -cumtrapz(self.α.jT, self.z, axis=1, initial=0),
-                -cumtrapz(self.α.jlnq, self.z, axis=1, initial=0)
+                None, #-cumtrapz(self.α.jT, self.z, axis=1, initial=0),
+                None, #-cumtrapz(self.α.jlnq, self.z, axis=1, initial=0)
                 )
 
 
