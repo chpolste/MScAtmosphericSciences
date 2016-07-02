@@ -47,26 +47,25 @@ scheme = (
             "id INTEGER PRIMARY KEY, "
             "kind TEXT, "
             "valid NUMERIC, "
-            "profile INTEGER, "
             "angle NUMERIC, "
-            "f22240 NUMERIC, "
-            "f23040 NUMERIC, "
-            "f23840 NUMERIC, "
-            "f25440 NUMERIC, "
-            "f26240 NUMERIC, "
-            "f27840 NUMERIC, "
-            "f31400 NUMERIC, "
-            "f51260 NUMERIC, "
-            "f52280 NUMERIC, "
-            "f53860 NUMERIC, "
-            "f54940 NUMERIC, "
-            "f56660 NUMERIC, "
-            "f57300 NUMERIC, "
-            "f58000 NUMERIC, "
+            "TB_22240MHz NUMERIC, "
+            "TB_23040MHz NUMERIC, "
+            "TB_23840MHz NUMERIC, "
+            "TB_25440MHz NUMERIC, "
+            "TB_26240MHz NUMERIC, "
+            "TB_27840MHz NUMERIC, "
+            "TB_31400MHz NUMERIC, "
+            "TB_51260MHz NUMERIC, "
+            "TB_52280MHz NUMERIC, "
+            "TB_53860MHz NUMERIC, "
+            "TB_54940MHz NUMERIC, "
+            "TB_56660MHz NUMERIC, "
+            "TB_57300MHz NUMERIC, "
+            "TB_58000MHz NUMERIC, "
             "p NUMERIC, "
             "T NUMERIC, "
             "qvap NUMERIC, "
-            "precip INTEGER, "
+            "rain INTEGER, "
             "file TEXT"
         "); "
         "CREATE TABLE IF NOT EXISTS nordkette("
@@ -194,15 +193,13 @@ def read_netcdf(file):
                 index=data.index, name="valid")
         kind = pd.Series(np.repeat("igmk", [len(data)]),
                 index=data.index, name="kind")
-        profile = pd.Series(np.repeat(None, [len(data)]),
-                index=data.index, name="profile")
         angle = pd.Series(np.repeat(90-float(a), [len(data)]),
                 index=data.index, name="angle")
         precip = pd.Series(np.repeat(None, [len(data)]),
                 index=data.index, name="precip")
         fname = pd.Series(np.repeat(filename(file), [len(data)]),
                 index=data.index, name="file")
-        data = pd.concat([kind, valid, profile, angle, data, psfc,
+        data = pd.concat([kind, valid, angle, data, psfc,
                 Tsfc, qsfc, precip, fname], axis=1)
         yield data
 
@@ -333,11 +330,13 @@ if __name__ == "__main__":
                 rows.extend(df.as_matrix().tolist())
         print("{} | {} | writing {} rows... ".format(
                 args.data, args.output, len(rows)), end="")
-        query = ("INSERT INTO hatpro (kind, valid, profile, angle, f22240, "
-                "f23040, f23840, f25440, f26240, f27840, f31400, f51260, "
-                "f52280, f53860, f54940, f56660, f57300, f58000, p, T, qvap, "
-                "precip, file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")
+        query = ("INSERT INTO hatpro (kind, valid, angle, "
+                "TB_22240MHz, TB_23040MHz, TB_23840MHz, TB_25440MHz, "
+                "TB_26240MHz, TB_27840MHz, TB_31400MHz, TB_51260MHz, "
+                "TB_52280MHz, TB_53860MHz, TB_54940MHz, TB_56660MHz, "
+                "TB_57300MHz, TB_58000MHz, p, T, qvap, rain, file) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                "?, ?, ?, ?, ?, ?, ?, ?);")
         db.executemany(query, rows)
         print("done!")
     
