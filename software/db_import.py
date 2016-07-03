@@ -65,8 +65,7 @@ scheme = (
             "p NUMERIC, "
             "T NUMERIC, "
             "qvap NUMERIC, "
-            "rain INTEGER, "
-            "file TEXT"
+            "rain INTEGER"
         "); "
         "CREATE TABLE IF NOT EXISTS nordkette("
             "valid NUMERIC PRIMARY KEY, "
@@ -196,11 +195,9 @@ def read_netcdf(file):
         angle = pd.Series(np.repeat(90-float(a), [len(data)]),
                 index=data.index, name="angle")
         precip = pd.Series(np.repeat(None, [len(data)]),
-                index=data.index, name="precip")
-        fname = pd.Series(np.repeat(filename(file), [len(data)]),
-                index=data.index, name="file")
+                index=data.index, name="rain")
         data = pd.concat([kind, valid, angle, data, psfc,
-                Tsfc, qsfc, precip, fname], axis=1)
+                Tsfc, qsfc, precip], axis=1)
         yield data
 
 
@@ -334,10 +331,59 @@ if __name__ == "__main__":
                 "TB_22240MHz, TB_23040MHz, TB_23840MHz, TB_25440MHz, "
                 "TB_26240MHz, TB_27840MHz, TB_31400MHz, TB_51260MHz, "
                 "TB_52280MHz, TB_53860MHz, TB_54940MHz, TB_56660MHz, "
-                "TB_57300MHz, TB_58000MHz, p, T, qvap, rain, file) "
+                "TB_57300MHz, TB_58000MHz, p, T, qvap, rain) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                "?, ?, ?, ?, ?, ?, ?, ?);")
+                "?, ?, ?, ?, ?, ?, ?);")
         db.executemany(query, rows)
         print("done!")
     
+    if args.data == "hatpro":
+        import hatpro
+        def get_df(files, kind=None):
+            dfs = []
+            for f in files:
+                dfs.append(hatpro.read(f))
+            out = pd.concat(dfs, axis=0).reset_index(drop=True)
+            if kind is not None:
+                kc = pd.Series(np.repeat(kind, len(out)),
+                        index=out.index, name="kind")
+                out = pd.concat([out, kc], axis=1)
+            return out
+        met_files = glob("../data/hatpro_raw/MET/*.MET")
+        brt_files = glob("../data/hatpro_raw/BRT/*.BRT")
+        blb_files = glob("../data/hatpro_raw/BLB/*.BLB")
+        print("{} | {} | reading {}*3 files".format(
+                args.data, args.output, len(met_files)))
+        met_df = get_df(met_files)
+        brt_df = get_df(brt_files, kind="hatpro_brt")
+        blb_df = get_df(blb_files, kind="hatpro_blb")
+        bt_df = (pd.concat([brt_df, blb_df], axis=0)
+                .sort_values(by=["valid", "angle"])
+                .set_index("valid")
+                )
+        met_df2 = (met_df.sort_values(by="valid")
+                .set_index("valid")
+                .reindex(bt_df.index, method="nearest", tolerance=60)
+                )
+        qvap = fml.qvap(p=met_df2["p"], RH=met_df2["RH"], T=met_df2["T"])
+        met_df2 = (met_df2
+                .drop("rain", 1)
+                .drop("ff", 1)
+                .drop("dd", 1)
+                .drop("RH", 1)
+                )
+        df = pd.concat([bt_df, met_df2, qvap], axis=1).reset_index()
+        rows = df.as_matrix().tolist()
+        print("{} | {} | writing {} rows... ".format(
+                args.data, args.output, len(rows)), end="")
+        query = ("INSERT INTO hatpro (valid, rain, "
+                "TB_22240MHz, TB_23040MHz, TB_23840MHz, TB_25440MHz, "
+                "TB_26240MHz, TB_27840MHz, TB_31400MHz, TB_51260MHz, "
+                "TB_52280MHz, TB_53860MHz, TB_54940MHz, TB_56660MHz, "
+                "TB_57300MHz, TB_58000MHz, angle, kind, p, T, qvap) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                "?, ?, ?, ?, ?, ?, ?);")
+        db.executemany(query, rows)
+        print("done!")
+
 

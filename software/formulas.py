@@ -143,7 +143,7 @@ def _(T): # Source: https://en.wikipedia.org/wiki/Goff%E2%80%93Gratch_equation
 
 # Density
 ρ = ArgNameDispatch("ρ")
-ρ.register(lambda p, T, e: ((p-e)/Rdry + e/Rwat)/T) # Ideal gas law
+ρ.register(lambda p, T, e: ((p-e)/Rdry + e/Rwat)*100/T) # Ideal gas law
 
 # Water vapor mixing ratio
 r = ArgNameDispatch("r")
@@ -153,6 +153,7 @@ r.register(lambda p, e: 0.622 * e/(p-e))
 qvap = ArgNameDispatch("qvap")
 qvap.register(lambda p, e: 0.622 * e/p)
 qvap.register(lambda p, Td: 0.622 * e(Td=Td)/p)
+qvap.register(lambda p, T, RH: RH/100 * qsat(p=p, T=T))
 
 qliq = ArgNameDispatch("qliq")
 @qliq.register

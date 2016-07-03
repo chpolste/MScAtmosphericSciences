@@ -2,6 +2,8 @@ nordkette | ../data/amalg.db | reading 4 files
 nordkette | ../data/amalg.db | writing 4 measurements... done!
 igmk | ../data/amalg.db | reading 11 files
 igmk | ../data/amalg.db | writing 31690 rows... done!
+hatpro | ../data/amalg.db | reading 1533*3 files
+hatpro | ../data/amalg.db | writing 2687273 rows... done!
 raso_cosmo7 | ../data/amalg.db | reading 349 files
 raso_cosmo7 | ../data/amalg.db | writing 4537 profiles... done!
 raso_fwf | ../data/amalg.db | reading 3168 files

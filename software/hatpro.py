@@ -108,6 +108,7 @@ def read_BLB(file):
         dtype.append(("T_"+f, np.float32))
     df = _data_to_df(file.name, file.tell(), np.dtype(dtype))
     assert(len(df) == n_rec)
+    df["valid"] = _to_utc(df["valid"])
     df["rain"] = _int_rain(df["rain"])
     # Reduce columns in dataframe by making the angle an explicit column
     # (maybe this can be done better with DataFrame.stack?)
