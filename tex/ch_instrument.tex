@@ -1,12 +1,50 @@
-Information about Innsbruck location.
+The location of interest here is Innsbruck, located in the Inn-valley of the
+Alps at approximately 600 m, surrounded by mountains of up to 2300 m height. It
+provides an challenging environment for radiometer retrievals as the boundary
+layer evolution is strongly affected by the topography and most NWP models
+resolve the terrain insufficiently.
 
 \startsection[title=HATPRO]
 
-    Quick overview of Instrument, used frequencies, other capabilites.
+    The Institute of Atmospheric and Cryospheric Sciences at the University of
+    Innsbruck operates a passive microwave radiometer on the roof of one of the
+    university's buildings as part of the Innsbruck Box project. The instrument
+    is a Humidity and Temperature Profiler (HATPRO), built by the Radiometer
+    Physics GmbH \cite[authoryears][Rose2005]. It obtains brightness
+    temperatures at 14 channels with a resolution of 1 s. The receiver antenna
+    can be rotated to allow elevation scanning. Additionally, HATPRO measures
+    environmental pressure, temperature and humidity.
+    
+    Frequencies in water vapor band (K-band): 22.24, 23.04, 23.84, 25.44,
+    26.24, 27.84, 31.40 GHz.
+    Frequencies in oxygen band (V-band): 51.26, 52.28, 53.86, 54.94, 56.66,
+    57.30, 58.00 GHz.
+
+    Boundary layer scans every ??? minutes, otherwise zenith measurements.
+    Angles of boundary layer scans (deviation from zenith): 0°, 60°, 70.8°,
+    75.6°, 78.6°, 81.6°, 83.4°.
+
+    Raw data available from 07-2015 to 10-2015 (???), this period provides
+    little data gaps and maximum overlap with other data sources.
 
 \stopsection
 
+\placefigure[bottom][fig:map_ibk]
+        {Data locations in the Inn-valley around Innsbruck. 1: Innsbruck
+        Airport (577 m), radiosonde launch location. 2: HATPRO location with
+        elevation scanning direction (612 m). 3: COSMO7 model grid point.
+        4 - 7: Nordkette slope stations Alpenzoo (710 m), Hungerburg (920 m),
+        Rastlboden (1220 m) and Hafelekar (2270 m). Map source:
+        http://www.basemap.at}
+        {\externalfigure[map][width=\textwidth]}
+
+
 \startsection[title=Radiosonde Climatology]
+
+    Treated as reference data set, radiosondes have high accuracy but drift
+    and time-lag problem. 
+
+    Distance airport to university is approximately 2.5 km.
 
     What available, which resolution. Applied ice-liquid-split of water outside
     of model. KARSTENS ET AL liquid water content.
@@ -30,6 +68,12 @@ Information about Innsbruck location.
     \stopformula
 
     Ice content is thrown away.
+
+    Problem: model topography end above 1 km (???) but Innsbruck is at
+    approximately 600 m, therefore the profiles have to be extrapolated to the
+    surface. Done by connecting lowest COSMO7 level temperature with radiometer
+    surface measurement, then recalculating the pressure using the hydrostatic
+    equation.
 
 \stopsection
 
