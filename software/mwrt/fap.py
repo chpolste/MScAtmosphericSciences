@@ -6,9 +6,14 @@ Murphy, D. M., and T. Koop, 2005: Review of the vapour pressures of ice and
 """
 
 import numpy as np
+import scipy.sparse as sp
 
 from mwrt.model import Value
 
+
+#
+# FAP components
+#
 
 def qtot(lnq):
     """Total specific water content from lnq."""
@@ -92,45 +97,106 @@ def partition_lnq(p, T, lnq):
     return qvap, qliq
 
 
+#
+# FAP training
+#
+
+
+def as_absorption(ν, refractivity):
+    def absorption(*args, **kwargs):
+        N = refractivity(ν, *args, **kwargs)
+        return 4 * np.pi * ν * 1.0e9 / 299792458. * np.imag(N)
+    return absorption
+
 
 def absorption_model(ν, refractivity_gaseous, refractivity_lwc):
     """"""
     def absorption(p, T, lnq):
         θ = 300 / T
-        qsat, qvap, qliq = partition_lnq(p, T, lnq)
-        e = qvap/qsat * fml.esat(T=T)
-        ρliq = qliq * fml.ρ(p=p, T=T, e=e)
+        qvap, qliq = partition_lnq(p, T, lnq)
+        qvap, qliq = qvap.fwd, qliq.fwd
+        qsat_ = qsat(p=p, T=T).fwd
+        e = qvap/qsat_ * esat(T=T).fwd
+        ρliq = qliq * density(p=p, T=T).fwd
         N = refractivity_gaseous(ν, θ, p-e, e) + ρliq * refractivity_lwc(ν, θ)
-        return 4 * np.pi * ν * 1.0e9 / fml.c0 * np.imag(N)
+        return 4 * np.pi * ν * 1.0e9 / 299792458. * np.imag(N)
     return absorption
 
 
-
-def predictor_data(n):
-    """Generate training data for FAP training."""
-    from sklearn.utils.extmath import cartesian
-    ps = np.linspace(80, 1000, n)
-    Ts = np.linspace(170, 330, n)
-    ss = np.linspace(0.0001, 1.3, n)
-    data = cartesian([ps, Ts, ss])
-    # Remove some unrealistic data
-    remove = (
-            # Lower atmosphere is rather warm
-            ((data[:,0] > 700) & (data[:,1] < 230))
-            # Middle atmosphere
-            | ((data[:,0] < 700) & (data[:,0] > 400)
-                & (data[:,1] > 300) | (data[:,1] < 200))
-            # Upper atmosphere is rather cold
-            | ((data[:,0] < 400) & (data[:,1] > 270))
-            # No liquid water below -40 °C
-            | ((data[:,1] < 233.15) & (data[:,2] > 1))
-            )
-    data = data[~remove]
-    data[:,2] = np.log(data[:,2] * fml.qsat(p=data[:,0], T=data[:,1]))
-    return data
-
-
 class FastAbsorptionPredictor:
+    """"""
+
+    def __init__(self, name="FAP", alpha=0.1, degree=3):
+        """"""
+        from sklearn.preprocessing import PolynomialFeatures
+        from sklearn.linear_model import Ridge
+        self.name = name
+        self.pf = PolynomialFeatures(degree=degree, include_bias=True)
+        # Intercept is modelled by column of 1s in PolyFeatures
+        self.lm = Ridge(alpha=alpha, fit_intercept=False)
+
+
+class CloudAbsorptionPredictor(FastAbsorptionPredictor):
+    """"""
+
+    train_T_range = (233., 303., 500000)
+
+    def fit(self, model, predictors=None):
+        if predictors is None:
+            # Realistic cloud range is not greater than -40°C to 27°C
+            predictors = np.linspace(*self.train_T_range).reshape(-1, 1)
+        assert predictors.shape[1] == 1
+        # Absorption/Refractivity models take inverse temperature as input
+        target = model(θ=300./predictors)
+        # The FAP is trained against "normal" temperature though
+        self.pf.fit(predictors)
+        self.lm.fit(self.pf.transform(predictors), target)
+
+
+class GaseousAbsorptionPredictor(FastAbsorptionPredictor):
+    """"""
+
+    train_p_range = 980., 80., 50
+    train_T_range = 170., 330., 50
+    train_rh_range = (0.0001, 1., 50) # Everything > 1 is liquid
+
+    def fit(self, model, predictors=None):
+        if predictors is None:
+            predictors = self.generate_predictor_data()
+        assert predictors.shape[1] == 3
+        self.pf.fit(predictors)
+        # Train against log of absorption coefficient to guarantee positivity
+        θ = 300/predictors[:,1]
+        e = (np.exp(predictors[:,2])/qsat(p=predictors[:,0], T=predictors[:,1]).fwd
+                * esat(T=predictors[:,1]).fwd)
+        target = np.log(model(θ=θ, pd=predictors[:,0]-e, e=e))
+        self.lm.fit(self.pf.transform(predictors), target)
+
+    def generate_predictor_data(self):
+        from sklearn.utils.extmath import cartesian
+        ps = np.linspace(*self.train_p_range)
+        Ts = np.linspace(*self.train_T_range)
+        rhs = np.linspace(*self.train_rh_range)
+        data = cartesian([ps, Ts, rhs])
+        # Remove some (for Innsbruck) unrealistic data
+        remove = (
+                # Lower atmosphere is rather warm
+                ((data[:,0] > 700) & (data[:,1] < 230))
+                # Middle atmosphere
+                | ((data[:,0] < 700) & (data[:,0] > 400)
+                    & (data[:,1] > 300) | (data[:,1] < 200))
+                # Upper atmosphere is rather cold
+                | ((data[:,0] < 400) & (data[:,1] > 270))
+                )
+        data = data[~remove]
+        # Calculate lnq
+        data[:,2] = np.log(data[:,2] * qsat(p=data[:,0], T=data[:,1]).fwd)
+        return data
+
+
+
+
+class FastAbsorptionPredictorOLD:
     """"""
 
     def __init__(self, model, *, alpha=1.0, degree=2, name="FAP"):

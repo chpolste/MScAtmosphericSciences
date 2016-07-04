@@ -22,6 +22,7 @@ def refractivity_lwc(ν, θ):
     temperatures from -40 °C to +50 °C.
     """
     ρL = 1000. # Density of liquid water kg/m³
+    ν = ν * 1.e9 # Convert to Hz
     ν2pi = 2. * np.pi * ν
     ν2pisq = ν2pi * ν2pi
     # Formulas are valid for T in °C
