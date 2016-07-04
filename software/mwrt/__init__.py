@@ -14,6 +14,7 @@ To obtain absorption coefficient: 4*pi*ν/c * Im(N)
 
 import mwrt.refractivity_l93 as liebe93
 import mwrt.refractivity_tkc as tkc
-from mwrt.fap import absorption_model, FastAbsorptionPredictor
+from mwrt.fap import FastAbsorptionPredictor
+from mwrt.fapgen import absorption_model
 from mwrt.model import MWRTM
 

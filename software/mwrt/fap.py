@@ -1,9 +1,11 @@
-"""Create fast absorption predictor with full forward differentiation.
+"""Fast absorption predictor with full forward differentiation.
 
 Murphy, D. M., and T. Koop, 2005: Review of the vapour pressures of ice and
     supercooled water for atmospheric applications. Q. J. R. Meteorol. Soc.,
     131, 1539–1565, doi:10.1256/qj.04.94.
 """
+
+import abc
 
 import numpy as np
 import scipy.sparse as sp
@@ -11,14 +13,48 @@ import scipy.sparse as sp
 from mwrt.model import Value
 
 
-#
-# FAP components
-#
+class VectorValue(Value):
+    """Convenience container for forward mode automatic differentiation."""
+
+    def __mul__(self, other):
+        """Product rule of derivation."""
+        assert isinstance(other, VectorValue)
+        return VectorValue( 
+                fwd = self.fwd * other.fwd,
+                dT = self.dT*other.fwd + self.fwd*other.dT,
+                dlnq = self.dlnq*other.fwd + self.fwd*other.dlnq
+                )
+
+    def __truediv__(self, other):
+        """Quotient rule of derivation."""
+        assert isinstance(other, VectorValue)
+        return VectorValue( 
+                fwd = self.fwd / other.fwd,
+                dT = (self.dT*other.fwd-self.fwd*other.dT) / other.fwd**2,
+                dlnq = (self.dlnq*other.fwd-self.fwd*other.dlnq) / other.fwd**2
+                )
+
+    def __add__(self, other):
+        assert isinstance(other, VectorValue)
+        return VectorValue( 
+                fwd = self.fwd + other.fwd,
+                dT = self.dT + other.dT,
+                dlnq = self.dlnq + other.dlnq
+                )
+
+    def __sub__(self, other):
+        assert isinstance(other, VectorValue)
+        return VectorValue( 
+                fwd = self.fwd - other.fwd,
+                dT = self.dT - other.dT,
+                dlnq = self.dlnq - other.dlnq
+                )
+
 
 def qtot(lnq):
     """Total specific water content from lnq."""
     out = np.exp(lnq)
-    return Value(fwd=out, dT=0., dlnq=out)
+    return VectorValue(fwd=out, dT=0., dlnq=out)
 
 
 def density(p, T):
@@ -30,7 +66,7 @@ def density(p, T):
     approximation should be below 2 %.
     """
     out = p * 100 / 288 / T # p is given in hPa
-    return Value(fwd=out, dT=-out/T, dlnq=0.)
+    return VectorValue(fwd=out, dT=-out/T, dlnq=0.)
 
 
 def esat(T):
@@ -42,14 +78,14 @@ def esat(T):
     """
     TT = T - 32.18
     out = 6.1121 * np.exp(17.502 * (T-273.15) / TT)
-    return Value(fwd=out, dT=4217.45694/TT/TT*out, dlnq=0.)
+    return VectorValue(fwd=out, dT=4217.45694/TT/TT*out, dlnq=0.)
 
 
 def qsat(p, T):
     """Saturation specific humidity."""
     esat_ = esat(T)
     factor = 0.622/p
-    return Value(
+    return VectorValue(
             fwd = factor * esat_.fwd,
             dT = factor * esat_.dT,
             dlnq = factor * esat_.dlnq
@@ -58,11 +94,7 @@ def qsat(p, T):
 
 def rh(qtot, qsat):
     """Fraction of total specific water and saturation specific humidity."""
-    return Value(
-            fwd = qtot.fwd / qsat.fwd,
-            dT = (qtot.dT*qsat.fwd - qtot.fwd*qsat.dT) / qsat.fwd**2,
-            dlnq = (qtot.dlnq*qsat.fwd - qtot.fwd*qsat.dlnq) / qsat.fwd**2
-            )
+    return qtot / qsat
 
 
 def partition_lnq(p, T, lnq):
@@ -82,202 +114,35 @@ def partition_lnq(p, T, lnq):
     fliq[high] = rh_.fwd[high] - 1.
     fliq_drh[high] = 1.
     # Multiply with qsat to obtain specific amount
-    qliq = Value(
+    qliq = VectorValue(
             fwd = qsat_.fwd * fliq,
             #             product rule         (  chain rule     )
             dT = qsat_.dT * fliq + qsat_.fwd * (rh_.dT * fliq_drh),
             dlnq = qsat_.dlnq * fliq + qsat_.fwd * (rh_.dlnq * fliq_drh),
             )
     # All water that's not liquid is vapor
-    qvap = Value(
-            fwd = qtot_.fwd - qliq.fwd,
-            dT = qtot_.dT - qliq.dT,
-            dlnq = qtot_.dlnq - qliq.dlnq
-            )
-    return qvap, qliq
+    return qtot_ - qliq, qliq
 
 
-#
-# FAP training
-#
-
-
-def as_absorption(ν, refractivity):
-    def absorption(*args, **kwargs):
-        N = refractivity(ν, *args, **kwargs)
-        return 4 * np.pi * ν * 1.0e9 / 299792458. * np.imag(N)
-    return absorption
-
-
-def absorption_model(ν, refractivity_gaseous, refractivity_lwc):
+class FastAbsorptionPredictor(metaclass=abc.ABCMeta):
     """"""
-    def absorption(p, T, lnq):
-        θ = 300 / T
+
+    def __call__(self, p, T, lnq):
+        """"""
         qvap, qliq = partition_lnq(p, T, lnq)
-        qvap, qliq = qvap.fwd, qliq.fwd
-        qsat_ = qsat(p=p, T=T).fwd
-        e = qvap/qsat_ * esat(T=T).fwd
-        ρliq = qliq * density(p=p, T=T).fwd
-        N = refractivity_gaseous(ν, θ, p-e, e) + ρliq * refractivity_lwc(ν, θ)
-        return 4 * np.pi * ν * 1.0e9 / 299792458. * np.imag(N)
-    return absorption
-
-
-class FastAbsorptionPredictor:
-    """"""
-
-    def __init__(self, name="FAP", alpha=0.1, degree=3):
-        """"""
-        from sklearn.preprocessing import PolynomialFeatures
-        from sklearn.linear_model import Ridge
-        self.name = name
-        self.pf = PolynomialFeatures(degree=degree, include_bias=True)
-        # Intercept is modelled by column of 1s in PolyFeatures
-        self.lm = Ridge(alpha=alpha, fit_intercept=False)
-
-
-class CloudAbsorptionPredictor(FastAbsorptionPredictor):
-    """"""
-
-    train_T_range = (233., 303., 500000)
-
-    def fit(self, model, predictors=None):
-        if predictors is None:
-            # Realistic cloud range is not greater than -40°C to 27°C
-            predictors = np.linspace(*self.train_T_range).reshape(-1, 1)
-        assert predictors.shape[1] == 1
-        # Absorption/Refractivity models take inverse temperature as input
-        target = model(θ=300./predictors)
-        # The FAP is trained against "normal" temperature though
-        self.pf.fit(predictors)
-        self.lm.fit(self.pf.transform(predictors), target)
-
-
-class GaseousAbsorptionPredictor(FastAbsorptionPredictor):
-    """"""
-
-    train_p_range = 980., 80., 50
-    train_T_range = 170., 330., 50
-    train_rh_range = (0.0001, 1., 50) # Everything > 1 is liquid
-
-    def fit(self, model, predictors=None):
-        if predictors is None:
-            predictors = self.generate_predictor_data()
-        assert predictors.shape[1] == 3
-        self.pf.fit(predictors)
-        # Train against log of absorption coefficient to guarantee positivity
-        θ = 300/predictors[:,1]
-        e = (np.exp(predictors[:,2])/qsat(p=predictors[:,0], T=predictors[:,1]).fwd
-                * esat(T=predictors[:,1]).fwd)
-        target = np.log(model(θ=θ, pd=predictors[:,0]-e, e=e))
-        self.lm.fit(self.pf.transform(predictors), target)
-
-    def generate_predictor_data(self):
-        from sklearn.utils.extmath import cartesian
-        ps = np.linspace(*self.train_p_range)
-        Ts = np.linspace(*self.train_T_range)
-        rhs = np.linspace(*self.train_rh_range)
-        data = cartesian([ps, Ts, rhs])
-        # Remove some (for Innsbruck) unrealistic data
-        remove = (
-                # Lower atmosphere is rather warm
-                ((data[:,0] > 700) & (data[:,1] < 230))
-                # Middle atmosphere
-                | ((data[:,0] < 700) & (data[:,0] > 400)
-                    & (data[:,1] > 300) | (data[:,1] < 200))
-                # Upper atmosphere is rather cold
-                | ((data[:,0] < 400) & (data[:,1] > 270))
-                )
-        data = data[~remove]
-        # Calculate lnq
-        data[:,2] = np.log(data[:,2] * qsat(p=data[:,0], T=data[:,1]).fwd)
-        return data
-
-
-
-
-class FastAbsorptionPredictorOLD:
-    """"""
-
-    def __init__(self, model, *, alpha=1.0, degree=2, name="FAP"):
-        """"""
-        from sklearn.preprocessing import PolynomialFeatures
-        from sklearn.linear_model import Ridge
-        self.name = name
-        self.model = model
-        self.degree = 2
-        self.polyfeatures = PolynomialFeatures(degree=degree)
-        # Intercept is modelled by columns of 1s in polyfeatures
-        self.regression = Ridge(alpha=alpha, fit_intercept=False)
-
-    def fit(self, predictors):
-        """"""
-        self.polyfeatures.fit(predictors)
-        target = np.log10(self.model(p=predictors[:,0], T=predictors[:,1],
-                lnq=predictors[:,2]))
-        self.regression.fit(self.polyfeatures.transform(predictors), target)
-
-    def generate_code(self):
-        """"""
-        out = []
-        coeffs = self.regression.coef_
-        powers = self.polyfeatures.powers_
-        method_indent = " "*16
-        out.append("class {}:\n".format(self.name))
-        out.append('    """Fast Absorption Predictor."""\n\n')
-        out.append("    @staticmethod\n")
-        out.append("    def forward(p, T, lnq):\n")
-        out.append("        return 10**(\n")
-        out.append(method_indent)
-        out.append(method_indent.join(self._generate_terms(coeffs, powers)))
-        out.append("                )\n\n")
-        out.append("    @staticmethod\n")
-        out.append("    def jacobian_T(p, T, lnq):\n")
-        out.append("        return np.diag(\n")
-        out.append(method_indent)
-        out.append(method_indent.join(self._generate_terms(
-                *self._derive(coeffs, powers, 1))))
-        out.append("                )\n\n")
-        out.append("    @staticmethod\n")
-        out.append("    def jacobian_lnq(p, T, lnq):\n")
-        out.append("        return np.diag(\n")
-        out.append(method_indent)
-        out.append(method_indent.join(self._generate_terms(
-                *self._derive(coeffs, powers, 2))))
-        out.append("                )\n\n")
-        return "".join(out)
+        density_ = density(p, T),
+        absorp_gas = self.gaseous_FAP(p, T, qvap)
+        absorp_clw = self.cloud_FAP(p, T, lnq) * qliq / density_
+        out = absorp_gas + absorp_clw
+        return VectorValue(out.fwd, sp.diags(out.dT), spdiags(out.dlnq))
 
     @staticmethod
-    def _generate_terms(coeffs, powers):
-        out = []
-        for coeff, power in zip(coeffs, powers):
-            if coeff == 0:  continue
-            term = [("- {}" if coeff < 0 else "+ {}").format(abs(coeff))]
-            for name, pwr in zip(["p", "T", "lnq"], power):
-                if pwr == 0: continue
-                elif pwr == 1: term.append(name)
-                else: term.append("{}**{}".format(name, pwr))
-            out.append(" * ".join(term))
-            out.append("\n")
-        return out
+    @abc.abstractmethod
+    def cloud_FAP(self, T):
+        """"""
 
     @staticmethod
-    def _print_power(powers, names):
-        terms = []
-        for name, power in zip(names, powers):
-            if power == 0: continue
-            elif power == 1: terms.append(name)
-            else: terms.append("{}**{}".format(name, power))
-        return " * ".join(terms)
-
-    @staticmethod
-    def _derive(coeffs, powers, component):
-        out_coeffs = []
-        out_powers = []
-        for coeff, power in zip(coeffs, powers):
-            deriv = power.copy()
-            deriv[component] = max(deriv[component]-1, 0)
-            out_coeffs.append(coeff*power[component])
-            out_powers.append(deriv)
-        return out_coeffs, out_powers
+    @abc.abstractmethod
+    def gaseous_FAP(self, p, T, lnq):
+        """"""
 

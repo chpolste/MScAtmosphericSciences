@@ -1,6 +1,5 @@
 """Microwave region radiative transfer model for ground based applications."""
 
-
 from collections import namedtuple
 
 import numpy as np
@@ -59,7 +58,7 @@ class MWRTM:
 
     def _cache_absorption(self):
         """Calculate absorption coefficients with FAP and store in cache."""
-        self.α = Cached(
+        self.α = Value(
                 self.fap.forward(self.p, self.T, self.lnq),
                 None, #self.fap.jacobian_T(self.p, self.T, self.lnq),
                 None #self.fap.jacobian_lnq(self.p, self.T, self.lnq)
@@ -67,7 +66,7 @@ class MWRTM:
 
     def _cache_optical_depth(self):
         """"""
-        self.τ = Cached(
+        self.τ = Value(
                 -cumtrapz(self.α.fwd, self.z, initial=0),
                 None, #-cumtrapz(self.α.jT, self.z, axis=1, initial=0),
                 None, #-cumtrapz(self.α.jlnq, self.z, axis=1, initial=0)
