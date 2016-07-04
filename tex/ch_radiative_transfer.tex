@@ -127,7 +127,7 @@
         then recovered by a partition function
 
         \startformula
-            \DERIV{\QLIQ}{\RHL} = \frac{1}{\QSAT} \startcases
+            \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
                 \NC 0 \MC s \lt 0.95 \NR
                 \NC \cos \left( \frac{\RHL - 1.05}{0.1} \frac{\pi}{2} \right)^2
                     \MC 0.95 \le s \le 1.05 \EQCOMMA\NR
@@ -157,7 +157,7 @@
         and from REF to s = qtot/qsat
 
         \startformula
-            \QVAP(\RHL) = \QSAT(\RHL) - \QLIQ(\RHL) \EQSTOP
+            \QVAP(\RHL) = \QTOT(\RHL) - \QLIQ(\RHL) \EQSTOP
         \stopformula
 
         Additionally: use ln(qtot) in state vector to enforce positivity and

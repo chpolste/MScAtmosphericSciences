@@ -8,9 +8,7 @@ from scipy.integrate import trapz, cumtrapz
 from scipy.interpolate import interp1d
 
 
-# Cache type
-
-Cached = namedtuple("Cached", ["fwd", "jT", "jlnq"])
+Value = namedtuple("Value", ["fwd", "dT", "dlnq"])
 
 
 # Radiative Transfer Model
