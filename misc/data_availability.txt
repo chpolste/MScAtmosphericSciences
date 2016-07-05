@@ -3,265 +3,266 @@ Data Availability
 N = Nordkette
 R = Radiosounding
 C = COSMO7 Sounding
+H = HATPRO
 
 ===== 1999 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 2 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 3 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  N__  N__  
- 4 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 5 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 6 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  ___  ___  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 7 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 8 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 9 | NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  
-11 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 2 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 3 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ N___ N___ 
+ 4 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 5 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 6 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ ____ ____ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 7 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 8 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 9 | NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ 
+11 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
 
 ===== 2000 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  _R_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  NR_  _R_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  _R_  _R_  _R_  N__  NR_  NR_  NR_  NR_  
- 7 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 8 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 9 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-11 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ _R__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ NR__ _R__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ _R__ _R__ _R__ N___ NR__ NR__ NR__ NR__ 
+ 7 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 8 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 9 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+11 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
 
 ===== 2001 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 7 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  
- 8 | NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 9 | NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  
-11 | NR_  NR_  _R_  _R_  _R_  _R_  _R_  _R_  ___  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 7 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ 
+ 8 | NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 9 | NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ 
+11 | NR__ NR__ _R__ _R__ _R__ _R__ _R__ _R__ ____ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
 
 ===== 2002 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  _R_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  N__  N__  N__  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  N__  NR_  NR_  _R_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 7 | NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 8 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 9 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-11 | NR_  NR_  _R_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ _R__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ N___ N___ N___ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ N___ NR__ NR__ _R__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 7 | NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 8 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 9 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+11 | NR__ NR__ _R__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
 
 ===== 2003 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  _R_  NR_  
- 5 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 7 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 8 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  
- 9 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  N__  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-11 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ _R__ NR__ 
+ 5 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 7 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 8 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ 
+ 9 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ N___ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+11 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
 
 ===== 2004 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 7 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  _R_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 8 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 9 | NR_  NR_  NR_  NR_  _R_  _R_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  _R_  _R_  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-11 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 7 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ _R__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 8 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 9 | NR__ NR__ NR__ NR__ _R__ _R__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ _R__ _R__ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+11 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ 
 
 ===== 2005 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 7 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 8 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 9 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-10 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-11 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-12 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 7 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 8 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 9 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+10 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+11 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+12 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
 
 ===== 2006 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 2 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 3 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 4 | N__  N__  N__  N__  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 5 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 6 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 7 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 8 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 9 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-10 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-11 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-12 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 2 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 3 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 4 | N___ N___ N___ N___ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 5 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 6 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 7 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 8 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 9 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+10 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+11 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+12 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
 
 ===== 2007 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 2 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 3 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 4 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 5 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  N__  N__  ___  N__  N__  N__  ___  N__  N__  N__  N__  N__  N__  N__  N__  
- 6 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  N__  N__  N__  N__  N__  N__  
- 7 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  ___  ___  ___  ___  ___  ___  
- 8 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 9 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
-10 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
-11 | ___  ___  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-12 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  N__  N__  N__  N__  N__  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 2 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 3 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 4 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 5 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ N___ N___ ____ N___ N___ N___ ____ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 6 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ N___ N___ N___ N___ N___ N___ 
+ 7 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ ____ ____ ____ ____ ____ ____ 
+ 8 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 9 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+10 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+11 | ____ ____ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+12 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ N___ N___ N___ N___ N___ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 
 ===== 2008 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | ___  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 2 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 3 | N__  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  ___  ___  ___  ___  ___  ___  ___  
- 4 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 5 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  N__  N__  ___  N__  N__  N__  ___  ___  ___  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  
- 6 | N__  N__  N__  N__  N__  N__  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  ___  ___  ___  ___  ___  
- 7 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 8 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 9 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
-10 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
-11 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-12 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  N__  N__  N__  N__  N__  N__  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | ____ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 2 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 3 | N___ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 4 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 5 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ N___ N___ ____ N___ N___ N___ ____ ____ ____ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ 
+ 6 | N___ N___ N___ N___ N___ N___ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ ____ ____ ____ ____ ____ 
+ 7 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 8 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 9 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+10 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+11 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+12 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ N___ N___ N___ N___ N___ N___ 
 
 ===== 2009 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 2 | N__  N__  N__  N__  N__  N__  N__  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 3 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 4 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  NR_  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 5 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 6 | ___  ___  ___  ___  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 7 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 8 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 9 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-10 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  
-11 | NR_  N__  NR_  NR_  N__  NR_  NR_  N__  N__  N__  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  N__  N__  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 2 | N___ N___ N___ N___ N___ N___ N___ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 3 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 4 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ NR__ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 5 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 6 | ____ ____ ____ ____ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 7 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 8 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 9 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+10 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ 
+11 | NR__ N___ NR__ NR__ N___ NR__ NR__ N___ N___ N___ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ N___ N___ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ 
 
 ===== 2010 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | N__  NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  N__  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  NR_  N__  N__  
- 2 | N__  NR_  NR_  N__  N__  NR_  N__  N__  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  N__  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  N__  NR_  N__  NR_  NR_  N__  N__  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  N__  NR_  NR_  N__  
- 6 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  N__  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  
- 7 | N__  N__  N__  NR_  N__  NR_  N__  NR_  NR_  N__  NR_  NR_  N__  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  
- 8 | NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  
- 9 | NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  
-11 | N__  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-12 | NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | N___ NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ N___ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ NR__ N___ N___ 
+ 2 | N___ NR__ NR__ N___ N___ NR__ N___ N___ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ N___ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ N___ NR__ N___ NR__ NR__ N___ N___ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ N___ NR__ NR__ N___ 
+ 6 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ N___ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ 
+ 7 | N___ N___ N___ NR__ N___ NR__ N___ NR__ NR__ N___ NR__ NR__ N___ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ 
+ 8 | NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ 
+ 9 | NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ 
+11 | N___ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+12 | NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ 
 
 ===== 2011 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  N__  N__  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  
- 7 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  N__  N__  NR_  NR_  NR_  NR_  
- 8 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  _R_  _R_  
- 9 | _R_  _R_  _R_  _R_  N__  N__  N__  N__  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  N__  
-10 | N__  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-11 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  N__  N__  NR_  N__  NR_  
-12 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ N___ N___ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ 
+ 7 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ N___ N___ NR__ NR__ NR__ NR__ 
+ 8 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ _R__ _R__ 
+ 9 | _R__ _R__ _R__ _R__ N___ N___ N___ N___ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ N___ 
+10 | N___ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+11 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ N___ N___ NR__ N___ NR__ 
+12 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
 
 ===== 2012 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 2 | NR_  NR_  NR_  N__  N__  N__  NR_  NR_  N__  NR_  NR_  N__  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 3 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  
- 4 | NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  N__  NR_  NR_  
- 5 | NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 7 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  
- 8 | NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  
- 9 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-10 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-11 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-12 | N__  N__  NR_  N__  NR_  NR_  N__  N__  N__  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  N__  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 2 | NR__ NR__ NR__ N___ N___ N___ NR__ NR__ N___ NR__ NR__ N___ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 3 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ 
+ 4 | NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ N___ NR__ NR__ 
+ 5 | NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 7 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ 
+ 8 | NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ 
+ 9 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+10 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+11 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+12 | N___ N___ NR__ N___ NR__ NR__ N___ N___ N___ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ N___ 
 
 ===== 2013 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  N__  NR_  NR_  N__  N__  NR_  NR_  N__  N__  N__  N__  N__  N__  NR_  N__  N__  NR_  N__  NR_  NR_  N__  N__  N__  N__  N__  N__  N__  N__  
- 2 | N__  N__  N__  N__  N__  N__  N__  NR_  NR_  N__  N__  NR_  NR_  NR_  N__  N__  N__  N__  N__  N__  NR_  NR_  N__  N__  NR_  N__  NR_  N__  
- 3 | NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  
- 4 | N__  N__  NR_  N__  NR_  N__  N__  NR_  N__  N__  N__  NR_  N__  NR_  N__  N__  NR_  N__  N__  N__  N__  N__  NR_  N__  N__  N__  N__  N__  N__  N__  
- 5 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 6 | NR_  N__  NR_  NR_  NR_  NR_  NR_  N__  N__  N__  N__  NR_  N__  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 7 | NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  N__  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  
- 8 | N__  N__  N__  N__  N__  N__  NR_  N__  N__  NR_  NR_  N__  N__  N__  N__  N__  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 9 | NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  N__  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-10 | NR_  N__  N__  NR_  N__  NR_  NR_  NR_  N__  NR_  N__  N__  N__  NR_  N__  N__  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
-11 | NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  N__  N__  N__  N__  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  N__  N__  NR_  NR_  N__  ___  _R_  _R_  _R_  _R_  
-12 | ___  _R_  _R_  _R_  _R_  ___  ___  _R_  _R_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  NR_  N__  NR_  NR_  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ N___ NR__ NR__ N___ N___ NR__ NR__ N___ N___ N___ N___ N___ N___ NR__ N___ N___ NR__ N___ NR__ NR__ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 2 | N___ N___ N___ N___ N___ N___ N___ NR__ NR__ N___ N___ NR__ NR__ NR__ N___ N___ N___ N___ N___ N___ NR__ NR__ N___ N___ NR__ N___ NR__ N___ 
+ 3 | NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ 
+ 4 | N___ N___ NR__ N___ NR__ N___ N___ NR__ N___ N___ N___ NR__ N___ NR__ N___ N___ NR__ N___ N___ N___ N___ N___ NR__ N___ N___ N___ N___ N___ N___ N___ 
+ 5 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 6 | NR__ N___ NR__ NR__ NR__ NR__ NR__ N___ N___ N___ N___ NR__ N___ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 7 | NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ N___ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ 
+ 8 | N___ N___ N___ N___ N___ N___ NR__ N___ N___ NR__ NR__ N___ N___ N___ N___ N___ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 9 | NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ N___ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+10 | NR__ N___ N___ NR__ N___ NR__ NR__ NR__ N___ NR__ N___ N___ N___ NR__ N___ N___ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+11 | NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ N___ N___ N___ N___ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ N___ N___ NR__ NR__ N___ ____ _R__ _R__ _R__ _R__ 
+12 | ____ _R__ _R__ _R__ _R__ ____ ____ _R__ _R__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ NR__ N___ NR__ NR__ 
 
 ===== 2014 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  N__  
- 2 | NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
- 3 | N__  N__  N__  N__  N__  N__  N__  ___  _R_  _R_  _R_  ___  _R_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  
- 4 | NR_  NR_  NR_  NR_  NR_  NR_  N__  N__  NR_  N__  N__  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  N__  N__  N__  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  
- 5 | NR_  NR_  NR_  N__  N__  N__  NR_  NR_  NR_  NR_  N__  N__  NR_  N__  NR_  N__  NR_  N__  N__  NR_  N__  NR_  N__  N__  N__  N__  N__  NR_  NR_  NR_  NR_  
- 6 | NR_  NR_  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 7 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  N__  
- 8 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
- 9 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  
-10 | ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  ___  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-11 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  
-12 | N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  N__  NR_  N__  N__  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ N___ 
+ 2 | NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+ 3 | N___ N___ N___ N___ N___ N___ N___ ____ _R__ _R__ _R__ ____ _R__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ 
+ 4 | NR__ NR__ NR__ NR__ NR__ NR__ N___ N___ NR__ N___ N___ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ N___ N___ N___ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ 
+ 5 | NR__ NR__ NR__ N___ N___ N___ NR__ NR__ NR__ NR__ N___ N___ NR__ N___ NR__ N___ NR__ N___ N___ NR__ N___ NR__ N___ N___ N___ N___ N___ NR__ NR__ NR__ NR__ 
+ 6 | NR__ NR__ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 7 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ N___ 
+ 8 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+ 9 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+10 | ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+11 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ 
+12 | N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ N___ NR__ N___ N___ 
 
 ===== 2015 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | NR_  NR_  N__  NR_  N__  N__  NR_  NR_  NR_  N__  NR_  N__  NR_  NR_  NR_  NR_  N__  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  NR_  N__  NR_  N__  NR_  
- 2 | NR_  NR_  NR_  N__  NR_  NRC  NRC  N_C  N_C  NRC  NRC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  N_C  NRC  N_C  NRC  NRC  NRC  NRC  NRC  NRC  
- 3 | NRC  N_C  N_C  NRC  NRC  N_C  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  N_C  
- 4 | N_C  N_C  N_C  NRC  NRC  N_C  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  
- 5 | N_C  NRC  N_C  N_C  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  NRC  N_C  NRC  NRC  NRC  NRC  N_C  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  
- 6 | N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  N_C  __C  __C  _RC  _RC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  
- 7 | NRC  NRC  N_C  NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  
- 8 | NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  NRC  N_C  N_C  N_C  N_C  N_C  
- 9 | NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  NRC  NRC  N_C  N_C  NRC  N_C  NRC  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  
-10 | N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  N_C  NRC  NRC  NRC  NRC  NRC  NRC  NRC  
-11 | NRC  NRC  _RC  _RC  _RC  _RC  _RC  _RC  _RC  _RC  _RC  __C  __C  _RC  _RC  __C  __C  _RC  _RC  _RC  __C  _RC  __C  _RC  _RC  _RC  _RC  _RC  _RC  _RC  
-12 | __C  _RC  _RC  _RC  _RC  __C  _RC  _RC  _RC  _RC  _RC  _RC  __C  _RC  _RC  _RC  __C  _RC  _RC  _RC  __C  __C  _RC  __C  _RC  _RC  _RC  _RC  _RC  __C  _RC  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | NR__ NR__ N___ NR__ N___ N___ NR__ NR__ NR__ N___ NR__ N___ NR__ NR__ NR__ NR__ N___ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ NR__ N___ NR__ N___ NR__ 
+ 2 | NR__ NR__ NR__ N___ NR__ NRC_ NRC_ N_C_ N_C_ NRC_ NRC_ NRC_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ N_C_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ 
+ 3 | NRC_ N_C_ N_C_ NRC_ NRC_ N_C_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ N_C_ N_C_ 
+ 4 | N_C_ N_C_ N_C_ NRC_ NRC_ N_C_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ N_C_ 
+ 5 | N_C_ NRC_ N_C_ N_C_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ N_C_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ N_C_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ 
+ 6 | N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ N_C_ N_C_ __C_ __C_ _RC_ _RC_ NRC_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ 
+ 7 | NRC_ NRC_ N_C_ NRC_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ N_C_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRC_ NRCH NRCH 
+ 8 | NRCH NRCH NRCH NRCH NRCH NRCH NRCH NRCH NRCH N_CH NRCH NRCH NRCH NRCH N_C_ NRC_ NRC_ NRCH NRC_ NRC_ NRCH NRCH NRCH NRCH N_CH NRCH N_CH N_CH N_CH N_CH N_CH 
+ 9 | NRCH NRCH N_CH NRCH NRC_ NRC_ NRC_ NRCH NRCH NRCH NRCH NRCH NRCH N_CH NRCH NRCH N_CH N_CH NRCH N_CH NRCH N_CH N_CH N_CH N_CH N_CH N_CH N_CH N_C_ N_C_ 
+10 | N_CH N_CH N_CH N_C_ N_CH N_CH N_CH N_CH N_CH N_CH N_CH N_CH N_CH N_CH N_CH N_CH NRCH NRCH NRCH NRCH NRCH NRCH NRCH N_CH NRCH NRC_ NRCH NRCH NRCH NRCH NRCH 
+11 | NRC_ NRC_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ __C_ __C_ _RC_ _RC_ __C_ __C_ _RC_ _RC_ _RC_ __C_ _RC_ __C_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ 
+12 | __C_ _RC_ _RC_ _RC_ _RC_ __C_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ __C_ _RC_ _RC_ _RC_ __C_ _RC_ _RC_ _RC_ __C_ __C_ _RC_ __C_ _RC_ _RC_ _RC_ _RC_ _RC_ __C_ _RC_ 
 
 ===== 2016 =====
-       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31 
- 1 | __C  __C  _RC  _RC  __C  _RC  _RC  _RC  __C  _RC  _RC  _RC  _RC  _RC  _RC  __C  __C  _RC  _RC  _RC  _RC  _RC  _RC  ___  ___  _R_  ___  _R_  _R_  _R_  _R_  
- 2 | _R_  _R_  _R_  _R_  _R_  ___  _R_  _R_  _R_  _R_  ___  ___  _R_  _R_  _R_  ___  _R_  _R_  _R_  _R_  _R_  ___  _R_  _R_  _R_  _R_  _R_  _R_  _R_  
- 3 | _R_  _R_  ___  _R_  ___  ___  ___  _R_  _R_  _R_  ___  ___  _R_  _R_  _R_  ___  _R_  ___  ___  _R_  _R_  _R_  _R_  _R_  ___  _R_  _R_  _R_  _R_  _R_  _R_  
- 4 | _R_  _R_  _R_  _R_  _R_  _R_  ___  _R_  _R_  _R_  ___  ___  _R_  _R_  ___  _R_  _R_  _R_  ___  _R_  _R_  _R_  _R_  _R_  _R_  _R_  ___  ___  ___  ___  
+        1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
+ 1 | __C_ __C_ _RC_ _RC_ __C_ _RC_ _RC_ _RC_ __C_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ __C_ __C_ _RC_ _RC_ _RC_ _RC_ _RC_ _RC_ ____ ____ _R__ ____ _R__ _R__ _R__ _R__ 
+ 2 | _R__ _R__ _R__ _R__ _R__ ____ _R__ _R__ _R__ _R__ ____ ____ _R__ _R__ _R__ ____ _R__ _R__ _R__ _R__ _R__ ____ _R__ _R__ _R__ _R__ _R__ _R__ _R__ 
+ 3 | _R__ _R__ ____ _R__ ____ ____ ____ _R__ _R__ _R__ ____ ____ _R__ _R__ _R__ ____ _R__ ____ ____ _R__ _R__ _R__ _R__ _R__ ____ _R__ _R__ _R__ _R__ _R__ _R__ 
+ 4 | _R__ _R__ _R__ _R__ _R__ _R__ ____ _R__ _R__ _R__ ____ ____ _R__ _R__ ____ _R__ _R__ _R__ ____ _R__ _R__ _R__ _R__ _R__ _R__ _R__ ____ ____ ____ ____ 
