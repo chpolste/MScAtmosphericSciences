@@ -22,12 +22,14 @@ def as_absorption(ν, refractivity):
 def absorption_model(ν, refractivity_gaseous, refractivity_lwc):
     """"""
     def absorption(p, T, lnq):
-        θ = 300 / T
         qvap, qliq = partition_lnq(p, T, lnq)
+        # partition_lnq currently only takes VectorValues, this is a bit awkward
+        p, T, lnq = p.fwd, T.fwd, lnq.fwd
+        θ = 300 / T
         qvap, qliq = qvap.fwd, qliq.fwd
-        qsat_ = qsat(p=p, T=T).fwd
-        e = qvap/qsat_ * esat(T=T).fwd
-        ρliq = qliq * density(p=p, T=T).fwd
+        qsat_ = qsat(p=p, T=T)
+        e = qvap/qsat_ * esat(T=T)
+        ρliq = qliq * density(p=p, T=T)
         N = refractivity_gaseous(ν, θ, p-e, e) + ρliq * refractivity_lwc(ν, θ)
         return 4 * np.pi * ν * 1.0e9 / 299792458. * np.imag(N)
     return absorption
@@ -36,9 +38,8 @@ def absorption_model(ν, refractivity_gaseous, refractivity_lwc):
 class FAPGenerator:
     """"""
 
-    def __init__(self, name="FAP", alpha=0.1, degree=3):
+    def __init__(self, alpha=0.1, degree=3):
         """"""
-        self.name = name
         self.pf = PolynomialFeatures(degree=degree, include_bias=True)
         # Intercept is modelled by column of 1s in PolyFeatures
         self.lm = Ridge(alpha=alpha, fit_intercept=False)
@@ -48,31 +49,24 @@ class FAPGenerator:
         out = []
         for coeff, power in zip(coeffs, powers):
             if coeff == 0:  continue
-            term = [(" - {}" if coeff < 0 else " + {}").format(abs(coeff))]
+            term = [("- {}" if coeff < 0 else "+ {}").format(abs(coeff))]
             for name, pwr in zip(names, power):
                 if pwr == 0: continue
                 elif pwr == 1: term.append(name)
                 else: term.append("{}**{}".format(name, pwr))
-            out.append("*".join(term))
+            out.append(" * ".join(term))
         return out if out else " 0."
 
     @staticmethod
-    def _derive(coeffs, powers, component):
-        if component >= powers.shape[1]:
-            return np.zeros_like(coeffs), np.zeros_like(powers)
-        out_coeffs = []
-        out_powers = []
-        for coeff, power in zip(coeffs, powers):
-            deriv = power.copy()
-            deriv[component] = max(deriv[component]-1, 0)
-            out_coeffs.append(coeff*power[component])
-            out_powers.append(deriv)
-        return out_coeffs, out_powers
-    
-
-    @staticmethod
-    def generate_code(fap_gaseous, fap_cloud):
+    def generate_code(name, gasfap, cloudfap):
         """"""
+        out = ["from mwrt import FastAbsorptionPredictor\n\n"]
+        out.append("class {}(FastAbsorptionPredictor):\n\n".format(name))
+        out.append(gasfap.generate_method())
+        out.append("\n")
+        out.append(cloudfap.generate_method())
+        out.append("\n")
+        return "".join(out)
 
 
 class CloudFAPGenerator(FAPGenerator):
@@ -94,18 +88,15 @@ class CloudFAPGenerator(FAPGenerator):
     def generate_method(self):
         out = []
         out.append("    @staticmethod\n")
-        out.append("    def cloud_FAP(self, T):\n")
-        out.append("        return VectorValue(\n")
-        out.append("                fwd =")
-        out.append("".join(self._generate_terms(self.lm.coef_, self.pf.powers_, ["T"])))
-        out.append(",\n                dT =")
-        out.append("".join(self._generate_terms(*self._derive(self.lm.coef_, self.pf.powers_, 0), ["T"])))
-        out.append(",\n                dlnq = 0.\n")
-        out.append("                )\n")
+        out.append("    def cloud_absorption(T):\n")
+        out.append("        return (")
+        out.append("\n                ".join(self._generate_terms(
+                self.lm.coef_, self.pf.powers_, ["T"])))
+        out.append("\n                )\n")
         return "".join(out)
 
 
-class GaseousFAPGenerator(FAPGenerator):
+class GasFAPGenerator(FAPGenerator):
     """Input: p, T, q."""
 
     train_p_range = 80., 980., 50
@@ -119,9 +110,9 @@ class GaseousFAPGenerator(FAPGenerator):
         self.pf.fit(predictors)
         # Train against log of absorption coefficient to guarantee positivity
         θ = 300/predictors[:,1]
-        e = (predictors[:,2]/qsat(p=predictors[:,0], T=predictors[:,1]).fwd
-                * esat(T=predictors[:,1]).fwd)
-        target = np.log(model(θ=θ, pd=predictors[:,0]-e, e=e)).flatten()
+        e = (predictors[:,2]/qsat(p=predictors[:,0], T=predictors[:,1])
+                * esat(T=predictors[:,1]))
+        target = model(θ=θ, pd=predictors[:,0]-e, e=e).flatten()
         self.lm.fit(self.pf.transform(predictors), target)
 
     def generate_predictor_data(self):
@@ -142,19 +133,16 @@ class GaseousFAPGenerator(FAPGenerator):
                 )
         data = data[~remove]
         # Calculate q
-        data[:,2] = data[:,2] * qsat(p=data[:,0], T=data[:,1]).fwd
+        data[:,2] = data[:,2] * qsat(p=data[:,0], T=data[:,1])
         return data
 
     def generate_method(self):
         out = []
         out.append("    @staticmethod\n")
-        out.append("    def gaseous_FAP(self, p, T, qvap):\n")
-        out.append("        return VectorValue(\n")
-        out.append("                fwd =")
-        out.append("".join(self._generate_terms(self.lm.coef_, self.pf.powers_, ["p", "T", "qvap"])))
-        out.append(",\n                dT =")
-        out.append("".join(self._generate_terms(*self._derive(self.lm.coef_, self.pf.powers_, 1), ["p", "T", "qvap"])))
-        out.append(",\n                dlnq =") # TODO: apply chain rule, this is currently wrong!
-        out.append("".join(self._generate_terms(*self._derive(self.lm.coef_, self.pf.powers_, 2), ["p", "T", "qvap"])))
+        out.append("    def gas_absorption(p, T, qvap):\n")
+        out.append("        return (")
+        out.append("\n                ".join(self._generate_terms(
+                self.lm.coef_, self.pf.powers_, ["p", "T", "qvap"])))
         out.append("\n                )\n")
         return "".join(out)
+

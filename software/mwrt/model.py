@@ -1,13 +1,9 @@
 """Microwave region radiative transfer model for ground based applications."""
 
-from collections import namedtuple
-
 import numpy as np
 from scipy.integrate import trapz, cumtrapz
 from scipy.interpolate import interp1d
 
-
-Value = namedtuple("Value", ["fwd", "dT", "dlnq"])
 
 
 # Radiative Transfer Model
