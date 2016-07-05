@@ -194,14 +194,49 @@
 
 \startsection[title=Atmospheric Extinction]
 
-    Neglecting scattering. Existing absorption models.
+    \placefigure[top][fig:absorption]
+        {Absorption coefficients (black) and contributions of individual terms
+        (other) according to the models of \cite[Liebe1993] (gaseous) and
+        \cite[Turner2016] (cloud) for a atmospheric layer at 850 hPa pressure,
+        0°C temperature and saturation, containing 0.1 g/kg of liquid water.
+        The arrows mark HATPRO channels.
+        }
+        {\externalfigure[absorption][width=\textwidth]}
 
-    Gaseous Absorption: molecule transitions. Oxygen, Water vapor. What about
-    nitrogen or CO2?  Included in Liebe Model or negligible? I think Hewison
-    had nitrogen as well.
+    Size of molecules and cloud particles too small for effective scattering
+    therefore only absorption is considered in microwave region. Only at
+    droplet sizes occuring during precipitation does scattering become
+    important, these cases are problematic due to little knowledge of acutal
+    LWC and droplet size distributions.
 
-    Liquid Water Extinction: Rayleigh-approximation. Problems during
-    precipitation due to scattering.
+    Main contributions to absorption of microwave radiation by oxygen and water
+    vapor, which have rotational and vibrational transitions, and liquid
+    water, whose apsorption can be treated with the Rayleigh-approximation.
+    Other effects include pressure-broadening, self-broadening, non-resonant
+    continuum absorption.
+
+    Multiple absorption models exist in the literature (e.g. Rosenkranz, Liebe,
+    MONORTM which is based on HITRAN or similar?). These usually describe
+    the most important lines, correct for the missing ones and parameterize
+    the continuum. Cloud absorption is parameterized by a double-Debey model.
+    Models are formulated in terms of refractivity $N$ (which is complex
+    refractive index minus 1), absorption can be calculated by (REFERENCE?)
+
+    \startformula
+        \ABSCOEF = \frac{4 \pi \nu}{c}~ {\rm Im}(N) \EQCOMMA
+    \stopformula
+
+    where $c$ is the speed of light and $\nu$ is frequency.
+
+    Here model by \cite[Liebe1993], containing ??? lines ..., is used to
+    calculate absorption coefficients of gaseous absorption and model by
+    \cite[Turner2016] for cloud liquid water absorption.
+
+    Example of absorption in typical atmospheric conditions shown in Figure
+    REF. Selecting frequencies along the sides of the absorption complexes
+    of oxygen (V band) and water vapor (K band) allows profiling of the
+    atmosphere as radiation at each frequency is differently absorbed along the
+    way.
 
 \stopsection
 
