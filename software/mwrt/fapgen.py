@@ -1,4 +1,6 @@
-"""Train fast absorption predictors for gaseous and cloud absorption."""
+"""Training and code generation gaseous and cloud FAPs."""
+
+from functools import wraps
 
 import numpy as np
 from sklearn.preprocessing import PolynomialFeatures
@@ -7,26 +9,30 @@ from sklearn.linear_model import Ridge
 from mwrt.fap import partition_lnq, density, esat, qsat
 
 
-__all__ = ["as_absorption", "absorption_model", "CloudFAPGenerator",
-        "GaseousFAPGenerator"]
+__all__ = ["as_absorption", "CloudFAPGenerator", "GaseousFAPGenerator"]
 
 
-def as_absorption(ν, refractivity):
-    """"""
-    def absorption(*args, **kwargs):
+def as_absorption(refractivity):
+    """Convert a refractivity model to an absorption model.
+    
+    This function is supposed to be used to provide input for the model
+    argument of the fit methods of FAPGenerators.
+    """
+    @wraps(refractivity)
+    def absorption(ν, *args, **kwargs):
         N = refractivity(ν, *args, **kwargs)
         return 4 * np.pi * ν * 1.0e9 / 299792458. * np.imag(N)
     return absorption
 
 
-def absorption_model(ν, refractivity_gaseous, refractivity_lwc):
-    """"""
-    def absorption(p, T, lnq):
-        qvap, qliq = partition_lnq(p, T, lnq)
-        # partition_lnq currently only takes VectorValues, this is a bit awkward
-        p, T, lnq = p.fwd, T.fwd, lnq.fwd
+def absorption_model(refractivity_gaseous, refractivity_lwc):
+    """Make a full absorption model from gas and liquid refractivity models.
+
+    Use for the performance evaluation of an FAP.
+    """
+    def absorption(ν, p, T, lnq):
         θ = 300 / T
-        qvap, qliq = qvap.fwd, qliq.fwd
+        qvap, qliq = partition_lnq(p, T, lnq)
         qsat_ = qsat(p=p, T=T)
         e = qvap/qsat_ * esat(T=T)
         ρliq = qliq * density(p=p, T=T)
@@ -36,16 +42,22 @@ def absorption_model(ν, refractivity_gaseous, refractivity_lwc):
 
 
 class FAPGenerator:
-    """"""
+    """Base class for fast absorption predictor generators."""
 
-    def __init__(self, alpha=0.1, degree=3):
-        """"""
+    def __init__(self, degree=3, alpha=0.1):
+        """A new FAPGenerator instance.
+
+        Emits a polynomial of given degree in the state vector variables p, T
+        and lnq, trained with a Ridge-regression model (regularization
+        parameter alpha).
+        """
         self.pf = PolynomialFeatures(degree=degree, include_bias=True)
         # Intercept is modelled by column of 1s in PolyFeatures
         self.lm = Ridge(alpha=alpha, fit_intercept=False)
 
     @staticmethod
     def _generate_terms(coeffs, powers, names):
+        """Generate code for calculation of polynomial."""
         out = []
         for coeff, power in zip(coeffs, powers):
             if coeff == 0:  continue
@@ -59,7 +71,12 @@ class FAPGenerator:
 
     @staticmethod
     def generate_code(name, gasfap, cloudfap):
-        """"""
+        """Generate code for a complete FAP based on the given to components.
+        
+        Generated is a class inheriting from mwrt.fap.FastAbsorptionPredictor
+        with cloud and gas absorption methods implemented. The code can
+        directly be executed with exec() or written to a file for later use.
+        """
         out = ["from mwrt import FastAbsorptionPredictor\n\n"]
         out.append("class {}(FastAbsorptionPredictor):\n\n".format(name))
         out.append(gasfap.generate_method())
@@ -70,11 +87,23 @@ class FAPGenerator:
 
 
 class CloudFAPGenerator(FAPGenerator):
-    """Input: T."""
+    """Train a FAP for specific absorption by cloud liquid water.
+    
+    Only the dependence on temperature is modelled, both Liebe et al. (1993)
+    and Turner et al. (2016) describe absorption by liquid water only as
+    a function of temperature.
+    """
 
     train_T_range = (233., 303., 500000)
 
     def fit(self, model, predictors=None):
+        """Determine the fit coefficients.
+        
+        Targets are provided by calling model on the training data (temperature
+        is converted to inverse temperature θ=300/T before evaluation). These
+        are generated automatically (the range and amount can be controlled
+        with train_T_range) or can be given with the predictors attribute.
+        """
         if predictors is None:
             # Realistic cloud range is not greater than -40°C to 27°C
             predictors = np.linspace(*self.train_T_range).reshape(-1, 1)
@@ -104,11 +133,19 @@ class GasFAPGenerator(FAPGenerator):
     train_rh_range = (0.0001, 1., 50) # Everything > 1 is liquid
 
     def fit(self, model, predictors=None):
+        """Determine the fit coefficients.
+
+        Targets are provided by calling model on the training data (temperature
+        is converted to inverse temperature θ=300/T before evaluation). These
+        are generated automatically (the range and amount can be controlled
+        with train_p_range, train_T_range and train_rh_range) or can be given
+        with the predictors attribute. The predictor input data are formulated
+        in terms of p, T and RH to achive a more realistic training data range.
+        """
         if predictors is None:
             predictors = self.generate_predictor_data()
         assert predictors.shape[1] == 3
         self.pf.fit(predictors)
-        # Train against log of absorption coefficient to guarantee positivity
         θ = 300/predictors[:,1]
         e = (predictors[:,2]/qsat(p=predictors[:,0], T=predictors[:,1])
                 * esat(T=predictors[:,1]))

@@ -5,9 +5,6 @@ from scipy.integrate import trapz, cumtrapz
 from scipy.interpolate import interp1d
 
 
-
-# Radiative Transfer Model
-
 class MWRTM:
     """"""
 

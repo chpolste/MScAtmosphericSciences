@@ -1,4 +1,6 @@
-"""Fast absorption predictor with full forward differentiation.
+"""Fast absorption prediction with full forward differentiation.
+
+The FastAbsorptionPredictor class is the basis of all generated FAPs.
 
 Murphy, D. M., and T. Koop, 2005: Review of the vapour pressures of ice and
     supercooled water for atmospheric applications. Q. J. R. Meteorol. Soc.,
@@ -8,9 +10,11 @@ Murphy, D. M., and T. Koop, 2005: Review of the vapour pressures of ice and
 import abc
 
 import numpy as np
-import scipy.sparse as sp
 
 from mwrt.autodiff import VectorValue, exp
+
+
+__all__ = ["FastAbsorptionPredictor"]
 
 
 def density(p, T):
@@ -41,56 +45,68 @@ def rh(qtot, qsat):
     return qtot / qsat
 
 def partition_lnq(p, T, lnq):
-    """Separate specific water into vapor and liquid components.
-    
-    This is a piecewise function, the differentiation is carried out manually.
-    """
+    """Separate specific water into vapor and liquid components."""
     qtot = exp(lnq)
     qsat_ = qsat(p, T)
     rh_ = rh(qtot, qsat_)
-    mid = (0.95 <= rh_.fwd) & (rh_.fwd <= 1.05)
-    high = 1.05 < rh_.fwd
-    # Calculate partition function
-    fliq = np.zeros_like(p.fwd)
-    fliq_drh = np.zeros_like(p.fwd)
-    # 0.95 <= s <= 1.05: transition into cloud starting at RH = 95%
-    fliq[mid] = 0.5*(rh_.fwd[mid]-0.95-0.1/np.pi*np.cos(10*np.pi*rh_.fwd[mid]))
-    fliq_drh[mid] = np.cos(5*np.pi*(rh_.fwd[mid]-1.05))**2
-    # s > 1.05: RH is capped at 100% from here on only cloud water increases
-    fliq[high] = rh_.fwd[high] - 1.
-    fliq_drh[high] = 1.
-    # Multiply with qsat to obtain specific amount
-    qliq = VectorValue(
-            fwd = qsat_.fwd * fliq,
-            #    (        product rule         (    chain rule   ))
-            #    dqsat/dT * fliq + qsat *      dfliq/drh * drh/dT
-            dT = qsat_.dT * fliq + qsat_.fwd * (fliq_drh * rh_.dT),
-            dlnq = qsat_.dlnq * fliq + qsat_.fwd * (fliq_drh * rh_.dlnq)
-            )
+    if isinstance(rh_, VectorValue):
+        # VectorValue cannot handle the piecewise operations automatically,
+        # therefore the output has to be constructed manually
+        mid = (0.95 <= rh_.fwd) & (rh_.fwd <= 1.05)
+        high = 1.05 < rh_.fwd
+        # RH < 0.95: no liquid water
+        fliq, fliq_drh = np.zeros_like(p.fwd), np.zeros_like(p.fwd)
+        # 0.95 <= RH <= 1.05: smooth transition into cloudy conditions
+        fliq[mid] = 0.5 * (rh_.fwd[mid] - 0.95
+                - 0.1 / np.pi * np.cos(10*np.pi*rh_.fwd[mid]))
+        fliq_drh[mid] = np.cos(5*np.pi*(rh_.fwd[mid]-1.05))**2
+        # RH > 1.05: RH is capped at 100% from here on only more cloud water
+        fliq[high] = rh_.fwd[high] - 1.
+        fliq_drh[high] = 1.
+        # Multiply with qsat to obtain specific amount
+        qliq = VectorValue(
+                fwd = qsat_.fwd * fliq,
+                #    (        product rule         (    chain rule   ))
+                #    dqsat/dT * fliq + qsat *      dfliq/drh * drh/dT
+                dT = qsat_.dT * fliq + qsat_.fwd * (fliq_drh * rh_.dT),
+                dlnq = qsat_.dlnq * fliq + qsat_.fwd * (fliq_drh * rh_.dlnq)
+                )
+    else:
+        # If the input is not a VectorValue only calculate forward component
+        mid = (0.95 <= rh_) & (rh_ <= 1.05)
+        high = 1.05 < rh_
+        fliq = np.zeros_like(p.fwd)
+        fliq[mid] = 0.5 * (rh_[mid] - 0.95
+                - 0.1 / np.pi * np.cos(10*np.pi*rh_[mid]))
+        fliq[high] = rh_[high] - 1.
+        qliq = qsat_ * fliq
     # All water that's not liquid is vapor
     return qtot - qliq, qliq
 
 
 class FastAbsorptionPredictor(metaclass=abc.ABCMeta):
-    """"""
+    """The basis of all generated FAPs.
 
-    def __call__(self, p, T, lnq):
-        """"""
+    It is unnecessary to instanciate this class, the class is only there to
+    group the two components of the FAP.
+    """
+
+    @classmethod
+    def evaluate(cls, p, T, lnq):
+        """Calculate the absorptions coefficients and their derivatives."""
         qvap, qliq = partition_lnq(p, T, lnq)
         density_ = density(p, T)
-        absorp_gas = self.gas_absorption(p, T, qvap)
-        absorp_clw = self.cloud_absorption(T) * qliq * density_
-        out = absorp_gas + absorp_clw
-        return out
-        return VectorValue(out.fwd, out.dT, out.dlnq)
+        absorp_gas = cls.gas_absorption(p, T, qvap)
+        absorp_clw = cls.cloud_absorption(T) * qliq * density_
+        return absorp_gas + absorp_clw
 
     @staticmethod
     @abc.abstractmethod
-    def cloud_absorption(self, T):
-        """"""
+    def cloud_absorption(T):
+        """Density specific absorption by liquid water."""
 
     @staticmethod
     @abc.abstractmethod
-    def gas_absorption(self, p, T, lnq):
-        """"""
+    def gas_absorption(p, T, lnq):
+        """Absorption by gases."""
 
