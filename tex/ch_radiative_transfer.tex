@@ -208,19 +208,53 @@
 
 \startsection[title=Fast Absorption Prediction]
 
-    Fitting a polynomial to the absorption at a specific line to speed up
-    calculations and simplify derivatives. Evaluate FAP performance for
-    each line of the HATPRO. Training data: synthetic gridded data
-    representative for a wide variety of atmospheric states. Climatology is
-    test dataset. Climatology is not used for training due to profiles being
-    mostly at night and night, therefore temperatures are not representative
-    of whole range of realistic values. Climatology is valuable as independent
-    test set.
+    A major part of the radiative transfer calculations is the determination of
+    the absorption coefficient of each layer of the discretization. Although
+    the models of \cite[Liebe1993] and \cite[Turner2016] are already fairly
+    simple, the forward model spends a large fraction of computing time in
+    these components. The purpose of a \infull{FAP} (\FAP) is to reduce this
+    time. It also simplifies the task of model linearization greatly
+    (section \in[ch:linearization]). The {\FAP} is chosen to be a polynomial of
+    the state vector variables $p$, $T$, $\LNQ$ (although with some prior
+    processing of the variables, as seen shortly). The polynomial coefficients
+    are determined by multiple linear regression.
+    
+    In a first implementation both gaseous and cloud absorption were modelled
+    together by a single polynomial of the state vector variables. Up to
+    polynomials of degree 5 yielded large errors in the approximated absorption
+    coefficients. The polynomial was not able to adequately represent the
+    strong nonlinearity at the cloud threshold. Higher order polynomials are
+    affected by combinatorial blowup of interaction terms and numerical
+    stability, therefore a more refined approach is taken.
+
+    Instead of fitting a polynomial to the combined gaseous and cloud
+    absorption, the components are approximated separately. Specific cloud
+    absorption according to the model by \cite[Turner2016] is only a function
+    of temperature. A 5th order polynomial in $T$ is sufficient to approximate
+    cloud absorption at a selected frequency with good accuracy. The gaseous
+    absorption is modelled by $p$, $T$ and $\QVAP$, with the latter obtained by
+    separating $\QTOT$ into its vapor and liquid components using ???).
+    \cite[Lohnert2004] and \cite[Hewison2006] used a third order polynomial of
+    these variables without interaction terms and claimed good accuracy. This
+    was not observed here, therefore a 5th order polynomial with all
+    interaction terms is used in this work. Additionally, instead of using the
+    absorption coefficient $\ABSCOEF$ as the target of the regression directly,
+    $\ln(\ABSCOEF)$ is used in order to guarantee positivity of the
+    approximated $\ABSCOEF$.
+
+    TODO: describe test data set. FAP scpecialized for each frequency.
+    Evaluate FAP performance for each line of the HATPRO. Training data:
+    synthetic gridded data representative for a wide variety of atmospheric
+    states. Climatology is test dataset. Climatology is not used for training
+    due to profiles being mostly at night and night, therefore temperatures are
+    not representative of whole range of realistic values. Climatology is
+    valuable as independent test set. Mention that FAP errors contribute to
+    covariance matrix.
 
 \stopsection
 
 
-\startsection[title=Linearization]
+\startsection[title=Linearization,reference=ch:linearization]
 
     Necessary for iterative optimal estimation approach.
 
