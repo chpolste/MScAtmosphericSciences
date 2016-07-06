@@ -27,8 +27,8 @@ class VectorBase:
 class Vector(VectorBase):
     """A vector of independent scalars with automatic differentiation.
 
-    Overloaded operators: * (to be understood element-wise)
-    Operators work between DiagVector instances and with scalars.
+    Overloaded operators: +, *, partially / (to be understood element-wise)
+    Operators work between Vector instances and with scalars.
     
     jacobians: rows are derivatives of fixed component, cols are derivatives
                wrt the same variable of all components
@@ -60,6 +60,42 @@ class Vector(VectorBase):
         if isinstance(other, Number):
             return self * other # Multiplication is associative
         return NotImplemented
+
+    def __truediv__(self, other):
+        if isinstance(other, Number):
+            return Vector(
+                    fwd = self.fwd / other,
+                    dT = self.dT / other,
+                    dlnq = self.dlnq / other
+                    )
+        return NotImplemented
+
+    def __add__(self, other):
+        if isinstance(other, Vector):
+            return Vector(
+                    fwd = self.fwd + other.fwd,
+                    dT = self.dT + other.dT,
+                    dlnq = self.dlnq + other.dlnq
+                    )
+        if isinstance(other, Number):
+            return Vector(fwd=self.fwd+other, dT=self.dT, dlnq=self.dlnq)
+        return NotImplemented
+
+    def __radd__(self, other):
+        if isinstance(other, Number):
+            return self + other # Addition is associative
+        return NotImplemented
+
+    def __neg__(self):
+        return Vector(fwd=-self.fwd, dT=-self.dT, dlnq=-self.dlnq)
+
+    def __getitem__(self, key):
+        return Vector(
+                fwd = self.fwd[key],
+                dT = self.dT[key,:],
+                dlnq = self.dlnq[key,:]
+                )
+
 
 
 class DiagVector(VectorBase):
@@ -152,11 +188,7 @@ class DiagVector(VectorBase):
                     dlnq = self.dlnq + other.dlnq
                     )
         if isinstance(other, Number):
-            return DiagVector( 
-                    fwd = self.fwd + other,
-                    dT = self.dT,
-                    dlnq = self.dlnq
-                    )
+            return DiagVector(fwd=self.fwd+other, dT=self.dT, dlnq=self.dlnq)
         return NotImplemented
 
     def __radd__(self, other):
@@ -172,11 +204,7 @@ class DiagVector(VectorBase):
                     dlnq = self.dlnq - other.dlnq
                     )
         if isinstance(other, Number):
-            return DiagVector( 
-                    fwd = self.fwd - other,
-                    dT = self.dT,
-                    dlnq = self.dlnq
-                    )
+            return DiagVector(fwd=self.fwd-other, dT=self.dT, dlnq=self.dlnq)
         return NotImplemented
 
     def __rsub__(self, other):
@@ -230,8 +258,11 @@ def exp(value):
 @exp.register(Vector)
 def _(value):
     fwd = np.exp(value.fwd)
-    return Vector(...) #TODO
-
+    return Vector(
+            fwd = fwd,
+            dT = value.dT * fwd[:,None],
+            dlnq = value.dlnq * fwd[:,None]
+            )
 
 @exp.register(DiagVector)
 def _(value):
@@ -240,16 +271,16 @@ def _(value):
 
 
 @singledispatch
-def trapz(value, grid, initial=None):
+def trapz(value, grid):
     """Trapezoidal quadrature."""
-    return it.trapz(value, grid, initial=initial)
+    return it.trapz(value, grid)
 
 @trapz.register(Vector)
-def _(value, grid, initial=None):
+def _(value, grid):
     return Vector(
-            fwd = it.trapz(value.fwd, grid, initial=initial),
-            dT = it.trapz(value.dT, grid, initial=initial, axis=0),
-            dlnq = it.trapz(value.dlnq, grid, initial=initial, axis=0),
+            fwd = it.trapz(value.fwd, grid),
+            dT = it.trapz(value.dT, grid, axis=0),
+            dlnq = it.trapz(value.dlnq, grid, axis=0),
             )
 
 

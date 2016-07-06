@@ -1,5 +1,7 @@
 """Microwave region radiative transfer model for ground based applications."""
 
+from numbers import Number
+
 import numpy as np
 
 from mwrt.autodiff import Vector, DiagVector, exp, trapz, cumtrapz
@@ -40,9 +42,9 @@ class CachedMWRTM:
     def __init__(self, parent, p, T, lnq):
         """"""
         zz = parent.interpolator.target
-        pp = parent.interpolator @ p
-        TT = parent.interpolator @ T
-        qq = parent.interpolator @ lnq
+        pp = parent.interpolator(p)
+        TT = parent.interpolator(T)
+        qq = parent.interpolator(lnq)
         # Instead of propagating low-res dT and dlnq through entire FAP
         # calculation, the FAP jacobian is evaluated in high-res space (where
         # it is diagonal and much easier to handle).
@@ -57,24 +59,31 @@ class CachedMWRTM:
         # diagonal matrix αα.dT faster than using scipy.sparse.diags.
         self.α = Vector(
                 fwd = αα.fwd,
-                dT = alpha_fap.dT[:,None] * itp,
-                dlnq = alpha_fap.dlnq[:,None] * itp
+                dT = αα.dT[:,None] * parent.interpolator.matrix,
+                dlnq = αα.dlnq[:,None] * parent.interpolator.matrix
                 )
         # Optical depth
         self.τ = -cumtrapz(self.α, zz, initial=0)
         # Keep vertical grid and temperature for evaluation
         self.z = zz
-        self.T = TT
+        self.T = Vector(
+                fwd=TT,
+                dT=parent.interpolator.matrix,
+                dlnq=np.zeros_like(parent.interpolator.matrix, dtype=float)
+                )
 
     def evaluate(self, angle):
         """Angle from zenith in degrees."""
+        cosangle = np.cos(np.deg2rad(angle))
+        τexp = exp(self.τ/cosangle)
+        cosmic = 2.736 * τexp[-1]
+        return cosmic + trapz(self.α * self.T * τexp, self.z)/cosangle
 
     def __call__(self, angles):
         """Angle in degrees"""
-        cosangle = np.cos(np.deg2rad(angle))
-        τexp = np.exp(self.τ.fwd/cosangle) # cache this...?
-        cosmic = 2.736 * τexp[-1] # TODO
-        return cosmic + trapz(self.α.fwd * self.T * τexp, self.z)/cosangle
+        if isinstance(angles, Number):
+            return self.evaluate(angles)
+        raise NotImplementedError()
 
 
 class Radiometer:
