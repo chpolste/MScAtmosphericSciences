@@ -4,22 +4,13 @@ from functools import singledispatch, wraps
 from numbers import Number
 
 import numpy as np
+import scipy.sparse as sp
+import scipy.integrate as it
 
 
-class VectorValue:
-    """A vector of independent scalars with automatic differentiation.
-
-    Overloaded operators: +, -, *, /, **
-    Operators work between VectorValue instances and with scalars.
-
-    The container is taylored to the needs of the fast absorption predictors.
-    It is suitable for a vector of scalars, whose derivatives (dT, dlnq) can be
-    calculated element-wise. This is the case for the absorption coefficients,
-    which are only dependent on the properties of their own layer. The Jacobian
-    of the vector is a diagonal matrix, therefore it is sufficient to calculate
-    and store only the diagonal.
-    """
-
+class VectorBase:
+    """"""
+    
     def __init__(self, fwd, dT, dlnq):
         """Create a new instance with autodiff capabilities.
         
@@ -32,29 +23,33 @@ class VectorValue:
         self.dT = dT
         self.dlnq = dlnq
 
+
+class Vector(VectorBase):
+    """A vector of independent scalars with automatic differentiation.
+
+    Overloaded operators: * (to be understood element-wise)
+    Operators work between DiagVector instances and with scalars.
+    
+    jacobians: rows are derivatives of fixed component, cols are derivatives
+               wrt the same variable of all components
+    """
+
+
     def __repr__(self):
-        return "VectorValue(fwd={}, dT={}, dlnq={})".format(
+        return "Vector(fwd={}, dT={}, dlnq={})".format(
                 repr(self.fwd), repr(self.dT), repr(self.dlnq))
 
-    def __pow__(self, other):
-        """Power rule of derivation, implemented for integer exponents."""
-        if isinstance(other, int):
-            return VectorValue(
-                    fwd = self.fwd**other,
-                    dT = self.fwd**(other-1) * self.dT * other,
-                    dlnq = self.fwd**(other-1) * self.dlnq * other,
-                    )
-
     def __mul__(self, other):
-        """Product rule of derivation."""
-        if isinstance(other, VectorValue):
-            return VectorValue( 
+        """Element-wise multiplication, product rule."""
+        if isinstance(other, Vector):
+            return Vector(
                     fwd = self.fwd * other.fwd,
-                    dT = self.dT*other.fwd + self.fwd*other.dT,
-                    dlnq = self.dlnq*other.fwd + self.fwd*other.dlnq
+                    # [:,None] causes row-wise multiplication
+                    dT = self.dT * other.fwd[:,None] + self.fwd[:,None] * other.dT,
+                    dlnq = self.dlnq * other.fwd[:,None] + self.fwd[:,None] * other.dlnq
                     )
         if isinstance(other, Number):
-            return VectorValue(
+            return Vector(
                     fwd = self.fwd * other,
                     dT = self.dT * other,
                     dlnq = self.dlnq * other
@@ -63,23 +58,76 @@ class VectorValue:
 
     def __rmul__(self, other):
         if isinstance(other, Number):
-            return VectorValue(
-                    fwd = other * self.fwd,
-                    dT = other * self.dT,
-                    dlnq = other * self.dlnq
+            return self * other # Multiplication is associative
+        return NotImplemented
+
+
+class DiagVector(VectorBase):
+    """A vector of independent scalars with automatic differentiation.
+
+    Overloaded operators: +, -, *, /, ** (to be understood element-wise)
+    Operators work between DiagVector instances and with scalars.
+
+    The container is taylored to the needs of the fast absorption predictors.
+    It is suitable for a vector of scalars, whose derivatives (dT, dlnq) can be
+    calculated element-wise and are of the same number as the vector. This is
+    the case for the absorption coefficients, which are only dependent on the
+    properties of their own layer. The Jacobians of the vector are diagonal
+    matrices, therefore it is sufficient to calculate and store only the
+    diagonals.
+    """
+
+    def __repr__(self):
+        return "DiagVector(fwd={}, dT={}, dlnq={})".format(
+                repr(self.fwd), repr(self.dT), repr(self.dlnq))
+
+    def as_vector(self):
+        return Vector(
+                fwd = self.fwd,
+                dT = sp.diags(self.dT),
+                dlnq = sp.diags(self.dlnq)
+                )
+
+    def __pow__(self, other):
+        """Power rule of derivation, implemented for integer exponents."""
+        if isinstance(other, int):
+            return DiagVector(
+                    fwd = self.fwd**other,
+                    dT = self.fwd**(other-1) * self.dT * other,
+                    dlnq = self.fwd**(other-1) * self.dlnq * other,
                     )
+
+    def __mul__(self, other):
+        """Product rule of derivation."""
+        if isinstance(other, DiagVector):
+            return DiagVector( 
+                    fwd = self.fwd * other.fwd,
+                    dT = self.dT*other.fwd + self.fwd*other.dT,
+                    dlnq = self.dlnq*other.fwd + self.fwd*other.dlnq
+                    )
+        if isinstance(other, Number):
+            return DiagVector(
+                    fwd = self.fwd * other,
+                    dT = self.dT * other,
+                    dlnq = self.dlnq * other
+                    )
+        return NotImplemented
+
+    def __rmul__(self, other):
+        if isinstance(other, Number):
+            return self * other # Multiplication is associative
         return NotImplemented
 
     def __truediv__(self, other):
         """Quotient rule of derivation."""
-        if isinstance(other, VectorValue):
-            return VectorValue( 
+        if isinstance(other, DiagVector):
+            return DiagVector( 
                     fwd = self.fwd / other.fwd,
                     dT = (self.dT*other.fwd-self.fwd*other.dT) / other.fwd**2,
                     dlnq = (self.dlnq*other.fwd-self.fwd*other.dlnq) / other.fwd**2
                     )
         if isinstance(other, Number):
-            return VectorValue(
+            return DiagVector(
                     fwd = self.fwd / other,
                     dT = self.dT / other,
                     dlnq = self.dlnq / other
@@ -88,7 +136,7 @@ class VectorValue:
 
     def __rtruediv__(self, other):
         if isinstance(other, Number):
-            return VectorValue(
+            return DiagVector(
                     fwd = other / self.fwd,
                     dT = - other * self.dT / self.fwd**2,
                     dlnq = - other * self.dlnq / self.fwd**2
@@ -97,14 +145,14 @@ class VectorValue:
 
     def __add__(self, other):
         """Derivation is linear."""
-        if isinstance(other, VectorValue):
-            return VectorValue( 
+        if isinstance(other, DiagVector):
+            return DiagVector( 
                     fwd = self.fwd + other.fwd,
                     dT = self.dT + other.dT,
                     dlnq = self.dlnq + other.dlnq
                     )
         if isinstance(other, Number):
-            return VectorValue( 
+            return DiagVector( 
                     fwd = self.fwd + other,
                     dT = self.dT,
                     dlnq = self.dlnq
@@ -113,22 +161,18 @@ class VectorValue:
 
     def __radd__(self, other):
         if isinstance(other, Number):
-            return VectorValue( 
-                    fwd = other + self.fwd,
-                    dT = self.dT,
-                    dlnq = self.dlnq
-                    )
+            return self + other # Addition is associative
         return NotImplemented
 
     def __sub__(self, other):
-        if isinstance(other, VectorValue):
-            return VectorValue( 
+        if isinstance(other, DiagVector):
+            return DiagVector( 
                     fwd = self.fwd - other.fwd,
                     dT = self.dT - other.dT,
                     dlnq = self.dlnq - other.dlnq
                     )
         if isinstance(other, Number):
-            return VectorValue( 
+            return DiagVector( 
                     fwd = self.fwd - other,
                     dT = self.dT,
                     dlnq = self.dlnq
@@ -137,7 +181,7 @@ class VectorValue:
 
     def __rsub__(self, other):
         if isinstance(other, Number):
-            return VectorValue( 
+            return DiagVector( 
                     fwd = other - self.fwd,
                     dT = - self.dT,
                     dlnq = - self.dlnq
@@ -149,7 +193,7 @@ class VectorValue:
         """Wrap a function such that all args of calls to the wrapper are
         packaged into a ValueVector with zero-valued derivatives. This might be
         useful for testing, when only the forward value is relevant and the
-        function to test only accepts VectorValue arguments.
+        function to test only accepts DiagVector arguments.
         """
         @wraps(f)
         def packed(*args, **kwargs):
@@ -181,16 +225,44 @@ class VectorValue:
 @singledispatch
 def exp(value):
     """Exponential function."""
-    err = "No implementation for type {}".format(type(value))
-    raise NotImplementedError(err)
-
-@exp.register(np.ndarray)
-@exp.register(Number)
-def _(value):
     return np.exp(value)
 
-@exp.register(VectorValue)
+@exp.register(Vector)
 def _(value):
     fwd = np.exp(value.fwd)
-    return VectorValue(fwd=fwd, dT=value.dT*fwd, dlnq=value.dlnq*fwd)
+    return Vector(...) #TODO
+
+
+@exp.register(DiagVector)
+def _(value):
+    fwd = np.exp(value.fwd)
+    return DiagVector(fwd=fwd, dT=value.dT*fwd, dlnq=value.dlnq*fwd)
+
+
+@singledispatch
+def trapz(value, grid, initial=None):
+    """Trapezoidal quadrature."""
+    return it.trapz(value, grid, initial=initial)
+
+@trapz.register(Vector)
+def _(value, grid, initial=None):
+    return Vector(
+            fwd = it.trapz(value.fwd, grid, initial=initial),
+            dT = it.trapz(value.dT, grid, initial=initial, axis=0),
+            dlnq = it.trapz(value.dlnq, grid, initial=initial, axis=0),
+            )
+
+
+@singledispatch
+def cumtrapz(value, grid, initial=None):
+    """Cumulative trapezoidal quadrature."""
+    return it.cumtrapz(value, grid, initial=initial)
+
+@cumtrapz.register(Vector)
+def _(value, grid, initial=None):
+    return Vector(
+            fwd = it.cumtrapz(value.fwd, grid, initial=initial),
+            dT = it.cumtrapz(value.dT, grid, initial=initial, axis=0),
+            dlnq = it.cumtrapz(value.dlnq, grid, initial=initial, axis=0),
+            )
 

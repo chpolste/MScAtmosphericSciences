@@ -11,7 +11,7 @@ import abc
 
 import numpy as np
 
-from mwrt.autodiff import VectorValue, exp
+from mwrt.autodiff import DiagVector, exp
 
 
 __all__ = ["FastAbsorptionPredictor"]
@@ -49,8 +49,8 @@ def partition_lnq(p, T, lnq):
     qtot = exp(lnq)
     qsat_ = qsat(p, T)
     rh_ = rh(qtot, qsat_)
-    if isinstance(rh_, VectorValue):
-        # VectorValue cannot handle the piecewise operations automatically,
+    if isinstance(rh_, DiagVector):
+        # DiagVector cannot handle the piecewise operations automatically,
         # therefore the output has to be constructed manually
         mid = (0.95 <= rh_.fwd) & (rh_.fwd <= 1.05)
         high = 1.05 < rh_.fwd
@@ -64,7 +64,7 @@ def partition_lnq(p, T, lnq):
         fliq[high] = rh_.fwd[high] - 1.
         fliq_drh[high] = 1.
         # Multiply with qsat to obtain specific amount
-        qliq = VectorValue(
+        qliq = DiagVector(
                 fwd = qsat_.fwd * fliq,
                 #    (        product rule         (    chain rule   ))
                 #    dqsat/dT * fliq + qsat *      dfliq/drh * drh/dT
@@ -72,7 +72,7 @@ def partition_lnq(p, T, lnq):
                 dlnq = qsat_.dlnq * fliq + qsat_.fwd * (fliq_drh * rh_.dlnq)
                 )
     else:
-        # If the input is not a VectorValue only calculate forward component
+        # If the input is not a DiagVector only calculate forward component
         mid = (0.95 <= rh_) & (rh_ <= 1.05)
         high = 1.05 < rh_
         fliq = np.zeros_like(p)
@@ -87,12 +87,11 @@ def partition_lnq(p, T, lnq):
 class FastAbsorptionPredictor(metaclass=abc.ABCMeta):
     """The basis of all generated FAPs.
 
-    It is unnecessary to instanciate this class, the class is only there to
-    group the two components of the FAP.
+    There are no instances of the class (__new__ triggers evaluation), the
+    class is only there to group the two components of the FAP.
     """
 
-    @classmethod
-    def evaluate(cls, p, T, lnq):
+    def __new__(cls, p, T, lnq):
         """Calculate the absorptions coefficients and their derivatives."""
         qvap, qliq = partition_lnq(p, T, lnq)
         density_ = density(p, T)

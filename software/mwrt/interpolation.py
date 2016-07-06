@@ -44,8 +44,11 @@ class LinearInterpolation:
     def __call__(self, value):
         return self.matrix @ value
 
-    def __matmul__(self, value):
-        return self.matrix @ value
+    def __matmul__(self, other):
+        return self.matrix @ other
+
+    def __rmatmul__(self, other):
+        return other @ self.matrix
 
     def __repr__(self):
         return "LinearInterpolation(source={}, target={})".format(
