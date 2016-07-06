@@ -14,6 +14,8 @@ Module-wide conventions:
 
 from mwrt.model import MWRTM
 from mwrt.fap import FastAbsorptionPredictor
+from mwrt.autodiff import VectorValue
+from mwrt.interpolation import LinearInterpolation
 import mwrt.refractivity_l93 as liebe93
 import mwrt.refractivity_tkc as tkc
 

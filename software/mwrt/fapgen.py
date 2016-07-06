@@ -9,7 +9,7 @@ from sklearn.linear_model import Ridge
 from mwrt.fap import partition_lnq, density, esat, qsat
 
 
-__all__ = ["as_absorption", "CloudFAPGenerator", "GaseousFAPGenerator"]
+__all__ = ["as_absorption", "CloudFAPGenerator", "GasFAPGenerator"]
 
 
 def as_absorption(refractivity):
@@ -128,9 +128,9 @@ class CloudFAPGenerator(FAPGenerator):
 class GasFAPGenerator(FAPGenerator):
     """Input: p, T, q."""
 
-    train_p_range = 80., 980., 50
-    train_T_range = 170., 330., 50
-    train_rh_range = (0.0001, 1., 50) # Everything > 1 is liquid
+    train_p_range = 80., 980., 100
+    train_T_range = 170., 330., 100
+    train_rh_range = (0.0001, 1., 100) # Everything > 1 is liquid
 
     def fit(self, model, predictors=None):
         """Determine the fit coefficients.

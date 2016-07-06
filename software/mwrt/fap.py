@@ -75,7 +75,7 @@ def partition_lnq(p, T, lnq):
         # If the input is not a VectorValue only calculate forward component
         mid = (0.95 <= rh_) & (rh_ <= 1.05)
         high = 1.05 < rh_
-        fliq = np.zeros_like(p.fwd)
+        fliq = np.zeros_like(p)
         fliq[mid] = 0.5 * (rh_[mid] - 0.95
                 - 0.1 / np.pi * np.cos(10*np.pi*rh_[mid]))
         fliq[high] = rh_[high] - 1.

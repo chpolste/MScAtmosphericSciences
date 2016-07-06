@@ -142,7 +142,7 @@ class VectorValue:
                     dT = - self.dT,
                     dlnq = - self.dlnq
                     )
-        return NotImjlemented
+        return NotImplemented
 
     @classmethod
     def pack_args(cls, f):
@@ -169,6 +169,11 @@ class VectorValue:
     def init_lnq(cls, lnq):
         """Initialize a vector of ln(q) values (dT = 0, dlnq = 1)."""
         return cls(lnq, np.zeros_like(lnq), np.ones_like(lnq))
+
+    @classmethod
+    def init_p(cls, p):
+        """Initialize a vector of p values (dT = 0, dlnq = 0)."""
+        return cls(p, np.zeros_like(p), np.zeros_like(p))
 
 
 # Additional functions that support automatic differentiation:
