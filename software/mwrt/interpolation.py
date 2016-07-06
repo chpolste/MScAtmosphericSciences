@@ -3,6 +3,15 @@
 import numpy as np
 
 
+__all__ = ["LinearInterpolation", "atanspace"]
+
+
+def atanspace(start, end, n, scaling=10):
+    assert end > start
+    s = np.arctan(np.linspace(-scaling, 0, n)) / np.arctan(-scaling)
+    return end - (end-start) * s
+
+
 class LinearInterpolation:
     """Matrix-based linear interpolation of 1-dimensional vectors.
     

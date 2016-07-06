@@ -6,10 +6,12 @@ import numpy as np
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import Ridge
 
+from mwrt.interpolation import atanspace
 from mwrt.fap import partition_lnq, density, esat, qsat
 
 
-__all__ = ["as_absorption", "CloudFAPGenerator", "GasFAPGenerator"]
+__all__ = ["as_absorption", "generate_code", "CloudFAPGenerator",
+        "GasFAPGenerator"]
 
 
 def as_absorption(refractivity):
@@ -28,7 +30,7 @@ def as_absorption(refractivity):
 def absorption_model(refractivity_gaseous, refractivity_lwc):
     """Make a full absorption model from gas and liquid refractivity models.
 
-    Use for the performance evaluation of an FAP.
+    Use for performance evaluation of a FAP.
     """
     def absorption(ν, p, T, lnq):
         θ = 300 / T
@@ -41,10 +43,28 @@ def absorption_model(refractivity_gaseous, refractivity_lwc):
     return absorption
 
 
+def generate_code(name, gasfap, cloudfap, with_import=True):
+    """Generate code for a complete FAP based on the given to components.
+    
+    Generated is a class inheriting from mwrt.fap.FastAbsorptionPredictor
+    with cloud and gas absorption methods implemented. The code can
+    directly be executed with exec() or written to a file for later use.
+    """
+    out = []
+    if with_import:
+        out.append("from mwrt import FastAbsorptionPredictor\n\n\n")
+    out.append("class {}(FastAbsorptionPredictor):\n\n".format(name))
+    out.append(gasfap.generate_method())
+    out.append("\n")
+    out.append(cloudfap.generate_method())
+    out.append("\n")
+    return "".join(out)
+
+
 class FAPGenerator:
     """Base class for fast absorption predictor generators."""
 
-    def __init__(self, degree=3, alpha=0.1):
+    def __init__(self, degree=3, alpha=0.01):
         """A new FAPGenerator instance.
 
         Emits a polynomial of given degree in the state vector variables p, T
@@ -69,22 +89,6 @@ class FAPGenerator:
             out.append(" * ".join(term))
         return out if out else " 0."
 
-    @staticmethod
-    def generate_code(name, gasfap, cloudfap):
-        """Generate code for a complete FAP based on the given to components.
-        
-        Generated is a class inheriting from mwrt.fap.FastAbsorptionPredictor
-        with cloud and gas absorption methods implemented. The code can
-        directly be executed with exec() or written to a file for later use.
-        """
-        out = ["from mwrt import FastAbsorptionPredictor\n\n"]
-        out.append("class {}(FastAbsorptionPredictor):\n\n".format(name))
-        out.append(gasfap.generate_method())
-        out.append("\n")
-        out.append(cloudfap.generate_method())
-        out.append("\n")
-        return "".join(out)
-
 
 class CloudFAPGenerator(FAPGenerator):
     """Train a FAP for specific absorption by cloud liquid water.
@@ -94,7 +98,7 @@ class CloudFAPGenerator(FAPGenerator):
     a function of temperature.
     """
 
-    train_T_range = (233., 303., 500000)
+    train_T_range = 233., 303., 500000
 
     def fit(self, model, predictors=None):
         """Determine the fit coefficients.
@@ -129,8 +133,8 @@ class GasFAPGenerator(FAPGenerator):
     """Input: p, T, q."""
 
     train_p_range = 80., 980., 100
-    train_T_range = 170., 330., 100
-    train_rh_range = (0.0001, 1., 100) # Everything > 1 is liquid
+    train_T_range = 170., 313., 100
+    train_rh_range = 0., 1., 120 # Everything > 1 is liquid
 
     def fit(self, model, predictors=None):
         """Determine the fit coefficients.
@@ -156,7 +160,7 @@ class GasFAPGenerator(FAPGenerator):
         from sklearn.utils.extmath import cartesian
         ps = np.linspace(*self.train_p_range)
         Ts = np.linspace(*self.train_T_range)
-        rhs = np.linspace(*self.train_rh_range)
+        rhs = atanspace(*self.train_rh_range, scaling=2.5)
         data = cartesian([ps, Ts, rhs])
         # Remove some (for Innsbruck) unrealistic data
         remove = (
