@@ -1,3 +1,24 @@
+Numerical radiative transfer calculations play a central role in retrieval.
+Iterative retrieval impossible without, statistical requires long history of
+measurements and radiosondes, which is available at only very few locations in
+the world and not transferrable (is that true???).
+
+A few common model are used: MONORTM (which is the basis of the previous
+retrieval studies from Innsbruck), MPM, ARTS, .... TODO: refer to comparison
+study. Currently developed: RTTOV-gb, which appears to be very promising.
+Older models such as MONORTM appear to be slowly left behind as more and more
+authors start to use optimal estimation techniques. Instead mature and more
+modern projects such as ARTS and now also RTTOV-gb, which provide analytical
+Jacobians are favored (show this with citations).
+
+In this chapter: presentation of the basics of radiative transfer, discussion
+of discretization techniques, linearization and error characterization. The
+chapter ends with a custom implementation of an RTM containing only the bare
+essentials but providing exact Jacobians. The model is supposed to
+be a demonstration prototype optimized for ease of use, not computational
+performance or accuracy.
+
+
 \startsection[title=The Radiative Transfer Equation]
 
     General form, absorption only, Rayleigh-Jeans → Brightness Temperatures.
@@ -291,28 +312,61 @@
 
 \startsection[title=Linearization,reference=ch:linearization]
 
-    Necessary for iterative optimal estimation approach.
-
-    Possibility of truncating the Jacobian at upper levels.
+    Necessary for iterative optimal estimation approach but also gives
+    information about the sensitivity of the measurement to different layers of
+    the atmosphere (weighting functions). Quality of linearization important
+    for convergence of iterative retrieval procedure. Literature review:
+    everyone seems to be working with finite differences, but often complaints
+    that these calculations take long. ARTS offers approximated Jacobians
+    but with a model reduced to the essentials it is possible to evaluate the
+    Jacobian exactly and this is done here.
 
     \startsubsection[title=Weighting Functions]
 
         Weighting functions/averaging kernels. Givve examples for different
-        angles.
+        angles. Plots!
 
     \stopsubsection
 
     \startsubsection[title=Calculating the Jacobian]
 
         Brute force: can be used with every model. Problems with selection of
-        perturbations, non-linearity (e.g. at liquid water boundary).
+        perturbations, non-linearity (e.g. at liquid water boundary). One-sided
+        derivatives have bad accuracy (first order finite difference).
+        Possibility of truncating the Jacobian at upper levels to save
+        computing time.
 
-        Symbolic differentiation: often unaffordable due to model complexity.
-        Automatic differentiation can help but requires model that is
-        compatible to AD-compiler. Approach here: strip model down to bare
-        essentials, use FAP to allow easy symbolic differentiation of
-        absorption model, thus allowing the exact computation of the Jacobian.
-        
+        Analytical alternatives to finite differences: symbolic and automatic
+        differentiation. Symbolic differentiation often requires significant
+        effort and has the problem of combinatorial blowup of expressions.
+        Automatic differentiation evaluates the derivatives at each node of
+        the computation graph directly. There are two ways of performing
+        automatic differentiation: the forward-mode type moves from the input
+        towards the output, computing the derivatives with respect to each
+        input along the way. The reverse-model type moves from the output
+        towards the input, computing the derivative of each output with respect
+        to each node of the computation graph along the way. Both techniques
+        yield the same results but might be very different in terms of
+        computational cost. Generally speaking reverse-mode is suitable for
+        problems with many inputs and only few outputs, while forward mode
+        differentiation is more efficient for problems with more outputs than
+        inputs.
+
+        A radiative transfer model, with many atmospheric layers and only
+        a few brightness temperatures as output seems well suited for
+        reverse-model differentiation. The model presented in the next section
+        uses forward mode despite that due to it being more easy to implement
+        and due to the merging of computational paths only happening at the end
+        of the model calculation and having little interaction in between
+        (absorption coefficients are only dependend on their own layer),
+        therefore the computational advantage of reverse-mode is likely to be
+        offset by the more complicated implementation.
+
+        TODO: mention that there are code generators for automatic
+        differentiation, tie in backprop if NNs are used and maybe make a
+        computational graph for the model, showing that most of the model
+        happens in parallel.
+
     \stopsubsection
 
 \stopsection
