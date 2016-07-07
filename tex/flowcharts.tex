@@ -1,0 +1,65 @@
+% Iterative retrieval algorithm
+
+\setupFLOWcharts[height=2em,width=14em,maxwidth=\textwidth,
+        nx=2,ny=5,dx=2em,dy=1.4em]
+\setupFLOWshapes[backgroundcolor=white,framecolor=black,
+        rulethickness=1pt]
+\setupFLOWlines[color=black,radius=6pt,rulethickness=1.2pt]
+
+\startFLOWchart[flow:iteralgo]
+    \startFLOWcell[framecolor=white]
+        \name{start}
+        \location{1,1}
+        \text{\FigureCaptionStyle START}
+        \connection[bt]{ig}
+    \stopFLOWcell
+    \startFLOWcell
+        \name{ig}
+        \location{1,2}
+        \text{\FigureStyle initial guess $\ITER{\MEANVEC}{0}$}
+        \shape{5}
+        \connection[bt]{rtm}
+    \stopFLOWcell
+    \startFLOWcell[backgroundcolor=gray]
+        \name{rtm}
+        \location{1,3}
+        \text{\FigureStyle RTM}
+        \connection[rl]{sbt}
+    \stopFLOWcell
+    \startFLOWcell
+        \name{sbt}
+        \location{2,3}
+        \text{\FigureStyle $\FWD(\MEANVEC)$ and $\FWDJAC$}
+        \shape{25}
+        \connection[bt]{lms}
+    \stopFLOWcell
+    \startFLOWcell[backgroundcolor=gray]
+        \name{lms}
+        \location{2,4}
+        \text{\FigureStyle Levenberg-Marquard step}
+        \connection[lr]{np}
+    \stopFLOWcell
+    \startFLOWcell
+        \name{np}
+        \location{1,4}
+        \text{\FigureStyle new profile $\MEANVEC$}
+        \shape{25}
+        \connection[tb]{rtm}
+        \connection[bt]{cov}
+        \comment[tr]{\FigureStyle not converged}
+        \comment[br]{\FigureStyle converged}
+    \stopFLOWcell
+    \startFLOWcell[framecolor=white]
+        \name{cov}
+        \location{1,5}
+        \text{\FigureCaptionStyle END}
+    \stopFLOWcell
+    \startFLOWcell
+        \name{pri}
+        \location{2,5}
+        \text{\FigureStyle observation $\VECY$, prior $\MEANVECA$, $\COVMATA$}
+        \connection[tb]{lms}
+        \shape{5}
+    \stopFLOWcell
+\stopFLOWchart
+

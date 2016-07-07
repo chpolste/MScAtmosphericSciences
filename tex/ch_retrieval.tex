@@ -383,6 +383,14 @@ repeated to achieve consistent notation and naming conventions throughout.
         Explain where 1D-VAR comes from: starting with minimization of
         variance.
         
+        \placefigure[top][fig:iteralgo]
+                {Visualization of the iterative retrieval algorithm. Missing
+                is the forward model error distribution, which is used in the
+                Levenberg-Marquard step. Square boxes represent numerical
+                calculations, rounded boxes data input and octagonal boxes
+                data being produced during the retrieval.}
+                {\FLOWchart[flow:iteralgo]}
+
     \stopsubsection
 
     \startsubsection[title=Introducing Constraints by Regularization]
@@ -400,6 +408,16 @@ repeated to achieve consistent notation and naming conventions throughout.
 
         Example: \cite[Hewison2006], penalizing high LWC and references
         therein.
+
+    \stopsubsection
+
+    \startsubsection[title={Constructing the Prior},reference=ch:construct_prior]
+
+        Choosing the prior (=background) state. Constructing the covariance
+        matrix.
+
+        Next: a generalization of the concept of a prior, that simplifies
+        the inclusion of multiple other sources of data.
 
     \stopsubsection
 
@@ -436,13 +454,6 @@ repeated to achieve consistent notation and naming conventions throughout.
         might actually be used for the combination of COSMO7 and Nordkette
         measurements.
         
-    \stopsubsection
-
-    \startsubsection[title={Constructing the Prior},reference=ch:construct_prior]
-
-        Choosing the prior (=background) state. Constructing the covariance
-        matrix.
-
     \stopsubsection
 
 \stopsection
