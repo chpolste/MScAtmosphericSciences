@@ -1,6 +1,32 @@
-Why radiometer measurements → boundary layer, high time resolution.
+Radiosondes, aircraft measurements and satellites are main sources of vertical
+information about atmospheric state. Such information is of high values
+for many areas of meteorology, from boundary layer research to numerical
+weather prediction. Vertical profiles of temperature and humidity are a main
+indicator for the state of the atmospheric boundary layer, they are used in
+day-to-day weather forecasting and are routinely assimilated into numerical
+weather prediction models. All three sources of measurement suffer from
+resolution issues: Aircraft soundings are available with relatively high
+frequency but only where airports exist. Radiosondes are also quite sparse
+spatially, but are also launched only one to four times a day due to high
+costs of equipment. They have the smallest error of all mentioned instruments
+but suffer from drift and locality of measurement. Remote sensing instruments
+of satellites provide area averaged profiles with generally limited vertical
+resolution and have largest errors near the surface which is a problem for
+boundary layer research. While the temporal resolution of space-bourne
+instruments is good, vertical profiles usually stem from satellites in
+polar orbits resulting in large area coverage but long times until
+a measurement is made at the same location again.
 
-Applications: Fundamental ABL-research, nowcasting, NWP assimilation, ....
+From the desire for a ground-based instrument with lower operating costs than
+balloon soundings and high temporal resolution came microwave radiometers...
+
+Passive instrument, very high time resolution, little maintenance necessary,
+fairly cheap components, portable. Ground based means best vertical resolution
+in boundary layer. Can see through clouds in contrast to IR instruments but
+problems in rain due to scattering. Aside from scattering issues in rain only
+few atmospheric constituents to consider in radiative transfer.
+
+TODO: expand a little, put 1 or 2 citations in here.
 
 
 \startsection[title={State of Research}]
@@ -11,7 +37,7 @@ Applications: Fundamental ABL-research, nowcasting, NWP assimilation, ....
 \stopsection
 
 
-\startsection[title={Prior Work and Objectives}]
+\startsection[title={Prior Work in Innsbruck}]
 
     The Institute of Atmospheric and Cryospheric Sciences at the University of
     Innsbruck operates a passive microwave radiometer as part of the Innsbruck
@@ -54,44 +80,67 @@ Applications: Fundamental ABL-research, nowcasting, NWP assimilation, ....
     with specialized retrievals allowed even the retrieval of elevated
     temperature inversions with satisfying accuracy.
 
-    Considering these results, there seem to be little incentive to
-    fundamentally change the retrieval method. But there are aspects of
-    regression techniques that are disadvantageous.
+\stopsection
 
-    No quantified uncertainty. Additional regressors do not constrain the
-    solution, regression training might find good correlation and put much
-    weight into such an additional regressor, but the retrieved profile is not
-    explicity bound to the measured value. Additionally problem of uncertainty
-    assessment, which is addressed here.  Bayesian technique used here improves
-    on these points: uncertainty assessment of retrieved profile and explicit
-    consideration of measurement errors. Also: use correlations between
-    adjacent atmospheric layers, while regression decouples into a separate
-    problem for each layer. Non-obvious integration of information such as
-    cloud base height. No guaranteed consistency between temperature, humidity
-    and brightness temperatures. Only what's contained in the climatology can
-    be reproduced, this is especially problematic in Innsbruck where
-    radiosondes are only lauched once a day at night. Known bad performance in
-    upper atmosphere. Many implicit assumptions in regression model. Complete
-    disregard of physical knowledge, only statisitical relationship.
 
-    TODO: Height attribution of clouds in the valley is possible without
-    ceilometers or cloud radar due to terrain markers, most NWP models resolve
-    the terrain insufficiently. Humidity too localized for integration of
-    surface measurements?
+\startsection[title={Objectives}]
 
-    Goals of this thesis: building foundation for future work in Innsbruck,
-    towards operational retrievals for ABL-research (ibox) and ertel2
-    visualization (mention recently added lidar). Bayesian techniques require
-    much more effort up front than regression techniques and seem much more
-    subjective in the choice of error margins etc. but actually all these
-    assumptions are in a way also included in a regression model, just
-    implicitly. Making the user aware of these assumptions is important for
-    understanding of the results and might be seen as an advantage even though
-    it means more work. Bayesian approach is much more powerful than
-    regression, can adapt to situations not included in the climatology, can
-    include information from other instruments and NWP, which is especially
-    helpful for the retrieval of upper-troposphere data. Generally the Bayesian
-    approach is mathematically cleaner.
+    In this thesis the retrieval problem is approached from a Bayesian
+    perspective. One of the major benefits of the Bayesian approach is the
+    assessment of uncertainty of a retrieved profile. This applies to
+    retrievals using linear regression but more importantly allows the
+    integration of a radiative transfer model into the retrieval yielding
+    the well established optimal estimation technique aka 1D-VAR.
+
+    Considering the good results of the prior work in Innsbruck using linear
+    regression, there seems to be little incentive to fundamentally change the
+    retrieval method. But there are aspects of regression techniques that are
+    disadvantageous. Since regression is a purely statistical method any
+    knowledge of the underlying physics is - if at all - only implicitly
+    included. Introducing additional regressors such as surface temperature
+    measurements provide no hard constraints for the retrieval. Similarly
+    there is no explicit connection between adjacent atmospheric layers because
+    in training the problem decouples into individual regressions for each
+    layer. Physically reasonable behavior of retrieved profiles (as usually
+    observed in practice) is a consequence of a representative climatology.
+    But there is always the possibility of a situation appearing that is far
+    away from the climatological range leading to poor regression performance.
+    Innsbruck for example has the problem that radiosondes are only launched at
+    night, which likely leads to worse retrieval performance during the day
+    (without a reasonably sized test dataset of daytime radiosondes this is not
+    easy to verify).  Other locations might not even have a training set of
+    radiosonde profiles available for training. Model forecasts can be used for
+    such locations (CITE THIS) but these are affected by problems associated
+    with NWP.
+
+    Optimal estimation techniques following a Bayesian approach improve on
+    these shortcomings of regression. Uncertainty assessment is natural to all
+    Bayesian methods since entire distributions are propagated through the
+    retrieval instead of just values. Physical knowledge, e.g. from a radiative
+    transfer model, is explicitly incorporated during retrieval making it
+    possible to accurately obtain profiles in situations not covered by
+    a climatology. Adding additional instruments to the retrieval scheme seems
+    mathematically more elegant (EHHH) than in regression methods and is
+    generally more flexible (CITE IPT PAPER?). These benefits come at a cost.
+    The radiative transfer model only works with profiles of temperature,
+    humidity and cloud liquid water making retrievals of individual variables
+    impossible. Computational costs are higher, although this concern is
+    becoming increasingly irrelevant with faster models and computers. Even
+    though optimal estimation methods do not require a climatology, the data
+    that is used must have well characterized errors and known systematic
+    biases. This makes the setup much more complicated than that of
+    a regression method.
+
+    The goal of this thesis is to provide such a setup for profile retrievals
+    in Innsbruck paving the way to operational retrievals useful for boundary
+    layer research and weather forecasting. It is an exploratory study as
+    variational techniques have never been used for retrievals in Innsbruck.
+    Most of the theoretical background of the method and radiative transfer
+    is shown here in order to build a deep understanding of the method and all
+    its assumptions and implications. Results of a first retrieval
+    implementation are shown and compared to regression retrievals. Finally,
+    shortcomings of the presented work and ideas for future research are
+    given.
 
 \stopsection
 
