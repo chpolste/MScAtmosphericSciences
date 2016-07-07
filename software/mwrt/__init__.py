@@ -16,6 +16,7 @@ from mwrt.model import MWRTM
 from mwrt.fap import FastAbsorptionPredictor
 from mwrt.autodiff import DiagVector, Vector
 from mwrt.interpolation import LinearInterpolation, atanspace
+import mwrt.evaluation as evaluation
 import mwrt.refractivity_l93 as liebe93
 import mwrt.refractivity_tkc as tkc
 

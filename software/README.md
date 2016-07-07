@@ -23,4 +23,6 @@ Data analysis scripts/notebooks and software that will not be developed into sta
 
 ## Radiative Transfer Modelling
 
-- `mwrt`: Custom microwave radiative transfer model (work in progress)
+- `mwrt`: custom microwave radiative transfer model (work in progress)
+- `faps_generator.py`: training of FAPs for HATPRO channels and code generation
+- `spectral_line_generator.py`: creates the spectral line database used in `mwrt` from a reference implementation.
