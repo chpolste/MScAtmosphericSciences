@@ -2,31 +2,96 @@ Why radiometer measurements → boundary layer, high time resolution.
 
 Applications: Fundamental ABL-research, nowcasting, NWP assimilation, ....
 
-History of application in Innsbruck: Linear regression techniques, focus on
-inclusion of additional information from different heights. Advantage of
-location in mountains: vertical profiles of the lower atmosphere can be made
-directly with stations along a mountain slope, if surface layer effects are
-taken into account. Linear regression allows very easy integration of such
-measurements, no explicit consideration of surface layer processes necessary.
-But: additional regressors do not constrain the solution, regression training
-might find good correlation and put much weight into such an additional
-regressor, but the retrieved profile is not explicity bound to the measured
-value. Additionally problem of uncertainty assessment, which is addressed here.
-Bayesian technique used here improves on these points: uncertainty assessment
-of retrieved profile and explicit consideration of measurement errors. Also:
-use correlations between adjacent atmospheric layers, while regression
-decouples into a separate problem for each layer.
 
-Goals of this thesis: quick literature review, building foundation for future
-work in Innsbruck, towards operational retrievals for ABL-research (ibox) and
-ertel2 visulalization (mention recently added lidar). Bayesian techniques
-require much more effort up front than regression techniques and seem much more
-subjective in the choice of error margins etc. but actually all these
-assumptions are in a way also included in a regression model, just implicit.
-Making the user aware of these assumptions is important for understanding of
-the results and might be seen as an advantage even though it means more work.
-Bayesian approach is much more powerful than regression, can adapt to
-situations not included in the climatology, can include information from other
-instruments and NWP, which is especially helpful for the retrieval of
-upper-troposphere data.
+\startsection[title={State of Research}]
+
+    Literature Review, from beginnings of regression to rise of variational
+    methods.
+
+\stopsection
+
+
+\startsection[title={Prior Work and Objectives}]
+
+    The Institute of Atmospheric and Cryospheric Sciences at the University of
+    Innsbruck operates a passive microwave radiometer as part of the Innsbruck
+    Box project, whose objective it is to study boundary layer dynamics in
+    complex terrain. Consequently there have been efforts to retrieve
+    temperature and humidity profiles from brightness temperature measurements
+    of the radiometer. Research in Innsbruck has been carried out by
+    \cite[Massaro2013] in his master's thesis and a subseqent publication
+    \cite[authoryears][Massaro2015], followed by a contribution earlier this
+    year by \cite[Meyer2016].
+    
+    Retrievals for the Innsbruck site have been done so far by linear
+    regression techniques with a focus on retrieval performance of profiles
+    with a surface-based or elevated temperature inversion and the inclusion of
+    regressors other than brightness temperatures in the retrieval process. The
+    desire to include additional information stems from Innsbruck's location in
+    an Alpine valley at an altitude of approximately 600 m, surrounded by
+    mountains of over 2000 m height. This complex terrain provides
+    a challenging environment for radiometer retrievals as the boundary layer
+    evolution is strongly affected by the topography. But the location in the
+    mountains also provides data not available in flat regions: weather
+    stations exist at different heights in the mountains, providing in-situ
+    profiles of the inner-Alpine atmosphere. Even though these measurements
+    are affected by surface layer effects they contain valuable information
+    about the state of the lower troposphere. Regression techniques allow easy
+    integration of such information into a retrieval. The relationship between
+    the valley atmosphere measured by the radiometer and surface layer
+    measurements obtained from weather stations does not have to be explicitly
+    known but is automatically inferred by the regression.
+
+    \cite[Massaro2015] found that the linear regression retrieval performance
+    in Innsbruck is comparable performance to flat regions. They found
+    significant improvement in the accuracy of the temperature profile at
+    heights where additional information are included and for specialized
+    retrievals, which categorize the atmospheric state e.g. by stability. Their
+    biggest problem remained the accurate retrieval of elevated temperature
+    inversions. \cite[Meyer2016] expanded on these results, taking into account
+    a greater number of surface observations from various heights and distances
+    from the radiometer. The inclusion of data from these stations combined
+    with specialized retrievals allowed even the retrieval of elevated
+    temperature inversions with satisfying accuracy.
+
+    Considering these results, there seem to be little incentive to
+    fundamentally change the retrieval method. But there are aspects of
+    regression techniques that are disadvantageous.
+
+    No quantified uncertainty. Additional regressors do not constrain the
+    solution, regression training might find good correlation and put much
+    weight into such an additional regressor, but the retrieved profile is not
+    explicity bound to the measured value. Additionally problem of uncertainty
+    assessment, which is addressed here.  Bayesian technique used here improves
+    on these points: uncertainty assessment of retrieved profile and explicit
+    consideration of measurement errors. Also: use correlations between
+    adjacent atmospheric layers, while regression decouples into a separate
+    problem for each layer. Non-obvious integration of information such as
+    cloud base height. No guaranteed consistency between temperature, humidity
+    and brightness temperatures. Only what's contained in the climatology can
+    be reproduced, this is especially problematic in Innsbruck where
+    radiosondes are only lauched once a day at night. Known bad performance in
+    upper atmosphere. Many implicit assumptions in regression model. Complete
+    disregard of physical knowledge, only statisitical relationship.
+
+    TODO: Height attribution of clouds in the valley is possible without
+    ceilometers or cloud radar due to terrain markers, most NWP models resolve
+    the terrain insufficiently. Humidity too localized for integration of
+    surface measurements?
+
+    Goals of this thesis: building foundation for future work in Innsbruck,
+    towards operational retrievals for ABL-research (ibox) and ertel2
+    visualization (mention recently added lidar). Bayesian techniques require
+    much more effort up front than regression techniques and seem much more
+    subjective in the choice of error margins etc. but actually all these
+    assumptions are in a way also included in a regression model, just
+    implicitly. Making the user aware of these assumptions is important for
+    understanding of the results and might be seen as an advantage even though
+    it means more work. Bayesian approach is much more powerful than
+    regression, can adapt to situations not included in the climatology, can
+    include information from other instruments and NWP, which is especially
+    helpful for the retrieval of upper-troposphere data. Generally the Bayesian
+    approach is mathematically cleaner.
+
+\stopsection
 
