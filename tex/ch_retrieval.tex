@@ -129,7 +129,7 @@ repeated to achieve consistent notation and naming conventions throughout.
             \NC -2 \ln(\POSTERIOR) = \NC -2 \ln(\LIKELIHOOD \PRIOR) \NR
             \NC = \NC -2 \ln(\LIKELIHOOD) - 2 \ln(\PRIOR) \NR
             \NC = \NC
-                \GAUSSEXP{\VECY}{\FWDJAC - \VECB}{\COVMATERR}
+                \GAUSSEXP{\VECY}{\FWDJAC \VECX - \VECB}{\COVMATERR}
                 + \GAUSSEXP{\VECX}{\MEANVECA}{\COVMATA} + c_1 + c_2
                 \NR
             \NC = \NC
@@ -319,23 +319,29 @@ repeated to achieve consistent notation and naming conventions throughout.
     Gaussians cannot be carried out using the results from section
     \in[ch:bayes_gauss] yet.
 
-    \startsubsection[title=An Iterative Solution]
+    \startsubsection[title=Iterative Solutions]
 
-        Taylor series around a state $\ITER{\MEANVEC}{i}$, throw away higher order
-        terms
+        Taylor series around a state $\ITER{\MEANVEC}{i}$, throw away higher
+        order terms
 
         \startformula
             \FWD(\VECX) \approx \FWD(\ITER{\MEANVEC}{i})
                 + \ITER{\FWDJAC}{i} (\VECX - \ITER{\MEANVEC}{i})
         \stopformula
 
-        Insert into \ineq{optimalest_posterior} to obtain an expression for
-        the posterior where the mean of the likelihood function is linear in
-        $\VECX$ and \ineq{gausspostcov} and \ineq{gausspostmean} can be used to
-        determine the posterior distribution parameters. Because of the
-        linearization the solutions for $\MEANVEC$ and $\COVMAT$ will not be
-        optimal. Use fixed-point iteration to find the optimal solution,
-        leading to an iterative scheme
+        Insert into \ineq{optimalest_posterior} equating
+
+        \startformula
+            \VECB = \FWD(\ITER{\MEANVEC}{i}) + \ITER{\FWDJAC}{i}
+            \ITER{\MEANVEC}{i} + \MEANVECERR
+        \stopformula
+
+        to obtain an expression for the posterior where the mean of the
+        likelihood function is linear in $\VECX$ and \ineq{gausspostcov} and
+        \ineq{gausspostmean} can be used to determine the posterior
+        distribution parameters. Because of the linearization the solutions for
+        $\MEANVEC$ and $\COVMAT$ will not be optimal. Use fixed-point iteration
+        to find the optimal solution, leading to an iterative scheme
 
         \startsubformulas[eq:gausspostiter]
         \placesubformula
@@ -343,7 +349,7 @@ repeated to achieve consistent notation and naming conventions throughout.
         \startalign[n=3,align={right,left,right}]
             \NC \ITER{\MEANVEC}{i+1} = \NC
                 \ITER{\COVMAT}{i} (\ITER{\FWDJAC}{i}^\top \COVMATERR^{-1}
-                (\VECY - \MEANVECERR - \FWD(\ITER{\MEANVEC}{i})
+                (\VECY - \FWD(\ITER{\MEANVEC}{i} - \MEANVECERR)
                 + \ITER{\FWDJAC}{i} \ITER{\MEANVEC}{i}) + \COVMATA^{-1} \MEANVECA)
                 \EQCOMMA \NC \NR[eq:gausspostmeaniter][a]
             \NC \ITER{\COVMAT}{i} = \NC
@@ -354,7 +360,38 @@ repeated to achieve consistent notation and naming conventions throughout.
         \stopformula
         \stopsubformulas
 
-        Using the identity
+        In practice more robust iteration schemes are needed to obtain good
+        convergence properties. The search for the mean of the posterior can be
+        translated into a minimization problem, for which many well studied
+        numerical methods exist. This is because of the symmetry of Gaussian
+        which implies that the mean of the distribution is also its maximum
+        \footnote{In Bayesian terminology this is called the maximum
+        a-posteriori solution or MAP for short. The equivalence of mean, MAP
+        and expected value is one of the convenient analytic properties of
+        the Gaussian distribution which make it such an attractive
+        assumption.}. The natural logarithm is a strictly monotonic function
+        therefore the maximum distribution is equal to the minimum of its
+        negated quadratic form. The task is then to find the root of the
+        gradient of the quadratic form of \ineq{optimalest_posterior} with
+        respect to $\VECX$:
+
+        \placeformula
+        \startformula
+        \startalign[n=2,align={right,left}]
+            \NC 0 = \NC \nabla_{\VECX} (- 2 \ln(\POSTERIOR)) \NR
+            \NC = \NC (\VECY - \FWD(\VECX) - \MEANVECERR)^\top \COVMAT^{-1}
+                (\VECY - \FWD(\VECX) - \MEANVECERR) + (\VECX - \MEANVECA)^\top
+                \COVMATA (\VECX - \MEANVECX)^\top \EQSTOP \NR[eq:gaussminimization]
+        \stopalign
+        \stopformula
+        
+        Usually one settles for a least squares solution to the minimization
+        problem as methods for these problems are much simpler to implement
+        (e.g. Newton's method for finding the root of a function requires the
+        Hessian, which is often expensive to calculate). \cite[Rodgers2000]
+        shows resulting iterative schemes for the Gauss-Newton method and
+        a more robust version of it, the Levenberg-Marquard iteration. Using
+        the identity
 
         \startformula
             \MEANVECA - \ITER{\COVMAT}{i} \ITER{\FWDJAC}{i}^\top
@@ -364,25 +401,15 @@ repeated to achieve consistent notation and naming conventions throughout.
             \MEANVECA = \ITER{\COVMAT}{i} \COVMATA^{-1} \MEANVECA \EQCOMMA
         \stopformula
 
-        it is easily seen that \ineq{gausspostmeaniter} is equivalent to
-        equation 5.9 from \cite[Rodgers2000], which he obtained by finding
-        for the maximum of the posterior {\PDF} with the Gauss-Newton method.
-        The next section expands on this approach by introducing an iterative
-        procedure that is more robust than basic fixed point iteration.
+        it is easily seen that \ineq{gausspostmeaniter}, the solution obtained
+        from fixed point iteration with the linearized forward model, is
+        equivalent to equation 5.9 from \cite[Rodgers2000], which he obtained
+        by applying the Gauss-Newton method. This underlines the equivalence
+        of the two approaches.
 
-    \stopsubsection
+        TODO: convergence criterion, cite one or two examples where convergence
+        was a problem.
 
-    \startsubsection[title=A Cost Function Approach]
-
-        MAP = finding maximum of a cost function (refer to property of Gaussian
-        that maximum=mean). Argue that one still obtains full information about
-        distribution in case of Gaussian assumption. Solve nonlinear problem by
-        Levenberg-Marquart, show equivalence to previous result by fixing gamma
-        parameter.
-
-        Explain where 1D-VAR comes from: starting with minimization of
-        variance.
-        
         \placefigure[top][fig:iteralgo]
                 {Visualization of the iterative retrieval algorithm. Missing
                 is the forward model error distribution, which is used in the
@@ -391,33 +418,59 @@ repeated to achieve consistent notation and naming conventions throughout.
                 data being produced during the retrieval.}
                 {\FLOWchart[flow:iteralgo]}
 
-    \stopsubsection
-
-    \startsubsection[title=Introducing Constraints by Regularization]
-
-        Refer to cost function version of MAP solution.
-
-        Introduce penalties to cost function. Explain how is nothing else than
-        adding additional prior information (interpret each penalty term as its
-        own distribution). Advantage: Simpler to set up than modifying prior,
-        but no representation of additional knowledge in posterior since MAP
-        solution does not give uncertainty and a general analytic solution for
-        the posterior is impossible when {\PDF}s more complicated than Gaussian
-        appear. Mention Monte Carlo as solution but very high associated
-        compuational costs.
-
-        Example: \cite[Hewison2006], penalizing high LWC and references
-        therein.
+        The flowchart in figure \in[fig:iteralgo] visualizes the resulting
+        iterative retrieval scheme. Given the prior knowledge, the measurement
+        and an initial guess of the profile, minimization steps with a
+        linearized forward model are taken until convergence. The profile
+        of the last iteration is then the result of the retrieval.
 
     \stopsubsection
 
-    \startsubsection[title={Constructing the Prior},reference=ch:construct_prior]
+    \startsubsection[title={1D-VAR, Cost Functions and Regularization}]
 
-        Choosing the prior (=background) state. Constructing the covariance
-        matrix.
+        There is another way to derive the optimal estimation retrieval scheme.
+        Instead of working directly with probability distributions the
+        retrieval problem can be approached as a minimization of the expected
+        value of the retrieval error variance. In case of the assumption of
+        Gaussian distributions this leads to the same solutions as the Bayesian
+        approach. Because of the focus on minimization variance this approach
+        is called \quote{variational} often abbreviated as 1D-VAR, since it is
+        an applied to an atmospheric profile which represents one dimension of
+        the atmosphere. A derivation from the variational perspective is found
+        in chapter 4.2 in the book by \cite[Rodgers2000].
 
-        Next: a generalization of the concept of a prior, that simplifies
-        the inclusion of multiple other sources of data.
+        The quadratic form minimized in the MAP solution
+        \ineq{gaussminimization} is often referred to as a cost function,
+        terminology that is common in regression problems.  It is popular to
+        add so-called regularization or penalty terms to this cost function in
+        order to make the retrieval favor physically realistic solutions. In
+        atmospheric profile retrieval such a penalty might be a term involving
+        the lapse rate, raising the \quote{cost} of having superadiabatic
+        layers in the atmosphere as these only occur near the surface (CITE).
+        REF and \cite[Hewison2006] added a term regulating the amount of LWC,
+        with a higher penalty for higher cloud water content.
+        
+        There is a problem with including information in the retrieval by
+        adding regularization terms: while the information is included in the
+        retrieved profile, it is absent from its uncertainty estimate given by
+        $\ITER{\COVMAT}{i}$. This issue can be resolved with the Bayesian
+        perspective. Viewing the cost function as the product of the prior
+        and likelihood function it becomes obvious that each additional penalty
+        term is nothing else than a multiplication by a distribution
+        representing prior knowledge. For a quadratic penalty term the
+        associated distribution is Gaussian, making the posterior a Gaussian
+        and an analytic form of the uncertainty can be derived as shown in the
+        next section. For other terms the distribution might not permit an
+        analytic form of the posterior. Then one has to resort to discretized
+        distributions and/or Monte Carlo methods which are costly due to the
+        high dimensionality of the retrieval problem.
+
+        Regularization is a powerful tool for the inclusion of additional
+        knowledge but penalities more complex than quadratic forms generally
+        violate the Gaussian assumptions leading to inaccurate uncertainty
+        estimates. Often these errors are tolerable since for many end users
+        a more accuratly retrieved profile is more valuable than an
+        inconsistent uncertainty assessment.
 
     \stopsubsection
 
@@ -456,6 +509,13 @@ repeated to achieve consistent notation and naming conventions throughout.
         
     \stopsubsection
 
+    \startsubsection[title={Constructing the Prior},reference=ch:construct_prior]
+
+        Choosing the prior (=background) state. Constructing the covariance
+        matrix.
+
+    \stopsubsection
+
 \stopsection
 
 
@@ -465,20 +525,13 @@ repeated to achieve consistent notation and naming conventions throughout.
     the inverse model from climatology instead of introducting a numerical
     physical model.
 
-    \startsubsection[title=Quantifying Uncertainty]
-
-        Transformation into eigensystem, diagonal covariance.
-
-    \stopsubsection
-
-    \startsubsection[title=Including Additional Information]
-
-        Adding regressors. No explicit forward model or error estimate needed.
-        Who has done it? Problem: no constraint, rather a suggestion. Known
-        elements of state vector are not enforced.
-
-    \stopsubsection
+    Adding regressors. No explicit forward model or error estimate needed.
+    Who has done it? Problem: no constraint, rather a suggestion. Known
+    elements of state vector are not enforced.
     
+    Quantifying Uncertainty by transformation into eigensystem, diagonal
+    covariance.
+
 \stopsection
 
 
