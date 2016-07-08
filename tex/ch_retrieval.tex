@@ -93,9 +93,54 @@ repeated to achieve consistent notation and naming conventions throughout.
     text, some general results are derived in the following sections. These
     will be used in subsequent sections.
 
-    \startsubsection[title=Maximum Likelihood Estimators for the Parameters]
+    \startsubsection[title=Parameter Estimation]
         
-        How best to determine mean and cov from a given dataset.
+        For the description of a dataset in the form of a Gaussian distribution
+        the mean and covariance parameters have to be estimated from the data.
+        This is done by finding the maximum likelihood solutions for $\MEANVEC$
+        and $\COVMAT$ given a dataset $\{\VECX_1, \dots, \VECX_N\}$, whose
+        elements are assumed to be independent and identically distributed.
+        The results are found in most textbooks dealing with statistics
+        \cite[alternative=authoryears,left={(e.g. }][Bishop2006]. Results
+        are shown here for completeness but no derivations.
+
+        The likelihood of a single datapoint $\VECX_i$ is
+        $\GAUSS{\VECX_i}{\MEANVEC}{\COVMAT}$ and because of the assumption of
+        independent data the likelihood of the entire dataset is
+
+        \startformula
+            \PROB{\{\VECX_1, \dots, \VECX_N\}|\MEANVEC,\COVMAT}
+            = \prod_{i=1}^N \GAUSS{\VECX_i}{\MEANVEC}{\COVMAT} \EQCOMMA
+        \stopformula
+
+        i.e. the product of each individual likelihood. The product of
+        Gaussians is again Gaussian and mean of a Gaussian is its maximum
+        therefore $\MEANVEC$ is found by maximizing the likelihood function of
+        the dataset or equivalently minimizing its negative natural logarithm.
+        Determination of the covariance matrix is more involved as it has to be
+        symmetric and positive definite. The resulting ML estimates are
+
+        \startformula
+            \MEANVEC_{ML} = \frac{1}{N} \sum_{i=1}^N \VECX_i
+        \stopformula
+
+        and
+
+        \startformula
+            \COVMAT_{ML} = \frac{1}{N} \sum_{i=1}^N (\VECX_i - \MEANVEC_{ML})^\top
+                (\VECX_i - \MEANVEC_{ML})
+        \stopformula
+
+        Notably the mean can be calculated independently from the covariance.
+        The ML estimator of the covariance systematically underestimates the
+        true covariance but can be corrected by using
+
+        \startformula
+            \tilde\COVMAT_{ML} = \frac{1}{N-1} \sum_{i=1}^N (\VECX_i - \MEANVEC_{ML})^\top
+                (\VECX_i - \MEANVEC_{ML})
+        \stopformula
+
+        instead of $\COVMAT_{ML}$.
 
     \stopsubsection
 
@@ -366,8 +411,8 @@ repeated to achieve consistent notation and naming conventions throughout.
         numerical methods exist. This is because of the symmetry of Gaussian
         which implies that the mean of the distribution is also its maximum
         \footnote{In Bayesian terminology this is called the maximum
-        a-posteriori solution or MAP for short. The equivalence of mean, MAP
-        and expected value is one of the convenient analytic properties of
+        a-posteriori solution or MAP for short. The equivalence of MAP and
+        the expected value is one of the convenient analytic properties of
         the Gaussian distribution which make it such an attractive
         assumption.}. The natural logarithm is a strictly monotonic function
         therefore the maximum distribution is equal to the minimum of its
