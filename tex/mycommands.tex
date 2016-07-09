@@ -24,10 +24,11 @@
 \define\EQSTOP{{\rm ~.}}
 \define\EQCOMMA{{\rm ~,}}
 
+\define\GIVEN{\,|\,}
+
 % Functions
-%\define[3]\GAUSS{{\rm N(#1\,|\,#2,\, #3)}}
-\define[3]\GAUSS{{\rm N(#1|#2, #3)}}
-\define[3]\GAUSSEXP{{\rm (#1 - #2)^\top #3 (#1 - #2)}}
+\define[3]\GAUSS{{\rm N}(#1 \GIVEN #2, #3)}
+\define[3]\GAUSSEXP{{(#1 - #2)^\top #3 (#1 - #2)}}
 \define[2]\DERIV{\frac{\diff #1}{\diff #2}}
 \define[1]\PROB{p(#1)}
 \define[2]\ITER{#1_{#2}}
@@ -99,8 +100,8 @@
 \define\MEANVECA{\MEANVEC_a}
 \define\MEANVECERR{\MEANVEC_\ERR}
 
-%\define\COVMAT{{\mathgreekupright \bf \Sigma}}
-\define\COVMAT{{\bf S}}
+\define\COVMAT{{\mathgreekupright \bf \Sigma}}
+%\define\COVMAT{{\bf S}}
 \define\COVMATX{\COVMAT_\VECX}
 \define\COVMATY{\COVMAT_\VECY}
 \define\COVMATA{\COVMAT_a}
@@ -109,8 +110,8 @@
 % Bayes
 \define\JOINT{\PROB{\VECX, \VECY}}
 \define\JOINTZ{\PROB{\VECZ}}
-\define\POSTERIOR{\PROB{\VECX|\VECY}}
-\define\LIKELIHOOD{\PROB{\VECY|\VECX}}
+\define\POSTERIOR{\PROB{\VECX \GIVEN \VECY}}
+\define\LIKELIHOOD{\PROB{\VECY \GIVEN \VECX}}
 \define\PRIOR{\PROB{\VECX}}
 \define\NORMALIZATION{\PROB{\VECY}}
 
