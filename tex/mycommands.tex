@@ -6,12 +6,15 @@
 \akronym{FAP}{fast absorption predictor}
 \akronym{PDF}{probability density function}
 
+\definemathmatrix
+    [pmatrix]
+    [left={\left\lbrack\,},right={\,\right\rbrack}]
 
 % Highlighting terms in formulas
 \define[2]\mathbox{
     \inframed[frame=on,
               framecolor=#1,
-              frameoffset=1pt,
+              frameoffset=0pt,
               corner=round,
               rulethickness=1pt,
               ]{$#2$}}
@@ -22,8 +25,9 @@
 \define\EQCOMMA{{\rm ~,}}
 
 % Functions
+%\define[3]\GAUSS{{\rm N(#1\,|\,#2,\, #3)}}
 \define[3]\GAUSS{{\rm N(#1|#2, #3)}}
-\define[3]\GAUSSEXP{{\rm (#1 - #2)^\top #3^{-1} (#1 - #2)}}
+\define[3]\GAUSSEXP{{\rm (#1 - #2)^\top #3 (#1 - #2)}}
 \define[2]\DERIV{\frac{\diff #1}{\diff #2}}
 \define[1]\PROB{p(#1)}
 \define[2]\ITER{#1_{#2}}
@@ -48,11 +52,40 @@
 % Sets
 \define\REALS{\mathbb{R}}
 
+% Scalars
+\define\CONST{{\rm const}}
+
 % Vectors
-\define\ZEROVEC{{\bf 0}}
+\define\VECZERO{{\bf 0}}
 \define\VECX{{\bf x}}
+\define\VECXT{{\bf x}^\top}
 \define\VECY{{\bf y}}
+\define\VECYT{{\bf y}^\top}
+\define\VECZ{{\bf z}}
+\define\VECZT{{\bf z}^\top}
+\define\VECA{{\bf a}}
+\define\VECAT{{\bf a}^\top}
 \define\VECB{{\bf b}}
+\define\VECBT{{\bf b}^\top}
+\define\VECC{{\bf c}}
+\define\VECCT{{\bf c}^\top}
+\define\VECD{{\bf d}}
+\define\VECDT{{\bf d}^\top}
+
+% Matrices
+\define\MATA{{\bf A}}
+\define\MATB{{\bf B}}
+\define\MATBT{{\bf B}^\top}
+\define\MATP{{\bf P}}
+\define\MATPI{{\bf P}^{-1}}
+\define\MATQ{{\bf Q}}
+\define\MATQI{{\bf Q}^{-1}}
+\define\MATR{{\bf R}}
+\define\MATRI{{\bf R}^{-1}}
+\define\MATS{{\bf S}}
+\define\MATSI{{\bf S}^{-1}}
+\define\MATT{{\bf T}}
+\define\MATTI{{\bf T}^{-1}}
 
 % Forward model
 \define\FWD{{\bf F}}
@@ -60,6 +93,7 @@
 \define\ERR{{\mathgreekupright \bf \epsilon}}
 
 \define\MEANVEC{{\mathgreekupright \bf \mu}}
+\define\MEANVECT{{\mathgreekupright \bf \mu^\top}}
 \define\MEANVECX{\MEANVEC_\VECX}
 \define\MEANVECY{\MEANVEC_\VECY}
 \define\MEANVECA{\MEANVEC_a}
@@ -73,6 +107,8 @@
 \define\COVMATERR{\COVMAT_\ERR}
 
 % Bayes
+\define\JOINT{\PROB{\VECX, \VECY}}
+\define\JOINTZ{\PROB{\VECZ}}
 \define\POSTERIOR{\PROB{\VECX|\VECY}}
 \define\LIKELIHOOD{\PROB{\VECY|\VECX}}
 \define\PRIOR{\PROB{\VECX}}

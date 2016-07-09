@@ -14,7 +14,7 @@ repeated to achieve consistent notation and naming conventions throughout.
     Conditional probability, diachronic interpreation, subjective priors,
     making assumptions explicit, focus on pdf from which values can be
     extracted due to different criteria, pdf carries uncertainty estimates,
-    sampling from pdfs...
+    sampling from pdfs, marginalization...
 
     Central role: Bayes' theorem.
     
@@ -57,10 +57,6 @@ repeated to achieve consistent notation and naming conventions throughout.
     where $\VECX, \MEANVEC \in \REALS^d$ and $\COVMAT \in \REALS^{d
     \times d}$ and the exponential function is applied component-wise.
 
-    The assumption that a continuous variable follows a Gaussian distribution
-    is not only popular due to its well understood analytic behavior. central
-    limit theorem, maximum entropy.
-
     The mean vector $\MEANVEC$ of the Gaussian distribution is the
     location of its maximum. The covariance matrix $\COVMAT$ determines
     the shape of the distribution. For a proper Gaussian distribution, it is
@@ -82,12 +78,22 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \startformula
         -2 \ln(\GAUSS{\VECX}{\MEANVEC}{\COVMAT})
-        = (\VECX - \MEANVEC)^\top \COVMAT^{-1} (\VECX - \MEANVEC) + c \EQCOMMA
+        = (\VECX - \MEANVEC)^\top \COVMAT^{-1} (\VECX - \MEANVEC) + c \EQCOMMA % TODO: use \GAUSSEXP
     \stopformula
 
     where $c$ is a constant that contains the normalization. The right hand
     side of this representation is easier to deal with in analytical
     derivations but contains all the information of the distribution.
+
+    Throughout this thesis it will be assumed again and again that continuous
+    variables follow a Gaussian distribution. A major reason for choosing this
+    assumption is that Gaussian distributions have very convenient analytic
+    properties.  Particularly useful is that the marginalization of a Gaussian
+    yields a Gaussian and that a conditional distribution of two Gaussian
+    variables is again Gaussian \cite[authoryears][Bishop2006]. TODO
+    The assumption that a continuous variable follows a Gaussian distribution
+    is not only popular due to its well understood analytic behavior. central
+    limit theorem, maximum entropy.
 
     Because the assumption of Gaussian {\PDF}s is persistent throughout this
     text, some general results are derived in the following sections. These
@@ -144,141 +150,283 @@ repeated to achieve consistent notation and naming conventions throughout.
 
     \stopsubsection
 
-    \startsubsection[title={Bayes' Theorem for Gaussians},reference=ch:bayes_gauss]
 
-        A convenient property of Gaussian distributions is that the product of
-        a Gaussian conditional distribution $\LIKELIHOOD$ (the likelihood
-        function) and a Gaussian marginal distribution $\PRIOR$ (the prior) is
-        again Gaussian \cite[authoryears][Bishop2006]. This allows the analytic
-        calculation of the posterior $\POSTERIOR$ if two assumptions hold: the
-        dependence of the conditional distribution's mean is linear with
-        respect to the prior's argument ($\VECX$) and its covariance is
-        independent of $\VECX$. Let
+    \stopsubsection
 
+    \startsubsection[title={Bayesian Operations for Gaussians},reference=ch:bayes_gauss]
+
+        In this section two important results for Gaussian distributions are
+        derived which are used later for the optimal estimation method and
+        linear regression with error estimates. A rigorous derivation of these
+        results is found in \cite[Bishop2006]. Here, shortcuts are taken
+        by taking the facts that the product of two Gaussians is Gaussian and
+        that the marginalization of a Gaussian is again Gaussian as a given.
+
+        The goal is to find the missing probability distributions in Bayes'
+        Theorem when the prior $\PRIOR$ and likelihood function $\LIKELIHOOD$
+        are given by
+
+        \startsubformulas[eq:gaussbayesinit]
+        \placesubformula
         \startformula
-        \startalign[n=2,align{right,left}]
-            \NC -2 \ln(\LIKELIHOOD) = \NC
-                \GAUSSEXP{\VECY}{\FWDJAC\VECX - \VECB}{\COVMATERR} + c_1 \NR
-            \NC -2 \ln(\PRIOR) = \NC
-                \GAUSSEXP{\VECX}{\MEANVECA}{\COVMATA} + c_2 \EQSTOP \NR
+        \startalign[n=2,align={right,left}]
+            \NC \PRIOR = \NC \GAUSS{\VECX}{\VECA}{\MATPI} \EQCOMMA \NR[eq:gaussbayesinitx]
+            \NC \LIKELIHOOD = \NC \GAUSS{\VECY}{\MATB \VECX + \VECB}{\MATQI}
+                \EQSTOP \NR[eq:gaussbayesinityx]
         \stopalign
         \stopformula
+        \stopsubformulas
 
-        The normalization is contained in $c_1$ and $c_2$ respectively. These
-        {\PDF}s are multivariate Gaussians fulfilling the above assumptions.
-        The posterior distribution is given by:
+        The mean of the conditional likelihood function is a linear function
+        of $\VECX$ but the covariance is independent of $\VECX$. Covariances
+        are given as inverted $\MATP$ and $MATQ$ making the notation of the
+        Gaussians in their logarithm form less cluttered:
+
+        \startsubformulas[eq:gaussbayesinitln]
+        \placesubformula
+        \startformula
+        \startalign[n=2,align={right,left}]
+            \NC -2 \ln(\PRIOR) = \NC (\VECX - \VECA)^\top \MATP (\VECX - \VECA)
+                + \CONST \EQCOMMA \NR[eq:gaussbayesinitlnx]
+            \NC -2 \ln(\LIKELIHOOD) = \NC (\VECY - \MATB \VECX - \VECB)^\top
+                \MATQ (\VECY - \MATB \VECX - \VECB) + \CONST
+                \EQSTOP \NR[eq:gaussbayesinitlnyx]
+        \stopalign
+        \stopformula
+        \stopsubformulas
+
+        The terms denoted \quote{const} contain the respective normalizations.
+        Bayes' theorem is derived from the joint probability distribution
+
+        \startformula
+            \JOINT = \LIKELIHOOD \PRIOR = \POSTERIOR \NORMALIZATION \EQSTOP
+        \stopformula
+
+        Viewing $\LIKELIHOOD$ and $\PRIOR$ as likelihood and prior makes
+        $\POSTERIOR$ the posterior distribution. It can be extracted from
+        the joint probability distribution or derived by the product of
+        $\LIKELIHOOD$ and $\PRIOR$ directly since $\NORMALIZATION$ only
+        provides a constant normalization which can also be determined by the
+        covariance of $\POSTERIOR$.
 
         \placesubformula
         \startformula
-        \startalign[n=2, align{right,left}]
-            \NC -2 \ln(\POSTERIOR) = \NC -2 \ln(\LIKELIHOOD \PRIOR) \NR
-            \NC = \NC -2 \ln(\LIKELIHOOD) - 2 \ln(\PRIOR) \NR
+        \startalign[n=2,align={right,left}]
+            \NC -2 \ln(\POSTERIOR) = \NC -2 \ln\left(\frac{\JOINT}{\NORMALIZATION}\right) \NR
+            \NC = \NC -2 \ln\left(\frac{\LIKELIHOOD \PRIOR}{\NORMALIZATION}\right) \NR
+            \NC = \NC -2 \ln(\LIKELIHOOD) - 2 \ln(\PRIOR) + \CONST \NR
+            \NC = \NC \GAUSSEXP{\VECY}{\MATB \VECX - \VECB}{\MATQ}
+                + \GAUSSEXP{\VECX}{\VECA}{\MATP} \NR
             \NC = \NC
-                \GAUSSEXP{\VECY}{\FWDJAC \VECX - \VECB}{\COVMATERR}
-                + \GAUSSEXP{\VECX}{\MEANVECA}{\COVMATA} + c_1 + c_2
-                \NR
-            \NC = \NC
-                  \VECY^\top \COVMATERR^{-1} \VECY
-                - \VECY^\top \COVMATERR^{-1} \FWDJAC \VECX
-                - \VECY^\top \COVMATERR^{-1} \VECB
+                \VECYT \MATQ \VECY
+                - \VECYT \MATQ \MATB \VECX
+                - \VECYT \MATQ \VECB
+                - \VECXT \MATBT \MATQ \VECY
                 \NR
             \NC \NC
-                \mathbox{cornflowerblue}{- \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECY}
-                + \mathbox{yellowgreen}{\VECX^\top \FWDJAC^\top \COVMATERR^{-1} \FWDJAC \VECX}
-                + \mathbox{cornflowerblue}{\VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECB}
-                \NR
-            \NC \NC
-                - \VECB^\top \COVMATERR^{-1} \VECY
-                + \VECB^\top \COVMATERR^{-1} \FWDJAC \VECX
-                + \VECB^\top \COVMATERR^{-1} \VECB
+                + \VECXT \MATBT \MATQ \MATB \VECX
+                + \VECXT \MATBT \MATQ \VECB
+                - \VECBT \MATQ \VECY
+                + \VECBT \MATQ \MATB \VECX
                 \NR[eq:gaussprodexpand]
             \NC \NC
-                + \mathbox{yellowgreen}{\VECX^\top \COVMATA^{-1} \VECX}
-                ~\mathbox{cornflowerblue}{- \VECX^\top \COVMATA^{-1} \MEANVECA}
-                - \MEANVECA^\top \COVMATA^{-1} \VECX
-                + \MEANVECA^\top \COVMATA^{-1} \MEANVECA
+                + \VECXT \MATP \VECX
+                - \VECXT \MATP \VECA
+                - \VECAT \MATP \VECX
+                + \CONST \EQCOMMA
                 \NR
-            \NC \NC + c_1 + c_2 \EQCOMMA \NR
         \stopalign
         \stopformula
-        
-        where the last step is expanding the vector-matrix-vector product.
-        Subscripts are chosen in anticipation of chapter
-        \in[ch:optimalestimation]. The posterior has to be Gaussian, therefore
+
+        where the last step is expanding the vector-matrix-vector products. The
+        posterior is again a Gaussian distribution, therefore an equivalent
+        representation of the form
 
         \placesubformula
         \startformula
         \startalign[n=2,align={right,left}]
             \NC -2 \ln(\POSTERIOR) = \NC
-                \GAUSSEXP{\VECX}{\MEANVEC}{\COVMAT} + c_3 \NR
+                \GAUSSEXP{\VECX}{\VECC}{\MATS} + \CONST \NR
             \NC = \NC
-                 \mathbox{yellowgreen}{\VECX^\top \COVMAT^{-1} \VECX}
-                 ~\mathbox{cornflowerblue}{- \VECX^\top \COVMAT^{-1} \MEANVEC}
-                 - \MEANVEC^\top \COVMAT^{-1} \VECX
-                 + \MEANVEC^\top \COVMAT^{-1} \MEANVEC
-                 + c_3 \NR[eq:gausspostexpand]
+                 \VECXT \MATS \VECX
+                 - \VECXT \MATS \VECC
+                 - \VECCT \MATS \VECX
+                 + \CONST \NR[eq:gausspostexpand]
         \stopalign
         \stopformula
 
-        must ben a equivalent representation. Noting that the equivalence must
-        hold for all $\VECX$, an expression for $\COVMAT$ is foundy by
-        matching terms quadratic in $\VECX$ of both forms
-        \ineq{gaussprodexpand} and \ineq{gausspostexpand} (highlighted
-        green):
+        must exist. Noting that the equivalence must hold for all $\VECX$, an
+        expression for $\COVMAT$ is found by matching terms quadratic in
+        $\VECX$ of both forms \ineq{gaussprodexpand} and
+        \ineq{gausspostexpand}:
 
-        \placesubformula
         \startformula
         \startalign[n=3,align={left,right,left}]
-            \NC \NC - \VECX^\top \COVMAT^{-1} \VECX = \NC
-                \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \FWDJAC \VECX
-                + \VECX^\top \COVMATA^{-1} \VECX
-             = \VECX^\top (\FWDJAC^\top \COVMATERR^{-1} \FWDJAC
-                + \COVMATA^{-1}) \VECX \NR
-            \NC \Rightarrow~~ \NC \COVMAT = \NC
-                (\FWDJAC^\top \COVMATERR^{-1} \FWDJAC + \COVMATA^{-1})^{-1}
-                \EQSTOP \NR[eq:gausspostcov]
+            \NC \NC \VECXT \MATS \VECX = \NC
+                \VECXT \MATBT \MATQ \MATB \VECX + \VECXT \MATP \VECX \NR
+            \NC \NC = \NC
+                \VECXT (\MATBT \MATQ \MATB + \MATP) \VECX \NR
+            \NC \Rightarrow~~ \NC \MATS = \NC
+                \MATBT \MATQ \MATB + \MATP
+                \EQSTOP
         \stopalign
         \stopformula
 
-        Matching the linear terms involving $\VECX^\top$ of both forms
-        \ineq{gaussprodexpand} and \ineq{gausspostexpand} (highlighted
-        blue) results in an expression for $\MEANVEC$:
+        Matching the linear terms involving $\VECXT$ of both forms
+        \ineq{gaussprodexpand} and \ineq{gausspostexpand}
+        results in an expression for $\VECC$:
 
-        \placesubformula
         \startformula
         \startalign[n=3,align={left,right,left}]
-            \NC \NC - \VECX^\top \COVMAT^{-1} \MEANVEC = \NC
-                - \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECY
-                + \VECX^\top \FWDJAC^\top \COVMATERR^{-1} \VECB
-                - \VECX^\top \COVMATA^{-1} \MEANVECA \NR
+            \NC \NC - \VECXT \MATS \VECC = \NC
+                - \VECXT \MATBT \MATQ \VECY
+                + \VECXT \MATBT \MATQ \VECB
+                - \VECXT \MATP \VECA \NR
             \NC \NC  = \NC
-                - \VECX^\top (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
-                + \COVMATA^{-1} \MEANVECA) \NR
-            \NC \Rightarrow~~ \NC \MEANVEC = \NC
-                \COVMAT (\FWDJAC^\top \COVMATERR^{-1} (\VECY - \VECB)
-                + \COVMATA^{-1} \MEANVECA)
-                \EQCOMMA \NR[eq:gausspostmean]
+                - \VECXT (\MATBT \MATQ (\VECY - \VECB) + \MATP \VECA) \NR
+            \NC \Rightarrow~~ \NC \VECC = \NC
+                \MATSI (\MATBT \MATQ (\VECY - \VECB) + \MATP \VECA) \EQSTOP \NR
         \stopalign
         \stopformula
 
-        where $\COVMAT$ is given by \ineq{gausspostcov}. Equating terms
-        linear in $\VECX$ yields the same result.  An alternative derivation of
-        \ineq{gausspostcov} and \ineq{gausspostmean} is given by
-        \cite[Bishop2006] in chapter 2.3.3.
+        Equating terms linear in $\VECX$ yields the same result. With $\VECC$
+        and $\MATS$ determined,
+
+        \placeformula[eq:bayesgausspost]
+        \startformula
+            \POSTERIOR = \GAUSS{\VECX}{\MATSI(\MATBT \MATQ (\VECY - \VECB) + \MATP \VECA)}{\MATSI}
+        \stopformula
+
+        is known. $\NORMALIZATION$ could now be obtained by
+
+        \startformula
+            \NORMALIZATION = \frac{\JOINT}{\POSTERIOR} \EQCOMMA
+        \stopformula
+
+        making the assumption that it is a Gaussian distribution
+
+        \startformula
+            -2 \ln(\NORMALIZATION) = \GAUSSEXP{\VECY}{\VECD}{\MATT}
+        \stopformula
+
+        and matching terms between both expressions as done for the posterior.
+        Due to the rather complex mean and covariance of $\POSTERIOR$ this is
+        tedious. It is also possible to directly integrate the joint
+        distribution with respect to $\VECX$, again a quite tedious procedure.
+        Starting from the joint distribution and rewriting it in blocked form,
+        an intuitive argument is made which can be reinforced by rigorous
+        derivation given by \cite[Bishop2006]. Let $\VECZ$ be the vector
+        obtained by stacking $\VECX$ and $\VECY$:
+
+        \startformula
+            \VECZ = \startpmatrix \VECX \NR \VECY \NR \stoppmatrix \EQSTOP
+        \stopformula
+
+        The joint distribution is Gaussian
+
+        \placeformula
+        \startformula
+        \startalign
+            \NC \JOINTZ = \NC \GAUSS{\VECZ}{\MEANVEC}{\MATRI} \EQCOMMA \NR
+            \NC -2 \ln(\JOINTZ) = \NC \GAUSSEXP{\VECZ}{\MEANVEC}{\MATR} + \CONST \NR
+            \NC = \NC \VECZT \MATR \VECZ - \VECZT \MATR \MEANVEC
+                - \MEANVECT \MATR \VECZ + \CONST \NR[eq:bayesgaussjoint]
+        \stopalign
+        \stopformula
+
+        and by matching terms with $\JOINT = \LIKELIHOOD \PRIOR$
+        \footnote{Which are the same terms as in \ineq{gaussprodexpand} with
+        exception of the constant term containing the normalization $2
+        \ln(\NORMALIZATION)$.}, $\MATR$ and $\MEANVEC$ can be determined. As
+        before, the quadratic terms are used for the inverse of the covariance
+
+        \placeformula
+        \startformula
+        \startalign[n=2,align={right,left}]
+            \NC \NC
+                \VECYT \MATQ \VECY
+                - \VECYT \MATQ \MATB \VECX
+                - \VECXT \MATBT \MATQ \VECY
+                + \VECXT \MATBT \MATQ \MATB \VECX
+                + \VECXT \MATP \VECX \NR
+            \NC = \NC
+                \VECZT \startpmatrix[n=2,align={middle,middle}]
+                    \NC \MATP + \MATBT \MATQ \MATB \NC - \MATBT \MATQ \NR
+                    \NC - \MATQ \MATB \NC \MATQ \NR
+                \stoppmatrix \VECZ \NR[eq:bayesgaussjointcovi]
+            \NC = \NC
+                \VECZT \MATR \VECZ \NR
+        \stopalign
+        \stopformula
+
+        and linear terms for determination of the mean (here shown with the
+        transposed terms)
+
+        \startformula
+        \startalign[n=2,align={right,left}]
+            \NC \NC
+                - \VECYT \MATQ \VECB
+                + \VECXT \MATBT \MATQ \VECB
+                - \VECXT \MATP \VECA \NR
+            \NC = \NC
+                - \VECZT \startpmatrix
+                    \MATP \VECA - \MATBT \MATQ \VECB \NR
+                    \MATQ \VECB \NR
+                \stoppmatrix \NR
+            \NC = \NC
+                - \VECZT \MATR \MEANVEC \EQSTOP \NR
+        \stopalign
+        \stopformula
+
+        An expression for the inverse of a block matrix is given e.g. by
+        \cite[Petersen2012] yielding
+
+        \placeformula[eq:bayesgaussjointcov]
+        \startformula
+            \MATRI = \startpmatrix[n=2,align={middle,middle}]
+                \NC \MATPI \NC \MATPI \MATBT \NR
+                \NC \MATB \MATPI \NC \MATQI + \MATB \MATP \MATBT \NR
+            \stoppmatrix \EQCOMMA
+        \stopformula
+        for \ineq{bayesgaussjointcovi} while using the fact that covariance
+        matrices are symmetric. Knowing \ineq{bayesgaussjointcov}, the mean is
+        given by
+
+        \placeformula[eq:bayesgaussjointmean]
+        \startformula
+            \MEANVEC = \MATRI \startpmatrix
+                    \MATP \VECA - \MATBT \MATQ \VECB \NR
+                    \MATQ \VECB \NR
+                \stoppmatrix = \startpmatrix
+                    \VECA \NR
+                    \MATB \VECA + \VECB \NR
+                \stoppmatrix \EQSTOP
+        \stopformula
+
+        Comparing \ineq{bayesgaussjointcov} and \ineq{bayesgaussjointmean}
+        with the probability distribution $\PRIOR
+        = \GAUSS{\VECX}{\VECA}{\MATPI}$ from \ineq{gaussbayesinit} one finds
+        that the upper left block of the covariance matrix and the upper block
+        of the mean vector of the joint distribution correspond directly to the
+        covariance and mean of $\PRIOR$. This makes intuitive sense: When the
+        distribution is evaluated, these are the blocks that interact with
+        $\VECX$ exclusively while the off-diagonal blocks of $\MATRI$ model the
+        interaction between $\VECX$ and $\VECY$. It would make sense that the
+        former blocks are then the only ones neccesary to describe the
+        (marginalized) distribution with respect to $\VECX$ alone. The same
+        idea leads to the expectation that the lower left block of $\MATRI$ and
+        the lower block of $\MEANVEC$ are the only ones neccessary to describe
+        the (marginalized) distribution with respect to $\VECY$ only. For
+        symmetry $\NORMALIZATION$ should therefore be given by
+        
+        \placeformula[eq:bayesgaussnorm]
+        \startformula
+            \NORMALIZATION = \GAUSS{\VECY}{\MATB \VECA + \VECB}{\MATQI + \MATB \MATP \MATBT} \EQCOMMA
+        \stopformula
+
+        and this is indeed the result found in a rigorous derivation.
 
     \stopsubsection
-
-    \startsubsection[title=Diagonalization of the Covariance Matrix]
-
-        Transformation into eigenspace. Used for uncertainty estimates of
-        linear regression technique.
-
-    \stopsubsection
-
-    
-    Plot stuff.
-
-    cite Bishop, Rodgers
 
 \stopsection
 
