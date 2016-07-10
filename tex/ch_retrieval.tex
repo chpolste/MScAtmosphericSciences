@@ -312,11 +312,16 @@ repeated to achieve consistent notation and naming conventions throughout.
         and matching terms between both expressions as done for the posterior.
         Due to the rather complex mean and covariance of $\POSTERIOR$ this is
         tedious. It is also possible to directly integrate the joint
-        distribution with respect to $\VECX$, again a quite tedious procedure.
-        Starting from the joint distribution and rewriting it in blocked form,
-        an intuitive argument is made which can be reinforced by rigorous
-        derivation given by \cite[Bishop2006]. Let $\VECZ$ be the vector
-        obtained by stacking $\VECX$ and $\VECY$:
+        distribution with respect to $\VECX$
+        
+        \startformula
+            \NORMALIZATION = \int \JOINT \diff \VECX = \int \LIKELIHOOD \PRIOR \diff \VECX \EQCOMMA
+        \stopformula
+        
+        again a quite tedious procedure.  Starting from the joint distribution
+        and rewriting it in blocked form, an intuitive argument is made which
+        can be reinforced by rigorous derivation given by \cite[Bishop2006].
+        Let $\VECZ$ be the vector obtained by stacking $\VECX$ and $\VECY$:
 
         \startformula
             \VECZ = \startpmatrix \VECX \NR \VECY \NR \stoppmatrix \EQSTOP
@@ -754,6 +759,90 @@ repeated to achieve consistent notation and naming conventions throughout.
 
 \startsection[title=Linear Regression]
 
+    TODO: Introduction
+
+    In retrieval applications the data pairs are atmospheric state observations
+    $x$ and simultaneous radiometer measurements $\VECY$. The atmospheric state
+    usually comes from a radiosonde climatology or NWP output, while the
+    radiometer measurements are often simulated with a numerical radiative
+    transfer model since extensive time series of radiometer measurements are
+    rare.
+
+    TODO: blabla into derivation of Bayesian regression as (more general)
+    alternative to least squares approach
+
+    Consider a model $f$ of a linear combination of $n$ fixed basis functions
+    $\VECPHI^\top = \startpmatrix[n=3] \NC \phi_1 \NC \dots \NC \phi_n \NR
+    \stoppmatrix$ approximating a scalar function $t$ of an input $\VECY \in
+    \REALS^d$
+
+    \startformula
+        t(\VECY) \approx f(\VECY, \VECW) = w_0 + \sum_{i=1}^n w_i \phi_i(\VECY)
+            = \sum_{i=0}^n w_i \phi_i(\VECY) = \VECWT \VECPHI(\VECY)
+    \stopformula
+
+    where an additional constant basis function $\phi_0(\VECY) = 1$ is
+    introduced to $\VECPHI$ for modelling the constant term without the need to
+    explicitly consider it in the following derivations. A common choice for
+    basis functions in retrievals are indentity functions for individual
+    components, i.e. $n = d$ and
+
+    \startformula
+        \phi_0(\VECY) = 1,~ \phi_1(\VECY) = y_1, ~ \dots, \phi_d = y_d
+    \stopformula
+
+    with $\VECY^\top = \startpmatrix[n=3] \NC y_1 \NC \dots \NC y_d \NR \stoppmatrix$,
+    but basis is not restricted to linear functions\footnote{The \quote{linear}
+    in \quote{linear regression} refers to the linearity in the parameter
+    vector $\VECW$.}. The objective of regression is to find a
+    a parameter vector $\VECW$ from a given set of $(t(\VECY), \VECY)$ pairs
+    that is in some sense optimal. The Bayesian approach even results in
+    an entire probability distribution for $\VECW$ which provides error
+    estimates for predictions from the regression model.
+
+    As usual, the assumption is that the deviations between the true function
+    $t$ and its approximation $f$ follows a Gaussian distribution with zero
+    mean and covariance $\BETAI$
+
+    \placeformula
+    \startformula
+    \startalign[n=3,align={left,right,left}]
+        \NC \NC \PROB{t(\VECY) - f(\VECY, \VECW) \GIVEN \beta} = \NC
+                \GAUSS{t(\VECY) - f(\VECY, \VECW)}{0}{\BETAI} \NR
+        \NC \Rightarrow~~ \NC \PROB{x \GIVEN \VECY, \VECW, \beta} = \NC
+            \GAUSS{x}{\VECWT \VECPHI(\VECY)}{\BETAI} \EQCOMMA \NR[eq:reg_indlikelihood]
+    \stopalign
+    \stopformula
+
+    where $x = t(\VECY)$ is now understood as the target variable and its
+    dependence on $\VECY$ is implied by the conditional variables of the
+    probability distribution. Under the assumption that data pairs from
+    corresponding datasets $\SETY = \{ \VECY_1, \dots, \VECY_m \}$ and $\SETX
+    = \{ x_1, \dots, x_m \}$ are independent, the likelihood function of
+    is given by
+
+    \placeformula[eq:reg_likelihood]
+    \startformula
+        \RLIKELIHOOD = \prod_{i=1}^{m} \GAUSS{x_i}{\VECWT \VECPHI(\VECY_i)}{\BETAI} \EQCOMMA
+    \stopformula
+    
+    using \ineq{reg_indlikelihood}. In order to use Bayes' theorem to obtain
+    the probability distribution of $\VECW$ given the data pairs, a prior
+    assumption for the parameter vector is necessary. One could just assume
+    that any value of $\VECW$ is equally likely since no information about
+    $\VECW$ are available at this point, resulting in a maximum likelihood
+    solution.  However, experience shows that it is useful to make the
+    regression favor smaller values of $\VECW$ in order to obtain a model that
+    is less prone to overfitting and numerically more stable. An isotropic
+    Gaussian with mean $\VECZERO$ is therefore considered
+
+    \placeformula[eq:reg_prior]
+    \startformula
+        \RPRIOR = \GAUSS{\VECW}{\VECZERO}{\ALPHAI \MATID}
+    \stopformula
+
+    where $\alpha$ governs the covariance of the distribution.
+
     Based on climatology, where to get climatology from. Idea: approximate
     the inverse model from climatology instead of introducting a numerical
     physical model.
@@ -762,18 +851,6 @@ repeated to achieve consistent notation and naming conventions throughout.
     Who has done it? Problem: no constraint, rather a suggestion. Known
     elements of state vector are not enforced.
     
-    Quantifying Uncertainty by transformation into eigensystem, diagonal
-    covariance.
-
-\stopsection
-
-
-\startsection[title=Neural Network Regression]
-
-    Who has used it? Non-linearity. Extrapolation problems. No error estimates
-    from common formulation. Choice of hidden layer and activation functions.
-    Advantage in resolving low level inversions?
-
 \stopsection
 
 

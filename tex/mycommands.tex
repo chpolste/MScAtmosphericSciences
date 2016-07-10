@@ -51,13 +51,19 @@
 \define\KELVIN{{\rm K}}
 
 % Sets
-\define\REALS{\mathbb{R}}
+\define\REALS{{\mathbb R}}
+\define\SETY{{\mathbb Y}}
+\define\SETX{{\mathbb X}}
 
 % Scalars
 \define\CONST{{\rm const}}
+\define\BETAI{{\beta^{-1}}}
+\define\ALPHAI{{\alpha^{-1}}}
 
 % Vectors
 \define\VECZERO{{\bf 0}}
+\define\VECW{{\bf w}}
+\define\VECWT{{\bf w}^\top}
 \define\VECX{{\bf x}}
 \define\VECXT{{\bf x}^\top}
 \define\VECY{{\bf y}}
@@ -72,8 +78,11 @@
 \define\VECCT{{\bf c}^\top}
 \define\VECD{{\bf d}}
 \define\VECDT{{\bf d}^\top}
+\define\VECPHI{{\mathgreekupright \bf \phi}}
+\define\VECPHIT{{\mathgreekupright \bf \phi}^\top}
 
 % Matrices
+\define\MATID{{\bf I}}
 \define\MATA{{\bf A}}
 \define\MATB{{\bf B}}
 \define\MATBT{{\bf B}^\top}
@@ -114,4 +123,8 @@
 \define\LIKELIHOOD{\PROB{\VECY \GIVEN \VECX}}
 \define\PRIOR{\PROB{\VECX}}
 \define\NORMALIZATION{\PROB{\VECY}}
+
+\define\RPOSTERIOR{\PROB{\VECW \GIVEN \SETX, \SETY, \alpha, \beta}}
+\define\RLIKELIHOOD{\PROB{\SETX \GIVEN \SETY, \VECW, \beta}}
+\define\RPRIOR{\PROB{\VECW \GIVEN \alpha}}
 
