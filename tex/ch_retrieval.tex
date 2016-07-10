@@ -759,7 +759,10 @@ repeated to achieve consistent notation and naming conventions throughout.
 
 \startsection[title=Linear Regression]
 
-    TODO: Introduction
+    TODO: Introduction. Adding regressors by adding elements to $\VECY$. No
+    explicit forward model or error estimate needed.  Who has done it? Problem:
+    no constraint, rather a suggestion. Known elements of state vector are not
+    enforced.
 
     In retrieval applications the data pairs are atmospheric state observations
     $x$ and simultaneous radiometer measurements $\VECY$. The atmospheric state
@@ -821,36 +824,120 @@ repeated to achieve consistent notation and naming conventions throughout.
     = \{ x_1, \dots, x_m \}$ are independent, the likelihood function of
     is given by
 
-    \placeformula[eq:reg_likelihood]
     \startformula
-        \RLIKELIHOOD = \prod_{i=1}^{m} \GAUSS{x_i}{\VECWT \VECPHI(\VECY_i)}{\BETAI} \EQCOMMA
+        \RLIKELIHOOD = \prod_{i=1}^{m} \GAUSS{x_i}{\VECWT \VECPHI(\VECY_i)}{\BETAI}
     \stopformula
     
-    using \ineq{reg_indlikelihood}. In order to use Bayes' theorem to obtain
-    the probability distribution of $\VECW$ given the data pairs, a prior
-    assumption for the parameter vector is necessary. One could just assume
-    that any value of $\VECW$ is equally likely since no information about
-    $\VECW$ are available at this point, resulting in a maximum likelihood
-    solution.  However, experience shows that it is useful to make the
-    regression favor smaller values of $\VECW$ in order to obtain a model that
-    is less prone to overfitting and numerically more stable. An isotropic
-    Gaussian with mean $\VECZERO$ is therefore considered
+    using \ineq{reg_indlikelihood} or alternatively by
+
+    \startformula
+        \RLIKELIHOOD = \GAUSS{\VECX}{\MATPHI \VECW}{\BETAI \MATID}
+    \stopformula
+    
+    with the definitions
+
+    \startformula
+        \VECX = \startpmatrix x_1 \NR \vdots\NR x_m \NR \stoppmatrix
+        {\rm ~~and~~}
+        \MATPHI = \startpmatrix[n=3,align={middle,middle,middle}]
+            \NC \phi_0(\VECY_1) \NC \dots \NC \phi_n(\VECY_1) \NR
+            \NC \vdots \NC \ddots \NC \vdots \NR
+            \NC \phi_0(\VECY_m) \NC \dots \NC \phi_n(\VECY_m) \NR
+        \stoppmatrix
+        \EQSTOP
+    \stopformula
+    
+    In order to use Bayes' theorem to obtain the probability distribution of
+    $\VECW$ given the data pairs, a prior assumption for the parameter vector
+    is necessary. One could just assume that any value of $\VECW$ is equally
+    likely since no information about $\VECW$ are available at this point,
+    resulting in a maximum likelihood solution.  However, experience shows that
+    it is useful to make the regression favor smaller values of $\VECW$ in
+    order to obtain a model that is less prone to overfitting and numerically
+    more stable. An isotropic Gaussian with mean $\VECZERO$ is therefore
+    considered
 
     \placeformula[eq:reg_prior]
     \startformula
         \RPRIOR = \GAUSS{\VECW}{\VECZERO}{\ALPHAI \MATID}
     \stopformula
 
-    where $\alpha$ governs the covariance of the distribution.
+    where $\alpha$ governs the covariance of the distribution. With likelihood
+    function and prior determined, Bayes' theorem reads
 
-    Based on climatology, where to get climatology from. Idea: approximate
-    the inverse model from climatology instead of introducting a numerical
-    physical model.
+    \startformula
+        \RPOSTERIOR = \frac{\RLIKELIHOOD \, \RPRIOR}{\RNORMALIZATION} \EQSTOP
+    \stopformula
 
-    Adding regressors. No explicit forward model or error estimate needed.
-    Who has done it? Problem: no constraint, rather a suggestion. Known
-    elements of state vector are not enforced.
+    The denominator is only a constant normalization, applying the result
+    \ineq{gaussbayespost} with substitutions
+
+    \startformula
+        \{ \VECX \rightarrow \VECW,~
+            \VECA \rightarrow \VECZERO,~
+            \MATP \rightarrow \alpha \MATID,~
+            \VECY \rightarrow \VECX,~
+            \MATB \rightarrow \MATPHI,~
+            \VECB \rightarrow \VECZERO,~
+            \MATQ \rightarrow \beta \MATID
+            \} \EQCOMMA
+    \stopformula
+
+    identified from \ineq{gaussbayesinit}, yields the desired posterior
+    probability distribution for the parameter vector:
+
+    \startsubformulas[eq:reg_posterior]
+    \placesubformula
+    \startformula
+    \startalign[n=2,align={right,left}]
+        \NC \RPOSTERIOR = \NC \GAUSS{\VECW}{\MEANVEC}{\COVMAT} \NR[eq:reg_posterior_gauss]
+        \NC \COVMAT = \NC (\beta \MATPHIT \MATPHI + \alpha \MATID)^{-1} \NR[eq:reg_posterior_cov]
+        \NC \MEANVEC = \NC \beta \COVMAT \MATPHIT \VECX \EQSTOP \NR[eq:reg_posterior_mean]
+    \stopalign
+    \stopformula
+    \stopsubformulas
+
+    Once the regression model is trained predictions for new measurements
+    $\VECY$ are made by evaluating the predictive distribution
+
+    \startformula
+    \startalign[n=2,align={right,left}]
+        \NC \RPREDICT = \NC
+            \int_{\REALS^{n+1}} \PROB{x \GIVEN \VECY, \VECW, \beta} \,
+            \RPOSTERIOR \, \diff \VECW \NR
+        \NC = \NC
+            \int_{\REALS^{n+1}} \GAUSS{x}{\VECWT \VECPHI(\VECY)}{\BETAI} \,
+                \GAUSS{\VECW}{\MEANVEC}{\COVMAT} \,\diff \VECW \NR
+    \stopalign
+    \stopformula
     
+    which is the likelihood of the measurement given the model
+    \ineq{reg_indlikelihood}, marginalized with respect to the posterior
+    parameter vector distribution \ineq{reg_posterior_gauss}. With the
+    substitution
+
+    \startformula
+        \{ \VECX \rightarrow \VECW,~
+            \VECA \rightarrow \MEANVEC,~
+            \MATP \rightarrow \COVMATI,~
+            \VECY \rightarrow x,~
+            \MATB \rightarrow \VECPHI(\VECY),~
+            \VECB \rightarrow 0,~
+            \MATQ \rightarrow \beta \}
+    \stopformula
+
+    result \ineq{gaussbayesnorm} is applicable\footnote{The reduction in
+    dimension in \ineq{gaussbayesinityx} does not invalidate the result.},
+    yielding
+
+    \startformula
+        \RPREDICT = \GAUSS{x}{\VECPHI(\VECY)^\top \MEANVEC}{\BETAI + \VECPHI(\VECY)^\top \COVMATI \VECPHI(\VECY)}
+    \stopformula
+
+    as the predictive distribution.
+
+    TODO: explain decoupling if target vector errors are uncorrelated.
+
 \stopsection
 
 

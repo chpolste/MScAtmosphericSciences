@@ -96,6 +96,8 @@
 \define\MATSI{{\bf S}^{-1}}
 \define\MATT{{\bf T}}
 \define\MATTI{{\bf T}^{-1}}
+\define\MATPHI{{\mathgreekupright \bf \Phi}}
+\define\MATPHIT{{\mathgreekupright \bf \Phi}^\top}
 
 % Forward model
 \define\FWD{{\bf F}}
@@ -110,6 +112,7 @@
 \define\MEANVECERR{\MEANVEC_\ERR}
 
 \define\COVMAT{{\mathgreekupright \bf \Sigma}}
+\define\COVMATI{\COVMAT^\top}
 %\define\COVMAT{{\bf S}}
 \define\COVMATX{\COVMAT_\VECX}
 \define\COVMATY{\COVMAT_\VECY}
@@ -127,4 +130,6 @@
 \define\RPOSTERIOR{\PROB{\VECW \GIVEN \SETX, \SETY, \alpha, \beta}}
 \define\RLIKELIHOOD{\PROB{\SETX \GIVEN \SETY, \VECW, \beta}}
 \define\RPRIOR{\PROB{\VECW \GIVEN \alpha}}
+\define\RNORMALIZATION{\PROB{\SETX \GIVEN \SETY, \beta}}
+\define\RPREDICT{\PROB{x \GIVEN \VECY, \SETX, \SETY, \beta, \alpha}}
 
