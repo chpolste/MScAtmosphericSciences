@@ -1,10 +1,40 @@
-Formulate retrieval problem.
+The retrieval problem of atmospheric remote sensing can be stated as: given
+a measurement of a sounding device, derive some part of the atmospheric state,
+e.g. a vertical profile of temperature. The difficulty is that this derivation
+requires the inversion of radiative transfer which is an ill-posed problem
+due to the complex nature of electromagnetic wave propagation in the
+atmosphere. When a passive instrument observes atmospheric radiation, its
+measurement is affected by many emitting and absorbing layers of the atmosphere
+and multiple states may exist which result in the same measurement. Therefore
+additional information is needed to arrive at a unique solution which is
+as close as possible to the true atmospheric state. Depending on the available
+information and recources, different retrieval techniques are applicable. A
+great variety of regression models exists which are purely statistical methods.
+These directly model the inverse problem, predicting the atmospheric state
+from a measurement based on a training data set, often a time series of past
+measurements for which the corresponding atmospheric state is known by some
+other method. Regression methods are generally easy to set up once such a data
+set is available but they carry the risk of bad performance in situations not
+adequately represented in the training data. Other methods make use of a
+numerical model of the forward problem, which is used in combination with
+boundary conditions given by additional measurements and/or statistical
+knowledge to iteratively determine a solution that is consitent with both the
+boundary conditions and the forward model. Such methods are called optimal
+methods or physical retrievals.
 
-Introduce optimal estimation and regression mention Kernel Methods, ... as
-alternative regression methods.
-
-Math is heavily influenced by Rodgers and Bishop, important calculations are
-repeated to achieve consistent notation and naming conventions throughout.
+Here, an optimal estimation method is derived and compared to the commonly used
+linear regression method. This chapter will review the necessary mathematics
+for both methods entirely in the framework of Bayesian statistics. All
+following results have beed derived before. They are derived here again to
+achieve consistent notation and to show the benefits of starting from a purely
+Bayesian approach. The calculations are based on books by \cite[Rodgers2000]
+and \cite[Bishop2006]. The former treats all aspects of the retrieval problem
+specifically for atmospheric sounding from a mixed perspective of classical and
+Bayesian statistics. His results are used for the optimal estimation technique.
+The book by Bishop is the foundation for general results on Bayesian statistics
+and the Gaussian distribution as well as for the Bayesian approach to linear
+regression. The introduction to Bayesian statistics is additionally influenced
+by \cite[Downey2013].
 
 \startsection[title={Bayesian Statistics}]
 
