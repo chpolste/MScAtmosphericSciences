@@ -1,6 +1,7 @@
 """Microwave region radiative transfer model for ground based applications."""
 
 from numbers import Number
+from multiprocessing.pool import ThreadPool
 
 import numpy as np
 import scipy.integrate as spi
@@ -79,6 +80,48 @@ class MWRTM:
         cosmic = 2.736 * τexp[-1]
         return cosmic + np.trapz(α * TT * τexp, zz)/cosangle
 
+    @classmethod
+    def simulate_radiometer(cls, interpolator, absorptions, angles, *,
+                data=None, p=None, T=None, lnq=None, parallel=False):
+        """Simulate RT in multiple absorption scenarios at multiple angles.
+
+        Output is a Vector, where rows are ordered as follows:
+            absorptions[0] w/ angles[0]
+                       ...
+            absorptions[0] w/ angles[n]
+            absorptions[1] w/ angles[0]
+                       ...
+            absorptions[1] w/ angles[n]
+                       ...
+            absorptions[m] w/ angles[0]
+                       ...
+            absorptions[m] w/ angles[n]
+        
+        parallel activates multithreaded execution. While this results in the
+            usage of multiple cores, is not much faster. Using multiple
+            processes also does not help much likely due to the associated
+            overhead of copying data.
+        """
+        models = [cls(interpolator, absorption) for absorption in absorptions]
+        out = []
+        if parallel:
+            pool = ThreadPool()
+            tasks = []
+            for model in models:
+                tasks.append(pool.apply_async(model, kwds={"angles": angles,
+                        "data": data, "p": p, "T": T, "lnq": lnq}))
+            pool.close()
+            pool.join()
+            out.extend(task.get() for task in tasks)
+        else:
+            for model in models:
+                out.append(model(angles=angles, data=data, p=p, T=T, lnq=lnq))
+        return Vector(
+                fwd = np.vstack(o.fwd for o in out),
+                dT = np.vstack(o.dT for o in out),
+                dlnq = np.vstack(o.dlnq for o in out)
+                )
+
 
 class CachedMWRTM:
     """MWRTM with cached absorption and optical depth for faster evaluation."""
@@ -88,9 +131,9 @@ class CachedMWRTM:
         pp = parent.interpolator(p)
         TT = parent.interpolator(T)
         qq = parent.interpolator(lnq)
-        # Instead of propagating low-res dT and dlnq through entire FAP
-        # calculation, the FAP jacobian is evaluated in high-res space (where
-        # it is diagonal and much easier to handle).
+        # Instead of propagating the low-res dT and dlnq through the entire
+        # absorption calculation, the absorption jacobian is evaluated in
+        # high-res space (where it is diagonal and much easier to handle).
         αα = parent.absorption(
                 DiagVector.init_p(pp),
                 DiagVector.init_T(TT),
@@ -132,15 +175,11 @@ class CachedMWRTM:
         """
         if isinstance(angles, Number):
             return self.evaluate(angles)
-        raise NotImplementedError()
-
-
-class Radiometer:
-    """"""
-
-    def __init__(self, νs, faps):
-        """"""
-
-    def simulate(self, angles, state):
-        """"""
+        bt, dT, dlnq = [], [], []
+        for angle in angles:
+            res = self.evaluate(angle)
+            bt.append(res.fwd)
+            dT.append(res.dT)
+            dlnq.append(res.dlnq)
+        return Vector(fwd=np.vstack(bt), dT=np.vstack(dT), dlnq=np.vstack(dlnq))
 

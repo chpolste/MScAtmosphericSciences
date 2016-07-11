@@ -10,7 +10,7 @@ import scipy.integrate as it
 
 class VectorBase:
     """"""
-    
+
     def __init__(self, fwd, dT, dlnq):
         """Create a new instance with autodiff capabilities.
         
