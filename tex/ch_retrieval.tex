@@ -320,7 +320,7 @@ by \cite[Downey2013].
         \stopformula
 
         Equating terms linear in $\VECX$ yields the same result. With $\VECC$
-        and $\MATS$ determined,
+        ( mean)and $\MATS$ (inverse covariance) determined,
 
         \placeformula[eq:gaussbayespost]
         \startformula
@@ -345,7 +345,7 @@ by \cite[Downey2013].
         distribution with respect to $\VECX$
         
         \startformula
-            \NORMALIZATION = \int \JOINT \diff \VECX = \int \LIKELIHOOD \PRIOR \diff \VECX \EQCOMMA
+            \NORMALIZATION = \int \JOINT \, \diff \VECX = \int \LIKELIHOOD \, \PRIOR \, \diff \VECX \EQCOMMA
         \stopformula
         
         again a quite tedious procedure.  Starting from the joint distribution
@@ -420,7 +420,7 @@ by \cite[Downey2013].
         \startformula
             \MATRI = \startpmatrix[n=2,align={middle,middle}]
                 \NC \MATPI \NC \MATPI \MATBT \NR
-                \NC \MATB \MATPI \NC \MATQI + \MATB \MATP \MATBT \NR
+                \NC \MATB \MATPI \NC \MATQI + \MATB \MATPI \MATBT \NR
             \stoppmatrix \EQCOMMA
         \stopformula
         for \ineq{gaussbayesjointcovi} while using the fact that covariance
@@ -456,7 +456,7 @@ by \cite[Downey2013].
         
         \placeformula[eq:gaussbayesnorm]
         \startformula
-            \NORMALIZATION = \GAUSS{\VECY}{\MATB \VECA + \VECB}{\MATQI + \MATB \MATP \MATBT} \EQCOMMA
+            \NORMALIZATION = \GAUSS{\VECY}{\MATB \VECA + \VECB}{\MATQI + \MATB \MATPI \MATBT} \EQCOMMA
         \stopformula
 
         and this is indeed the result found in a rigorous derivation.
@@ -805,13 +805,13 @@ by \cite[Downey2013].
     alternative to least squares approach
 
     Consider a model $f$ of a linear combination of $n$ fixed basis functions
-    $\VECPHI^\top = \startpmatrix[n=3] \NC \phi_1 \NC \dots \NC \phi_n \NR
-    \stoppmatrix$ approximating a scalar function $t$ of an input $\VECY \in
-    \REALS^d$
+    $\VECPHI = \startpmatrix[n=3] \NC \phi_1 \NC \dots \NC \phi_n \NR
+    \stoppmatrix$ (a row vector) approximating a scalar
+    function $t$ of an input $\VECY \in \REALS^d$
 
     \startformula
         t(\VECY) \approx f(\VECY, \VECW) = w_0 + \sum_{i=1}^n w_i \phi_i(\VECY)
-            = \sum_{i=0}^n w_i \phi_i(\VECY) = \VECWT \VECPHI(\VECY)
+            = \sum_{i=0}^n w_i \phi_i(\VECY) = \VECPHI(\VECY) \VECW
     \stopformula
 
     where an additional constant basis function $\phi_0(\VECY) = 1$ is
@@ -843,7 +843,7 @@ by \cite[Downey2013].
         \NC \NC \PROB{t(\VECY) - f(\VECY, \VECW) \GIVEN \beta} = \NC
                 \GAUSS{t(\VECY) - f(\VECY, \VECW)}{0}{\BETAI} \NR
         \NC \Rightarrow~~ \NC \PROB{x \GIVEN \VECY, \VECW, \beta} = \NC
-            \GAUSS{x}{\VECWT \VECPHI(\VECY)}{\BETAI} \EQCOMMA \NR[eq:reg_indlikelihood]
+            \GAUSS{x}{\VECPHI(\VECY) \VECW}{\BETAI} \EQCOMMA \NR[eq:reg_indlikelihood]
     \stopalign
     \stopformula
 
@@ -855,7 +855,7 @@ by \cite[Downey2013].
     is given by
 
     \startformula
-        \RLIKELIHOOD = \prod_{i=1}^{m} \GAUSS{x_i}{\VECWT \VECPHI(\VECY_i)}{\BETAI}
+        \RLIKELIHOOD = \prod_{i=1}^{m} \GAUSS{x_i}{\VECPHI(\VECY_i) \VECW}{\BETAI}
     \stopformula
     
     using \ineq{reg_indlikelihood} or alternatively by
@@ -873,6 +873,8 @@ by \cite[Downey2013].
             \NC \phi_0(\VECY_1) \NC \dots \NC \phi_n(\VECY_1) \NR
             \NC \vdots \NC \ddots \NC \vdots \NR
             \NC \phi_0(\VECY_m) \NC \dots \NC \phi_n(\VECY_m) \NR
+        \stoppmatrix = \startpmatrix
+            \VECPHI(\VECY_1) \NR \vdots \NR \VECPHI(\VECY_m) \NR
         \stoppmatrix
         \EQSTOP
     \stopformula
@@ -936,7 +938,7 @@ by \cite[Downey2013].
             \int_{\REALS^{n+1}} \PROB{x \GIVEN \VECY, \VECW, \beta} \,
             \RPOSTERIOR \, \diff \VECW \NR
         \NC = \NC
-            \int_{\REALS^{n+1}} \GAUSS{x}{\VECWT \VECPHI(\VECY)}{\BETAI} \,
+            \int_{\REALS^{n+1}} \GAUSS{x}{\VECPHI(\VECY) \VECW}{\BETAI} \,
                 \GAUSS{\VECW}{\MEANVEC}{\COVMAT} \,\diff \VECW \NR
     \stopalign
     \stopformula
@@ -961,7 +963,7 @@ by \cite[Downey2013].
     yielding
 
     \startformula
-        \RPREDICT = \GAUSS{x}{\VECPHI(\VECY)^\top \MEANVEC}{\BETAI + \VECPHI(\VECY)^\top \COVMATI \VECPHI(\VECY)}
+        \RPREDICT = \GAUSS{x}{\VECPHI(\VECY) \MEANVEC}{\BETAI + \VECPHI(\VECY) \COVMAT \VECPHIT(\VECY)}
     \stopformula
 
     as the predictive distribution.
