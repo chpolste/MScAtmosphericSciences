@@ -2,7 +2,8 @@
 
 A collection of one-time use data import scripts that assemble a unified
 database from multiple data sources. To be used as a command line program from
-the terminal.
+the terminal. This is not optimized for efficiency and might take quite a bit
+of time and main memory to run.
 
 size offset and pid arguments allow poor man's parallel processing by running multiple
 instances of this script and afterwards merging all output databases into the
@@ -438,34 +439,31 @@ if __name__ == "__main__":
                 "TB_26240MHz", "TB_27840MHz", "TB_31400MHz", "TB_51260MHz",
                 "TB_52280MHz", "TB_53860MHz", "TB_54940MHz", "TB_56660MHz",
                 "TB_57300MHz", "TB_58000MHz"]
-        def get_profile(where):
-            query = ("SELECT z, p, T, qvap, qliq FROM profiledata "
-                    "WHERE {} ORDER BY z ASC;".format(where))
-            df = dbin.as_dataframe(query).dropna(axis=0)
-            lnq = pd.Series(np.log(df["qvap"] + df["qliq"]),
-                    index=df.index, name="lnq")
-            lnq[lnq<-30] = -30 # remove -infs
-            return pd.concat([df, lnq], axis=1)
-        profiles = select_files(dbin.execute("""
-                SELECT DISTINCT profile, profiles.valid
+        raso = dbin.as_dataframe("""
+                SELECT profiles.valid, z, p, T, qvap, qliq
                 FROM profiledata
                 JOIN profiles ON profiles.id = profiledata.profile
-                WHERE z > 15000 and profiles.kind = "raso";"""))
-        print("{} | {} | simulating {} profiles".format(
-                args.data, args.output, len(profiles)))
+                WHERE profiles.kind = "raso" AND z > 500
+                ORDER BY z ASC, valid ASC;
+                """)
+        lnq = pd.Series(np.log(raso["qvap"] + raso["qliq"]),
+                index=raso.index, name="lnq")
+        lnq[lnq<-30] = -30 # remove -infs
+        raso = pd.concat([raso, lnq], axis=1)
         angles = [x[0] for x in dbin.execute("""
                 SELECT DISTINCT angle
                 FROM hatpro
                 WHERE kind="igmk"
                 ORDER BY angle ASC;""")]
         ang = pd.Series(angles, name="angle")
-        kind = pd.Series(np.repeat("mwrt", len(angles)), name="kind")
+        kind = pd.Series(np.repeat("mwrt2k", len(angles)), name="kind")
+        gvalids = raso.groupby("valid")
+        valids = select_files(gvalids.groups)
+        print("{} | {} | simulating {} profiles".format(
+                args.data, args.output, len(valids)))
         rows = []
-        for profid, valid in profiles:
-            df = (get_profile("profile={} AND z > 500".format(profid))
-                    .dropna(axis=0)
-                    .drop_duplicates("z", keep="first")
-                    )
+        for valid in valids:
+            df = gvalids.get_group(valid).dropna(axis=0).drop_duplicates("z", keep="first")
             if len(df) < 50: continue
             # Interpolate to 612 m level at the bottom
             zs = df["z"].values
@@ -483,7 +481,7 @@ if __name__ == "__main__":
             qvap = pd.Series(np.repeat(df.ix[0,"qvap"], len(angles)), name="qvap")
             # Simulate brightness temperatures
             zs = df["z"].values
-            zsmodel = mwrt.atanspace(zs[0], zs[-1], 3000)
+            zsmodel = np.logspace(np.log10(zs[0]), np.log10(zs[-1]), 2000, endpoint=False)
             itp = mwrt.LinearInterpolation(source=zs, target=zsmodel)
             out = [mwrt.MWRTM(itp, FAP).forward(angles, data=df) for FAP in FAPs]
             out = pd.DataFrame(np.array(out).T, columns=FAPnames)

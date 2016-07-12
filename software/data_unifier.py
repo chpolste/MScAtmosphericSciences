@@ -64,11 +64,11 @@ if __name__ == "__main__":
         # MWRTM brightness temperatures
         bt_mwrt = db.as_dataframe("""
                 SELECT * FROM hatpro
-                WHERE kind = "mwrt"
+                WHERE kind = "mwrt2k"
                 ORDER BY valid ASC;
                 """)
         bt_dataset(bt_igmk).to_csv("../data/unified/bt_igmk.csv")
-        bt_dataset(bt_mwrt).to_csv("../data/unified/bt_mwrt.csv")
+        bt_dataset(bt_mwrt).to_csv("../data/unified/bt_mwrt2k.csv")
 
 
     if args.data == "cosmo7" or args.data == "all":
@@ -95,10 +95,42 @@ if __name__ == "__main__":
                 zs = stretch(profile["z"].values, lower=z_hatpro, power=1)
                 for var in out:
                     out[var].append(interp1d(zs, profile[var].values)(ret_grid))
+            valid = pd.Series(valid, name="valid")
             for var, values in out.items():
                 (pd.DataFrame(np.vstack(values), index=valid,
-                        columns=["T_{}m".format(int(z)) for z in ret_grid])
+                        columns=["{}_{}m".format(var, int(z)) for z in ret_grid])
                         .sort_index()
                         .round(10)
                         .to_csv("../data/unified/{}_cosmo7+{:0>2}.csv".format(var, lead//3600))
                         )            
+
+
+    if args.data == "raso" or args.data == "all":
+        # Radiosoundings interpolated to retrieval grid
+        
+        raso = db.as_dataframe("""
+                SELECT profiles.valid, z, p, T, qvap, qliq
+                FROM profiledata
+                JOIN profiles ON profiles.id = profiledata.profile
+                WHERE profiles.kind = "raso"
+                ORDER BY z ASC;
+                """)
+
+        valid = []
+        out = {"p": [], "T": [], "qvap": [], "qliq": []}
+        gvalids = raso.groupby("valid")
+        for gvalid in gvalids.groups:
+            profile = gvalids.get_group(gvalid).dropna(axis=0).drop_duplicates("z", keep="first")
+            zs = profile["z"].values
+            if len(zs) < 50 or zs[0] > 612 or zs[-1] < 15000: continue
+            valid.append(dt.datetime.utcfromtimestamp(set(profile["valid"]).pop()))
+            for var in out:
+                out[var].append(interp1d(zs, profile[var].values)(ret_grid))
+        valid = pd.Series(valid, name="valid")
+        for var, values in out.items():
+            (pd.DataFrame(np.vstack(values), index=valid,
+                    columns=["{}_{}m".format(var, int(z)) for z in ret_grid])
+                    .sort_index()
+                    .round(10)
+                    .to_csv("../data/unified/{}_raso.csv".format(var))
+                    )

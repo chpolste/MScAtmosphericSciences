@@ -56,14 +56,15 @@ INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z,
 INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr10.profiledata ORDER BY id ASC;
 '''
 
-python db_import.py mwrt ../data/db_parts/mwrt_01.db --create --pid=2750000 --offset=0    --size=500 &
-python db_import.py mwrt ../data/db_parts/mwrt_02.db --create --pid=2760000 --offset=500  --size=500 &
-python db_import.py mwrt ../data/db_parts/mwrt_03.db --create --pid=2770000 --offset=1000 --size=500 &
-python db_import.py mwrt ../data/db_parts/mwrt_04.db --create --pid=2780000 --offset=1500 --size=500 &
-python db_import.py mwrt ../data/db_parts/mwrt_05.db --create --pid=2790000 --offset=2000 --size=500 &
-python db_import.py mwrt ../data/db_parts/mwrt_06.db --create --pid=2800000 --offset=2500 --size=500 &
-python db_import.py mwrt ../data/db_parts/mwrt_07.db --create --pid=2810000 --offset=3000 --size=500 &
-python db_import.py mwrt ../data/db_parts/mwrt_08.db --create --pid=2820000 --offset=3500 &
+python db_import.py mwrt ../data/db_parts/mwrt_01.db --create --pid=2750000 --offset=0    --size=700 &
+sleep 1 # Avoid database lock
+python db_import.py mwrt ../data/db_parts/mwrt_02.db --create --pid=2770000 --offset=700  --size=700 &
+sleep 1
+python db_import.py mwrt ../data/db_parts/mwrt_03.db --create --pid=2790000 --offset=1400 --size=700 &
+sleep 1
+python db_import.py mwrt ../data/db_parts/mwrt_04.db --create --pid=2810000 --offset=2100 --size=700 &
+sleep 1
+python db_import.py mwrt ../data/db_parts/mwrt_05.db --create --pid=2830000 --offset=2800 --size=700 &
 
 wait
 
@@ -73,15 +74,9 @@ ATTACH "../data/db_parts/mwrt_02.db" AS mwrt02;
 ATTACH "../data/db_parts/mwrt_03.db" AS mwrt03;
 ATTACH "../data/db_parts/mwrt_04.db" AS mwrt04;
 ATTACH "../data/db_parts/mwrt_05.db" AS mwrt05;
-ATTACH "../data/db_parts/mwrt_06.db" AS mwrt06;
-ATTACH "../data/db_parts/mwrt_07.db" AS mwrt07;
-ATTACH "../data/db_parts/mwrt_08.db" AS mwrt08;
 INSERT INTO hatpro SELECT * FROM mwrt01.hatpro;
 INSERT INTO hatpro SELECT * FROM mwrt02.hatpro;
 INSERT INTO hatpro SELECT * FROM mwrt03.hatpro;
 INSERT INTO hatpro SELECT * FROM mwrt04.hatpro;
 INSERT INTO hatpro SELECT * FROM mwrt05.hatpro;
-INSERT INTO hatpro SELECT * FROM mwrt06.hatpro;
-INSERT INTO hatpro SELECT * FROM mwrt07.hatpro;
-INSERT INTO hatpro SELECT * FROM mwrt08.hatpro;
 '''
