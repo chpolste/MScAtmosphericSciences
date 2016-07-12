@@ -1,8 +1,8 @@
 import datetime as dt
 import pandas as pd
-from dbtoolbox import DatabaseToolbox
+from db_tools import Database
 
-db = DatabaseToolbox("../data/amalg.db")
+db = Database("../data/amalg.db")
 
 cosmos = db.as_dataframe("""
         SELECT valid FROM profiles WHERE kind="cosmo7"

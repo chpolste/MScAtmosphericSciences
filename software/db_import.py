@@ -1,26 +1,62 @@
-"""Process data from a given source and put it into a sqlite3 database.
-    
-This is used to parallelize the data processing as the used bufr-reader is
-quite slow and would otherwise take over 2 hours to process all available
-files. Instead of handling the parallelization in Python, it is done by
-creating multiple databases in parallel with a bash script (db_create) and then
-merging those databases. To maintain correct relations in the database the
-profile-ids have to be offset for each database so that every id is unique
-in the merged database. This is what the pid argument is for, it gives the
-first profile index to be used. The size and offset arguments specify which
-files are selected from the respective folders.
+"""Process data from some source and put it into a sqlite3 database.
+
+A collection of one-time use data import scripts that assemble a unified
+database from multiple data sources. To be used as a command line program from
+the terminal.
+
+size offset and pid arguments allow poor man's parallel processing by running multiple
+instances of this script and afterwards merging all output databases into the
+main one (this should have come with a db_import shell script showing the use).
+pid governs the start id for the produced rows, therefore the individual rows
+can be merged without loosing appropriate relations between profiles and
+profiledata. size and offset are used to select subsets of input files.
+
+Available data arguments:
+
+raso_fwf
+    Radiosonde data from fixed width format files. These make up the
+    high-resolution climatology also used by Massaro (2013) and Meyer (2016).
+
+raso_cosmo7
+    Simulated vertical profiles from COSMO7 in L2E format.
+
+raso_bufr
+    Radiosonde data from bufr files. These are the additional profiles after
+    2012 from ERTEL2.
+
+nordkette
+    Nordkette slope temperature measurements used previously by Meyer (2016).
+
+igmk
+    Brightness temperature simulations based on the high-resolution
+    climatology. The used model is MONORTM, data were apparently processed by
+    the IGMK. These data come from the netcdf files that are the input to the
+    IDL script used by Massaro (2013) and Meyer (2016) for their regression
+    retrievals.
+
+hatpro
+    HATPRO raw data import: BLB and BRT joined with data from the MET files.
+
+mwrt
+    Simulates brightness temperature measurements for all radiosonde profiles
+    that exceed 15 km height using the mwrt Python model.
+
+description
+    Adds a table information to the database containing descriptions of the
+    kind values used in profiles and hatpro tables.
 """
 
 import argparse, json, os
 import datetime as dt
 from glob import glob
 from operator import itemgetter
+from collections import OrderedDict
 
 from toolz import groupby
 import numpy as np
 import pandas as pd
 
-from dbtoolbox import DatabaseToolbox
+from db_tools import Database
 import formulas as fml
 
 
@@ -133,7 +169,7 @@ def read_l2e(pid, path):
             qliq = fml.qliq(df["T"], df["qcloud"])
             ps = pd.Series(np.repeat(pid, len(df)), name="profile")
             data = pd.concat([ps, df[["p", "z", "T", "Td", "qvap"]], qliq],
-                    axis=1).as_matrix().tolist()
+                    axis=1).dropna(axis=0).as_matrix().tolist()
             cloudy = 1 if (qliq > 0).any() else 0
             yield pid, data, valid, valid-run, cloudy, filename(path)
             pid = pid + 1
@@ -214,7 +250,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     pid = int(args.pid)
 
-    db = DatabaseToolbox(args.output)
+    db = Database(args.output)
 
     if args.create:
         db.execute(scheme)
@@ -317,6 +353,7 @@ if __name__ == "__main__":
         db.executemany(query, rows)
         print("done!")
 
+
     if args.data == "igmk":
         files = glob("../data/hatpro_netcdf/rt*.cdf")
         print("{} | {} | reading {} files".format(
@@ -337,6 +374,7 @@ if __name__ == "__main__":
         db.executemany(query, rows)
         print("done!")
     
+
     if args.data == "hatpro":
         import hatpro
         def get_df(files, kind=None):
@@ -386,4 +424,112 @@ if __name__ == "__main__":
         db.executemany(query, rows)
         print("done!")
 
+
+    if args.data == "mwrt":
+        from scipy.interpolate import interp1d
+        import mwrt
+        from faps_hatpro import *
+        dbin = Database("../data/amalg.db")
+        FAPs = [FAP22240MHz, FAP23040MHz, FAP23840MHz, FAP25440MHz,
+                FAP26240MHz, FAP27840MHz, FAP31400MHz, FAP51260MHz,
+                FAP52280MHz, FAP53860MHz, FAP54940MHz, FAP56660MHz,
+                FAP57300MHz, FAP58000MHz]
+        FAPnames = ["TB_22240MHz", "TB_23040MHz", "TB_23840MHz", "TB_25440MHz",
+                "TB_26240MHz", "TB_27840MHz", "TB_31400MHz", "TB_51260MHz",
+                "TB_52280MHz", "TB_53860MHz", "TB_54940MHz", "TB_56660MHz",
+                "TB_57300MHz", "TB_58000MHz"]
+        def get_profile(where):
+            query = ("SELECT z, p, T, qvap, qliq FROM profiledata "
+                    "WHERE {} ORDER BY z ASC;".format(where))
+            df = dbin.as_dataframe(query).dropna(axis=0)
+            lnq = pd.Series(np.log(df["qvap"] + df["qliq"]),
+                    index=df.index, name="lnq")
+            lnq[lnq<-30] = -30 # remove -infs
+            return pd.concat([df, lnq], axis=1)
+        profiles = select_files(dbin.execute("""
+                SELECT DISTINCT profile, profiles.valid
+                FROM profiledata
+                JOIN profiles ON profiles.id = profiledata.profile
+                WHERE z > 15000 and profiles.kind = "raso";"""))
+        print("{} | {} | simulating {} profiles".format(
+                args.data, args.output, len(profiles)))
+        angles = [x[0] for x in dbin.execute("""
+                SELECT DISTINCT angle
+                FROM hatpro
+                WHERE kind="igmk"
+                ORDER BY angle ASC;""")]
+        ang = pd.Series(angles, name="angle")
+        kind = pd.Series(np.repeat("mwrt", len(angles)), name="kind")
+        rows = []
+        for profid, valid in profiles:
+            df = (get_profile("profile={} AND z > 500".format(profid))
+                    .dropna(axis=0)
+                    .drop_duplicates("z", keep="first")
+                    )
+            if len(df) < 50: continue
+            # Interpolate to 612 m level at the bottom
+            zs = df["z"].values
+            surface = OrderedDict()
+            for col in df:
+                surface[col] = [float(interp1d(zs, df[col].values)(612))]
+            surface["lnq"] = [np.log(surface["qvap"][0] + surface["qliq"][0])]
+            surface = pd.DataFrame.from_dict(surface)
+            # Remove values below surface and add surface
+            df = pd.concat([surface, df.loc[df["z"]>612]], axis=0)
+            # Additional rows
+            val = pd.Series(np.repeat(valid, len(angles)), name="valid")
+            p = pd.Series(np.repeat(df.ix[0,"p"], len(angles)), name="p")
+            T = pd.Series(np.repeat(df.ix[0,"T"], len(angles)), name="T")
+            qvap = pd.Series(np.repeat(df.ix[0,"qvap"], len(angles)), name="qvap")
+            # Simulate brightness temperatures
+            zs = df["z"].values
+            zsmodel = mwrt.atanspace(zs[0], zs[-1], 3000)
+            itp = mwrt.LinearInterpolation(source=zs, target=zsmodel)
+            out = [mwrt.MWRTM(itp, FAP).forward(angles, data=df) for FAP in FAPs]
+            out = pd.DataFrame(np.array(out).T, columns=FAPnames)
+            # Assemble rows
+            out = pd.concat([kind, val, ang, out, p, T, qvap], axis=1)
+            rows.extend(out.as_matrix().tolist())
+        for row in rows:
+            row.append(pid)
+            pid = pid + 1
+        print("{} | {} | writing {} rows... ".format(
+                args.data, args.output, len(rows)), end="")
+        query = ("INSERT INTO hatpro (kind, valid, angle, "
+                "TB_22240MHz, TB_23040MHz, TB_23840MHz, TB_25440MHz, "
+                "TB_26240MHz, TB_27840MHz, TB_31400MHz, TB_51260MHz, "
+                "TB_52280MHz, TB_53860MHz, TB_54940MHz, TB_56660MHz, "
+                "TB_57300MHz, TB_58000MHz, p, T, qvap, id) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                "?, ?, ?, ?, ?, ?, ?);")
+        db.executemany(query, rows)
+        print("done!")
+
+
+    if args.data == "description":
+        print("{} | {} | creating and filling description table... ".format(
+                args.data, args.output), end="")
+        db.execute("CREATE TABLE IF NOT EXISTS description(tablename TEXT, "
+                "kind TEXT, text TEXT);")
+        rows = [["profiles", "cosmo7",
+                        "COSMO7 simulated soundings for Innsbruck"],
+                ["profiles", "raso",
+                        "Radiosonde profiles from Innsbruck airport"],
+                ["hatpro", "igmk",
+                        "MONORTM simulations of HATPRO measurements based on "
+                        "hires radiosonde profiles done by IGMK"],
+                ["hatpro", "hatpro_blb",
+                        "HATPRO boundary layer elevation scan measurements "
+                        "from the ACINN roof"],
+                ["hatpro", "hatpro_brt",
+                        "HATPRO hifreq measurements from the ACINN roof"],
+                ["hatpro", "mwrt",
+                        "MWRTM simulations of HATPRO measurements based on"
+                        "hires radiosonde profiles"],
+                ["nordkette", None,
+                        "Nordkette slope temperature measurements by ZAMG"]
+                ]
+        query = "INSERT INTO description (tablename, kind, text) VALUES (?, ?, ?);"
+        db.executemany(query, rows)
+        print("done!")
 

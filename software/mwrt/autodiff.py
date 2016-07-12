@@ -4,7 +4,6 @@ from functools import singledispatch, wraps
 from numbers import Number
 
 import numpy as np
-import scipy.sparse as sp
 import scipy.integrate as it
 
 
@@ -116,13 +115,6 @@ class DiagVector(VectorBase):
     def __repr__(self):
         return "DiagVector(fwd={}, dT={}, dlnq={})".format(
                 repr(self.fwd), repr(self.dT), repr(self.dlnq))
-
-    def as_vector(self):
-        return Vector(
-                fwd = self.fwd,
-                dT = sp.diags(self.dT),
-                dlnq = sp.diags(self.dlnq)
-                )
 
     def __pow__(self, other):
         """Power rule of derivation, implemented for integer exponents."""

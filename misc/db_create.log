@@ -1,3 +1,4 @@
+description | ../data/amalg.db | creating and filling description table... done!
 nordkette | ../data/amalg.db | reading 4 files
 nordkette | ../data/amalg.db | writing 4 measurements... done!
 igmk | ../data/amalg.db | reading 11 files
@@ -51,3 +52,19 @@ Warning: 2015010304_bufr309052_all_100hpa.bfr | No clouds reported but found by 
 Warning: 2015021204_bufr309052_all_100hpa.bfr | No clouds reported but found by RH criterion.
 Warning: 2015021205_bufr309052_all.bfr | No clouds reported but found by RH criterion.
 raso_bufr | ../data/db_parts/raso_bufr06.db | writing 100 profiles... done!
+mwrt | ../data/db_parts/mwrt_01.db | simulating 500 profiles
+mwrt | ../data/db_parts/mwrt_06.db | simulating 500 profiles
+mwrt | ../data/db_parts/mwrt_07.db | simulating 500 profiles
+mwrt | ../data/db_parts/mwrt_02.db | simulating 500 profiles
+mwrt | ../data/db_parts/mwrt_08.db | simulating 253 profiles
+mwrt | ../data/db_parts/mwrt_03.db | simulating 500 profiles
+mwrt | ../data/db_parts/mwrt_04.db | simulating 500 profiles
+mwrt | ../data/db_parts/mwrt_05.db | simulating 500 profiles
+mwrt | ../data/db_parts/mwrt_08.db | writing 2470 rows... done!
+mwrt | ../data/db_parts/mwrt_01.db | writing 5000 rows... done!
+mwrt | ../data/db_parts/mwrt_02.db | writing 5000 rows... done!
+mwrt | ../data/db_parts/mwrt_04.db | writing 5000 rows... done!
+mwrt | ../data/db_parts/mwrt_03.db | writing 4990 rows... done!
+mwrt | ../data/db_parts/mwrt_05.db | writing 4990 rows... done!
+mwrt | ../data/db_parts/mwrt_07.db | writing 5000 rows... done!
+mwrt | ../data/db_parts/mwrt_06.db | writing 5000 rows... done!

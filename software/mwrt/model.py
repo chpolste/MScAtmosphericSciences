@@ -54,7 +54,7 @@ class MWRTM:
         assert len(lnq) == len(self.interpolator.source)
         return p, T, lnq
 
-    def __call__(self, *, data=None, p=None, T=None, lnq=None, angles=None):
+    def __call__(self, angles=None, *, data=None, p=None, T=None, lnq=None):
         """Perform a model simulation.
         
         If angles is None, a Cached model will be returned which then can be
@@ -67,18 +67,22 @@ class MWRTM:
             return cached_model
         return cached_model(angles)
 
-    def forward(self, angle, *, data=None, p=None, T=None, lnq=None):
+    def forward(self, angles, *, data=None, p=None, T=None, lnq=None):
         """Perform a model simulation without calculating the Jacobians."""
         p, T, lnq = self._get_vars(data, p, T, lnq)
+        if isinstance(angles, Number): angles = [angles]
         zz = self.interpolator.target
         pp = self.interpolator(p)
         TT = self.interpolator(T)
         qq = self.interpolator(lnq)
         α = self.absorption(pp, TT, qq)
-        cosangle = np.cos(np.deg2rad(angle))
-        τexp = np.exp(-spi.cumtrapz(α, zz, initial=0)/cosangle)
-        cosmic = 2.736 * τexp[-1]
-        return cosmic + np.trapz(α * TT * τexp, zz)/cosangle
+        bt = []
+        for angle in angles:
+            cosangle = np.cos(np.deg2rad(angle))
+            τexp = np.exp(-spi.cumtrapz(α, zz, initial=0)/cosangle)
+            cosmic = 2.736 * τexp[-1]
+            bt.append(cosmic + np.trapz(α * TT * τexp, zz)/cosangle)
+        return bt if len(bt) > 1 else bt[0]
 
     @classmethod
     def simulate_radiometer(cls, interpolator, absorptions, angles, *,

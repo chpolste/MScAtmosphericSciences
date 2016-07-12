@@ -1,7 +1,7 @@
 import apsw
 
 
-class DatabaseToolbox:
+class Database:
 
     def __init__(self, database):
         self.connection = apsw.Connection(database)
@@ -19,7 +19,7 @@ class DatabaseToolbox:
     def lastid(self):
         return self.connection.last_insert_rowid()
 
-    def as_dataframe(self, query, **kwargs):
+    def as_dataframe(self, query):
         """Get the results of a query as a pandas DataFrame.
     
         kwargs are given to pd.read_sql_query.
