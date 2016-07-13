@@ -966,7 +966,26 @@ by \cite[Downey2013].
         \RPREDICT = \GAUSS{x}{\VECPHI(\VECY) \MEANVEC}{\BETAI + \VECPHI(\VECY) \COVMAT \VECPHIT(\VECY)}
     \stopformula
 
-    as the predictive distribution.
+    as the predictive distribution. The prediction mean and therefore most
+    probable value is the sum of products between the basis functions evaluated
+    for the predictors and the the parameter vector's MAP solution, a result
+    that is consistent with the expectation from a non-Bayesian approach to
+    linear regression. The covariance of the predicted value is a combination
+    of the uncertainty inherent in the target variable and uncertainty in the
+    model parameters. A full description of the predictive distribution appears
+    to be very useful for the estimation of uncertainty in predictions. But
+    care has to be taken in its interpretation. 
+
+    \placefigure[top][fig:bayesian_regression]
+        {Predictive distributions of Bayesian regression models trained on 12
+        data points obtained from a sine signal with added Gaussian noise of
+        standard deviation 0.2 (circles). The line is the mean of the
+        predictive distribution, the gray and light gray shaded areas mark
+        one and three standard deviations around this mean. The left and center
+        models are fifth and first order polynomials respectively, the right
+        model uses 7 Gaussian basis functions between -3 and 3.}
+        {\externalfigure[bayesian_regression][width=\textwidth]}
+
 
     TODO: explain decoupling if target vector errors are uncorrelated.
 

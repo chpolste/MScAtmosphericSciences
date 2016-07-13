@@ -67,7 +67,7 @@
 \definestructureresetset[nosecreset][1,1,0][1] % [part, chapter, section][default]
 \setuphead[sectionresetset=nosecreset]
 % No chapter numbering, apply heading styles
-\setuphead[chapter][number=no,style=ChapterStyle,page=right]
+\setuphead[chapter][number=no,style=ChapterStyle,page=yes]
 \setuphead[section][style=SectionStyle,sectionsegments=section]
 \setuphead[subsection][style=SubsectionStyle,sectionsegments=section:subsection]
 
@@ -129,11 +129,30 @@
     \raggedcenter
 \stopsectionblockenvironment
 
-% Frontmatter: Table of Contents
+% Table of Contents
+\definesectionblock[TOCSectionBlock][,]
+\setupsectionblock[TOCSectionBlock][page=right]
+\startsectionblockenvironment[TOCSectionBlock]
+    \setupwhitespace[0.5em]
+    \setuppagenumbering[state=stop,alternative=doublesided]
+\stopsectionblockenvironment
+
+% Frontmatter: Acknowledgements, Preface
 \setupsectionblock[frontpart][page=right]
 \startsectionblockenvironment[frontpart]
-    \setupwhitespace[0.5em]
-    \page[right]
+    \setuplayout[footerdistance=8mm,footer=6mm]
+    \setcounter[userpage][1] % Reset page counter
+    \setuppagenumbering[
+            state=start,
+            location={footer,right},
+            left={},
+            right={},
+            alternative=doublesided,
+            style=\PageNumberFont
+            ]
+    \setupuserpagenumber[numberconversion=romannumerals]
+    \setupwhitespace[medium]
+    \setupinterlinespace[line=1.5em]
 \stopsectionblockenvironment
 
 \definesectionblock[AbstractSectionBlock][,]
@@ -274,22 +293,31 @@
 
 \stopsectionblock
 
-\startfrontmatter
+\startsectionblock[TOCSectionBlock]
+
     \completecontent
-\stopfrontmatter
 
+\stopsectionblock
 
-\startbodymatter
-    
-    \input flowcharts
+\startfrontmatter
 
     \startchapter[title=Acknowledgements]
         \input ch_acknowledgements
     \stoptitle
 
+    \page[even,empty] % TODO: take care of this when all is written
+
     \startchapter[title=Preface]
         \input ch_preface
     \stoptitle
+
+    \page[even,empty]
+
+\stopfrontmatter
+
+\startbodymatter
+    
+    \input flowcharts
 
     \startchapter[title=Introduction]
         \input ch_introduction
