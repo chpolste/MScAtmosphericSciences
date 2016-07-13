@@ -67,7 +67,7 @@
 \definestructureresetset[nosecreset][1,1,0][1] % [part, chapter, section][default]
 \setuphead[sectionresetset=nosecreset]
 % No chapter numbering, apply heading styles
-\setuphead[chapter][number=no,style=ChapterStyle,page=yes]
+\setuphead[chapter][number=no,style=ChapterStyle,page=right]
 \setuphead[section][style=SectionStyle,sectionsegments=section]
 \setuphead[subsection][style=SubsectionStyle,sectionsegments=section:subsection]
 
@@ -168,22 +168,6 @@
     \setupinterlinespace[line=1.5em]
 \stopsectionblockenvironment
 
-% Appendix
-\setupsectionblock[appendix][page=no]
-\startsectionblockenvironment[appendix]
-    \setuplayout[footerdistance=8mm,footer=6mm]
-    \setuppagenumbering[alternative=doublesided,style=\PageNumberFont]
-    \setupfootertexts[{\FooterFont {\DocTitleFooter}}]
-                     [pagenumber]
-                     [pagenumber]
-                     [{\FooterFont Master's Thesis of {\Author} (2016)}]
-    \setupbackgrounds[footer][text][topframe=on]
-    \setuphead[section][conversion=R]
-    \setupwhitespace[medium]
-    \setupinterlinespace[line=1.5em]
-    \resetnumber[figure]
-    \setupcaptions[figure][numberconversion=Romannumerals]
-\stopsectionblockenvironment
 
 % Backmatter: References
 \setupsectionblock[backpart][page=no]
@@ -199,15 +183,6 @@
     \setupinterlinespace[line=1.5em]
 \stopsectionblockenvironment
 
-% Acknowledgements
-\definesectionblock[AcknowledgementSectionBlock][,]
-\setupsectionblock[AcknowledgementSectionBlock][page=right]
-\startsectionblockenvironment[AcknowledgementSectionBlock]
-    \setuppagenumbering[state=stop,alternative=singlesided]
-    \setupbackgrounds[footer][text][topframe=off]
-    \setupinterlinespace[line=1.5em]
-    \setupwhitespace[medium]
-\stopsectionblockenvironment
 
 \starttext
 
@@ -308,6 +283,14 @@
     
     \input flowcharts
 
+    \startchapter[title=Acknowledgements]
+        \input ch_acknowledgements
+    \stoptitle
+
+    \startchapter[title=Preface]
+        \input ch_preface
+    \stoptitle
+
     \startchapter[title=Introduction]
         \input ch_introduction
     \stopchapter
@@ -324,31 +307,15 @@
         \input ch_instrument
     \stopchapter
 
-    \startchapter[title=Retrievals of Synthetic Data]
-        \input ch_synthetic_data
+    \startchapter[title=Retrieval Results and Discussion]
+        \input ch_results
     \stopchapter
 
-    \startchapter[title=A Case Study with Real Observations]
-        \input ch_real_data
-    \stopchapter
-
-    \startchapter[title=Outlook]
-        \input ch_outlook
-    \stopchapter
-
-    \startchapter[title=Conclusions]
+    \startchapter[title=Conclusions and Outlook]
         \input ch_conclusions
     \stopchapter
 
 \stopbodymatter
-
-\startappendices
-
-    \startchapter[title=Appendix]
-        \input appendix
-    \stopchapter
-
-\stopappendices
 
 \startbackmatter
 
@@ -356,18 +323,5 @@
     \page[left]
 
 \stopbackmatter
-
-\startsectionblock[AcknowledgementSectionBlock]
-    \page[empty,force]
-
-    \startsubject[title=Acknowledgements,page=yes]
-        Mathias, ...
-
-        Parents, ...
-    \stopsubject
-    %\page[empty,force]
-    %\page[empty,force]
-
-\stopsectionblock
 
 \stoptext

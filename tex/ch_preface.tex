@@ -1,0 +1,39 @@
+Hardest part of writing about research for me is the presentation of
+unfulfilled expectations and failed experiments. Current publication system
+results in one being used to seeing positive results almost exclusively. This
+brings a certain naivety. In reality most things are (much) harder than they
+look. But research is a process in time. One starts with a set of knowledge and
+expectations and both are in continuous change due to the research being done.
+While thinking about this I realized a nice connection to the theme of this
+thesis: one starts with knowledge and expectations based on this knowledge.
+During the research this knowledge is updated with experience and results. The
+research is dependent on the expectations which govern the conducted
+experiments.  After having conducted the research one's knowledge has been
+updated with the results.  Representing research with $r$ and knowledge with
+$k$ this process is described exactly by Bayes' theorem:
+
+\startformula
+    \PROB{k \GIVEN r} = \frac{\PROB{r \GIVEN k} \, \PROB{k}}{\PROB{r}}
+\stopformula
+
+Which parts to write about, only give final state as usually done in scientific
+literature or take a more exploratory approach describing the results and the
+process including things that are unclear or do not work (reference
+http://jvns.ca/?). Both have merits and flaws.
+
+The original idea of this thesis was to study neural network retrievals as an
+alternative to linear regression models. During the literature research it
+became apparent to me that the optimal estimation approach is a mathematically
+much more elegant approach to the problem and coincidentally also provides
+good retrieval performance. I therefore changed the focus and started working
+on an implementation of this technique. NN training w/ autodiff → idea for a
+custom RTM. Realization that radiative transfer is not as easy as it often
+seems in the retrieval literature. My expectations regarding the Bayesian
+approach to linear regression were damped by the realization that the
+predictive distribution did not represent the "right" kind of error.
+
+Despite their (partial) failures, the developed numerical model and the theory
+of Bayesian linear regression are included in this thesis as they represent
+a significant part of the work and might still be useful for following research
+if only as a reminder of what has not worked in the past.
+
