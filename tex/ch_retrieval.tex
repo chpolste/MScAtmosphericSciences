@@ -38,29 +38,70 @@ by \cite[Downey2013].
 
 \startsection[title={Bayesian Statistics}]
 
-    The Bayesian view of statistics is ideal for the formulation of retrieval
-    problems. 
+    Probability always refers to some entity, which may be a hypothesis, an
+    event or a value that some variable takes. Probability = value between
+    0 and 1 representing a continuum of certainty about the state of the
+    entity. As an example 0 stands for absolute certainty that a fact is
+    false, i.e. impossible, and 1 is absolute certainty that the fact is true.
+    All intermediate numbers express certainties between these two extremes.
 
-    Conditional probability, diachronic interpreation, subjective priors,
-    making assumptions explicit, focus on pdf from which values can be
-    extracted due to different criteria, pdf carries uncertainty estimates,
-    sampling from pdfs, marginalization...
+    The entity that a probability refers to can be discrete or continuous.
+    In both cases a \infull{PDF}, also called probability distribution,
+    probability mass function or {\PDF} can be defined. For the retrieval
+    problem the entity is always a continuous variable, e.g. $x \in I$, and its
+    probability distribution is a function $I \rightarrow \REALS$ which is
+    nonnegative almost everywhere. Integrating the {\PDF} over a subset of $U$
+    results in the probability that $x$ takes a value in that subset. Therefore
+    all probability distributions must fulfil
 
-    Central role: Bayes' theorem.
-    
-    \placeformula[eq:bayes_theorem]
+    \placeformula[eq:probaint]
     \startformula
-        \PROB{x \GIVEN y} = \frac{\PROB{y \GIVEN x} \PROB{x}}{\PROB{y}}
+        \int_I \PROB{x} \diff x = 1 \EQCOMMA
+    \stopformula
+    
+    that is the probability that any value of all possible will be taken must
+    be 1. A fundamental concept in Bayesian statistics is that of joint and
+    conditional probability. A joint probability is the probability that two
+    variables lie in a specified subset of their domain at the same time and
+    a conditional probability is a probability of one variable being part of a
+    set when it is known that the second variable takes a value in a given set.
+    The joint {\PDF} is written as $\PROB{x, y}$ (read $x$ and $y$) and the
+    conditional $\PROB{x \GIVEN y}$ (read $x$ given $y$). The extension to
+    more than two variables is straightforward.
+
+    To derive the fundamental theorem of Bayesian statistics, the product rule
+    of probability is needed \cite[authoryears][Bishop2006] which reads
+
+    \startformula
+        \PROB{x, y} = \PROB{x \GIVEN y} \, \PROB{y} \EQCOMMA
     \stopformula
 
-    $\PROB{x \GIVEN y}$ likelihood
+    i.e. the joint probability distribution of $x$ and $y$ is the product of
+    the conditional probability distribution $x$ given $y$ and the {\PDF} of
+    $y$ independent of $x$. Because the ordering of $x$ and $y$ is
+    irrelevant, symmetry dictates that
 
-    $\PROB{y \GIVEN x}$ posterior
+    \startformula
+        \PROB{x, y} = \PROB{y \GIVEN x} \, \PROB{x}
+    \stopformula
 
-    $\PROB{x}$ prior
+    is valid too. Together both expressions for the joint {\PDF} can be equated
+    and rearranged to yield Bayes' theorem:
 
-    $\PROB{y}$ normalization, can be obtained by integrating $\PROB{y \GIVEN x}\PROB{x}$
-    over all possible states $x$.
+    \placeformula[eq:bayes_theorem]
+    \startformula
+        \PROB{x \GIVEN y} = \frac{\PROB{y \GIVEN x} \, \PROB{x}}{\PROB{y}} 
+            \sim \PROB{y \GIVEN x} \, \PROB{x} \EQSTOP
+    \stopformula
+
+    All probability distributions must fulfil \ineq{probaint}, therefore the
+    denominator is just a normalization and generally does not need to be
+    determined explicitly. Diachronic interpretation: 
+    $\PROB{x \GIVEN y}$ likelihood, $\PROB{y \GIVEN x}$ posterior,
+    $\PROB{x}$ prior, $\PROB{y}$ normalization.
+
+    subjective priors, making assumptions explicit, pdf carries uncertainty
+    estimates, sampling from pdfs and Monte Carlo, marginalization...
 
     \placefigure[bottom][fig:bayes_theorem]
         {Visualization of a Bayesian update. A prior {\PDF} is combined
@@ -69,8 +110,6 @@ by \cite[Downey2013].
         {\externalfigure[bayes_theorem][width=\textwidth]}
 
     Describe different kinds of solutions: maximum likelihood, MAP, ...
-
-    Mention Monte Carlo methods.
 
 \stopsection
 
