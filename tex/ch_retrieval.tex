@@ -62,7 +62,11 @@ by \cite[Downey2013].
     $\PROB{y}$ normalization, can be obtained by integrating $\PROB{y \GIVEN x}\PROB{x}$
     over all possible states $x$.
 
-    \placefigure[bottom][fig:bayes_theorem]{Visualization of Bayes' theorem.} {\externalfigure[bayes_theorem][width=\textwidth]}
+    \placefigure[bottom][fig:bayes_theorem]
+        {Visualization of a Bayesian update. A prior {\PDF} is combined
+        with the likelihood {\PDF} according to Bayes' theorem resulting in
+        a posterior distribution combining the knowledge contained in both.}
+        {\externalfigure[bayes_theorem][width=\textwidth]}
 
     Describe different kinds of solutions: maximum likelihood, MAP, ...
 
@@ -801,8 +805,11 @@ by \cite[Downey2013].
     transfer model since extensive time series of radiometer measurements are
     rare.
 
-    TODO: blabla into derivation of Bayesian regression as (more general)
-    alternative to least squares approach
+    The classical approach to linear regression is the least squares framework
+    but the Bayesian framework provides an equivalent derivation presented
+    here. The Bayesian approach results in a predictive distribution instead
+    of a single target value but this distribution as an important caveat which
+    is shown as well.
 
     Consider a model $f$ of a linear combination of $n$ fixed basis functions
     $\VECPHI = \startpmatrix[n=3] \NC \phi_1 \NC \dots \NC \phi_n \NR
@@ -972,9 +979,7 @@ by \cite[Downey2013].
     that is consistent with the expectation from a non-Bayesian approach to
     linear regression. The covariance of the predicted value is a combination
     of the uncertainty inherent in the target variable and uncertainty in the
-    model parameters. A full description of the predictive distribution appears
-    to be very useful for the estimation of uncertainty in predictions. But
-    care has to be taken in its interpretation. 
+    model parameters.
 
     \placefigure[top][fig:bayesian_regression]
         {Predictive distributions of Bayesian regression models trained on 12
@@ -983,11 +988,46 @@ by \cite[Downey2013].
         predictive distribution, the gray and light gray shaded areas mark
         one and three standard deviations around this mean. The left and center
         models are fifth and first order polynomials respectively, the right
-        model uses 7 Gaussian basis functions between -3 and 3.}
+        model uses seven Gaussian basis functions centered between -3 and 3.}
         {\externalfigure[bayesian_regression][width=\textwidth]}
 
+    On first sight, a full description of the predictive distribution seems
+    useful for the estimation of uncertainty in predictions.  But care has to
+    be taken in its interpretation because the distribution describes
+    uncertainty in the model parameters but not the choice of model itself,
+    i.e. the choice of basis functions. The uncertainty obtained from the
+    predictive distribution is just one term in the overall error estimate and
+    on its own only really useful if the chosen model can accurately describe
+    the variability in the data.  Figure \in[fig:bayesian_regression]
+    illustrates how the choice of basis functions affects the predictive
+    distribution. The model shown in the left frame is a polynomial able
+    to describe the variability of the data and gives a good fit inside the
+    data domain and an appropriate uncertainty range outside the domain. The
+    model in the middle is a line with just slope and offset as parameters. It
+    is not only a bad fit for the data in- and outside the domain but the
+    predictive distribution massively overstates its accuracy. For the given
+    model this is a good fit and the parameters can be determined with high
+    accuracy but considering all possible models it is a bad fit because the
+    model cannot express variability sufficiently. On the right seven Gaussian
+    basis functions are used, giving a good fit inside the data domain with
+    appropriate uncertainty estimates. Because the basis functions are
+    localized, the error estimate from the predictive distribution however
+    reduces to the inherent uncertainty of the target data and no contribution
+    from the model exists anymore (the covariance is dominated by $\BETAI$
+    since $\VECPHI(\VECY)$ vanishes away from the basis functions).
 
-    TODO: explain decoupling if target vector errors are uncorrelated.
+    The treatment so far only considered multiple predictors but only a scalar
+    target. For the retrieval of an atmospheric profile from radiometer
+    measurements, each atmospheric layer is a target variable resulting in a
+    one dimensional target vector. The common approach in this situation is to
+    use the same basis functions for each target component and derive a
+    parameter matrix instead of a parameter vector $\VECW$. In the derivation
+    of this matrix it becomes apparent that the problem decouples into
+    independent, scalar regression problems for each target component
+    \cite[Bishop2006]. The results from above are therefore directly applicable
+    to multiple targets if the assumption holds that the errors of each target
+    variable are identically and independently distributed, an assumption that
+    is reasonable for the random errors of the sensors of a radiosonde.
 
 \stopsection
 
