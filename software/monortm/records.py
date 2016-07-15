@@ -1,6 +1,30 @@
 """MonoRTM record definitions."""
 
-from monortm.meta import Record
+from monortm.meta import RecordMeta
+
+
+class Record(metaclass=RecordMeta):
+    """Base class for records applying metaclass and adding common methods."""
+    
+    def __new__(cls, *args, **kwargs):
+        self = super().__new__(cls)
+        self._values = {}
+        return self
+
+    def __init__(self, **kwargs):
+        """Instanciate a new record."""
+        for key, val in kwargs.items():
+            if key in self._order:
+                # The default values are already set by the metaclass before
+                # __init__ is called.
+                setattr(self, key, val)
+            else:
+                err = "Element {} not in {}.".format(key, type(self).__name__)
+                raise ValueError(err)
+
+    def __str__(self):
+        """Return with formatting applied."""
+        return "".join(getattr(self, key) for key in self._order)
 
 
 class Record11(Record):
@@ -156,19 +180,19 @@ class Record211_IFORM0(Record):
     # SECNTK, ITYL, IPATH are not used in MONORTM. Format would be
     # F10.4,A3,I2,1X, therefore a gap of 16 characters is added to ALTZB
     ALTZB = ("16X,F7.2", None, float,
-            """Altitude for bottom of current layer (information only).""")
+            """Altitude for bottom of current layer.""")
 
     PZB = ("F8.3", None, float,
-            """Pressure at ALTZB (information only).""")
+            """Pressure at ALTZB.""")
 
     TZB = ("F7.2", None, float,
-            """Pressure at ALTZB. Used by MONORTM for Planck Function Calculation.""")
+            """Temperature at ALTZB. Used by MONORTM for Planck function.""")
 
     ALTZT = ("F7.2", None, float,
-            """Altitude for top of current layer (information only).""")
+            """Altitude for top of current layer.""")
 
     PZT = ("F8.3", None, float,
-            """Pressure at ALTZT (information only).""")
+            """Pressure at ALTZT.""")
 
     TZT = ("F7.2", None, float,
             """Temperature at ALTZT.""")

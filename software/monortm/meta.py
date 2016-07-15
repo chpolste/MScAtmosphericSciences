@@ -43,13 +43,20 @@ class ValueDescriptor:
 
     def _check_type(self, value):
         """Typecheck for values. Every type accepts None."""
-        isok = lambda v, t: (v is None or isinstance(v, t))
+        def isok(v, t):
+            return (v is None
+                    or (isinstance(t, set) and v in t)
+                    or (isinstance(t, range) and t.start <= v < t.stop)
+                    or isinstance(v, t)
+                    )
         # All types must match for a tuple
-        if ((self.ismultivalue
-                and not all(isok(v, t) for v, t in zip(value, self.type_)))
-                or not isok(value, self.type_)):
+        if self.ismultivalue:
+            matches = all(isok(v, t) for v, t in zip(value, self.type_))
+        else:
+            matches = isok(value, self.type_)
+        if not matches:
             err = "Value {} is not of type {} or None.".format(
-                    value, self.type_.__name__)
+                    value, self.type_)
             raise TypeError(err)
 
     @property
@@ -104,28 +111,4 @@ class RecordMeta(type):
             namespace
             namespace[key] = ValueDescriptor(key, *value)
         return super().__new__(cls, name, bases, namespace)
-
-
-class Record(metaclass=RecordMeta):
-    """Base class for records applying metaclass and adding common methods."""
-    
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls)
-        self._values = {}
-        return self
-
-    def __init__(self, **kwargs):
-        """Instanciate a new record."""
-        for key, val in kwargs.items():
-            if key in self._order:
-                # The default values are already set by the metaclass before
-                # __init__ is called.
-                setattr(self, key, val)
-            else:
-                err = "Element {} not in {}.".format(key, type(self).__name__)
-                raise ValueError(err)
-
-    def __str__(self):
-        """Return with formatting applied."""
-        return "".join(getattr(self, key) for key in self._order)
 
