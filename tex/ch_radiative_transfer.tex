@@ -174,11 +174,72 @@ performance or accuracy.
 \stopsection
 
 
+\startsection[title=The Choice of State Vector Variables]
+
+    Pressure as fixed variable (recalculated by hydrostatic equilibrium
+    after each iteration, check if this is good approximation when compared
+    to radiosonde measurements SHOW THIS). Temperature and humidity as variable
+    state quantities. To reduce dimensionality: use knowledge of qsat to
+    combine water vapor and liquid water content into a single variable qtot.
+    No representation of ice due to negligible absorption in microwave region
+    (see below INSERT REF). The individual components are then recovered by
+    a partition function
+
+    \startformula
+        \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
+            \NC 0 \MC s \lt 0.95 \NR
+            \NC \cos \left( \frac{\RHL - 1.05}{0.1} \frac{\pi}{2} \right)^2
+                \MC 0.95 \le s \le 1.05 \EQCOMMA\NR
+            \NC 1 \MC 1.05 \lt s \NR
+        \stopcases
+    \stopformula
+
+    where
+
+    \startformula
+        \RHL = \frac{\QTOT}{\QSAT} = \frac{\QVAP + \QLIQ}{\QSAT} \EQSTOP
+    \stopformula
+
+    Hewison, Deblonde, (COSMO7 fixes RH at 100 \% in clouds). Integrate,
+    get values for qliq and qvap.
+
+    \startformula
+        \QLIQ(\RHL) = \startcases
+            \NC 0 \MC s \lt 0.95 \NR
+            \NC \frac{\QSAT}{2} \left( \RHL - 0.95 - \frac{0.1}{\pi}
+                \cos \left( \frac{\pi \RHL}{0.1} \right) \right)
+                \MC 0.95 \le s \le 1.05 \NR
+            \NC \QLIQ(1.05) + \QSAT (\RHL - 1.05) \MC 1.05 \lt s \NR
+        \stopcases
+    \stopformula
+
+    and from REF to s = qtot/qsat
+
+    \startformula
+        \QVAP(\RHL) = \QTOT(\RHL) - \QLIQ(\RHL) \EQSTOP
+    \stopformula
+
+    Additionally: use ln(qtot) in state vector to enforce positivity and
+    better error characteristics.
+
+    \cite[Hewison2006]
+
+\stopsection
+
+
 \startsection[title=Weighting Functions]
 
     Weighting functions/averaging kernels. Obtained from the linearization of
     solution. Important for analyzing the information content and capabilities
     of resolution of a radiometer. Give examples for different angles. Plots!
+
+\stopsection
+
+
+\startsection[title=MonoRTM]
+
+    Short description, reference ARM models, used before in IBK, Python
+    wrapper.
 
 \stopsection
 
@@ -259,58 +320,6 @@ performance or accuracy.
         Numerical discretization very important for accurate results, high
         vertical resolution especially in the lower troposphere is required to
         obtain accurate numerical results.
-
-    \stopsubsection
-
-    \startsubsection[title=The Choice of State Vector Variables]
-
-        Pressure as fixed variable (recalculated by hydrostatic equilibrium
-        after each iteration, check if this is good approximation when compared
-        to radiosonde measurements). Temperature and humidity as variable
-        state quantities. To reduce dimensionality: use knowledge of qsat to
-        combine water vapor and liquid water content into a single variable
-        qtot. No representation of ice due to negligible absorption in
-        microwave region (see below INSERT REF). The individual components are
-        then recovered by a partition function
-
-        \startformula
-            \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
-                \NC 0 \MC s \lt 0.95 \NR
-                \NC \cos \left( \frac{\RHL - 1.05}{0.1} \frac{\pi}{2} \right)^2
-                    \MC 0.95 \le s \le 1.05 \EQCOMMA\NR
-                \NC 1 \MC 1.05 \lt s \NR
-            \stopcases
-        \stopformula
-
-        where
-
-        \startformula
-            \RHL = \frac{\QTOT}{\QSAT} = \frac{\QVAP + \QLIQ}{\QSAT} \EQSTOP
-        \stopformula
-
-        Hewison, Deblonde, (COSMO7 fixes RH at 100 \% in clouds). Integrate,
-        get values for qliq and qvap.
-
-        \startformula
-            \QLIQ(\RHL) = \startcases
-                \NC 0 \MC s \lt 0.95 \NR
-                \NC \frac{\QSAT}{2} \left( \RHL - 0.95 - \frac{0.1}{\pi}
-                    \cos \left( \frac{\pi \RHL}{0.1} \right) \right)
-                    \MC 0.95 \le s \le 1.05 \NR
-                \NC \QLIQ(1.05) + \QSAT (\RHL - 1.05) \MC 1.05 \lt s \NR
-            \stopcases
-        \stopformula
-
-        and from REF to s = qtot/qsat
-
-        \startformula
-            \QVAP(\RHL) = \QTOT(\RHL) - \QLIQ(\RHL) \EQSTOP
-        \stopformula
-
-        Additionally: use ln(qtot) in state vector to enforce positivity and
-        better error characteristics.
-
-        \cite[Hewison2006]
 
     \stopsubsection
 
@@ -423,7 +432,7 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title={Characterizing Errors},reference={ch:rtm_errors}]
+\startsection[title={Characterization of Errors},reference={ch:rtm_errors}]
 
     Building part of the forward model covariance matrix.
 

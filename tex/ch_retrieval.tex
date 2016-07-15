@@ -108,7 +108,7 @@ by \cite[Downey2013].
     may be hard to compute directly. For retrieval applications it is useful
     to consider the diachronic interpretation of Bayes' theorem
     \cite[authoryears][Downey2013], which sees \ineq{bayes_theorem} as
-    a Bayesian update of the distribution of $x$ in light of some data $y$. At
+    an update of the distribution of $x$ in light of some data $y$. At
     first only $\PROB{x}$ is known, this is the a-priori distribution of $x$ or
     just prior for short. Now some data $y$ is observed and $\PROB{x \GIVEN y}$
     expresses the likelihood of this observation given the prior knowlege $y$.
@@ -1131,8 +1131,44 @@ by \cite[Downey2013].
 
 \startsection[title=Other Retrieval Techniques]
 
-    Quick mention of neural networks and the whole of regression methods from
-    the field of machine learning. PCA for data reduction.
+    Another popular regression model used for the retrieval of thermodynamic
+    atmospheric profiles from radiometer measurements is the neural network.
+    This is a non-linear model able to approximate even complex functions.
+    Due to the non-linearity in its parameters, training the model is
+    computationally more expensive than finding the weights in linear
+    regression but both are cheap to evaluate once trained. Backpropagation,
+    a variant of automatic differentiation, has estabilshed itself as the
+    standard technique for efficient, automated training. Studies indicate that
+    even a simple network with a single type of activation function and one
+    hidden layer of neurons results in better retrieval performance for
+    inversion cases than linear regression FIND REFS FOR THIS. There are many
+    more regression models aside from linear regression and neural networks
+    that have not been tested as retrieval methods yet. The popularity of the
+    field of machine learning in the last years has caused a massive increase
+    in available regression models.
+
+    Aside from the method itself there are additional components of the
+    retrieval that can be tweaked. REF, REF and REF have used principal
+    component analysis/empirical orthogonal functions to reduce the
+    dimensionality of the retrieval problem. This is possible because
+    simultaneous measurements from different radiometer channels are generally
+    correlated and contain less independent pieces of information than the
+    number of channels REF. The inclusion of additional information is
+    a current topic of research. LÖHNERT ET AL have designed a retrieval system
+    that combines cloud radar, cloud base radiometer (and more?). It is common
+    practice to include surface measurements of temperature, humidity and
+    pressure into regression retrievals. These measurements as well as
+    measurements of cloud base height and -temperature have also been included
+    as fixed points in optimal estimation retrievals (I SHOULD HAVE A REF FOR
+    THAT). As mentioned in the introduction \cite[Massaro2013] and
+    \cite[Meyer2016] have studied the inclusion of measurements from different
+    altitudes as they are available in mountainous locations. The choice of
+    variables that quantify the atmospheric state is also of importance. While
+    regression techniques are able to retrieve temperature, humidity or liquid
+    water alone, optimal estimation techniques only work with a complete
+    description of the atmospheric state to ensure accurate radiative transfer
+    calculations. These aspects are one of the topics discussed in the
+    following chapter.
 
 \stopsection
 
