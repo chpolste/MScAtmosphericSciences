@@ -39,24 +39,24 @@ by \cite[Downey2013].
 \startsection[title={Bayesian Statistics}]
 
     Probability always refers to some entity, which may be a hypothesis, an
-    event or a value that some variable takes. Probability = value between
+    event or a value that some variable takes. A probability is a value between
     0 and 1 representing a continuum of certainty about the state of the
-    entity. As an example 0 stands for absolute certainty that a fact is
-    false, i.e. impossible, and 1 is absolute certainty that the fact is true.
-    All intermediate numbers express certainties between these two extremes.
+    entity. If the entity is a hypothesis, 0 stands for absolute certainty that
+    the hypothesis is false, and 1 is absolute certainty that it is true. All
+    numbers between 0 and 1 express certainties between these extremes.
 
     The entity that a probability refers to can be discrete or continuous.
     In both cases a \infull{PDF}, also called probability distribution,
     probability mass function or {\PDF} can be defined. For the retrieval
-    problem the entity is always a continuous variable, e.g. $x \in I$, and its
-    probability distribution is a function $I \rightarrow \REALS$ which is
+    problem the entity is always a continuous variable, e.g. $x \in U$, and its
+    probability distribution is a function $U \rightarrow \REALS$ which is
     nonnegative almost everywhere. Integrating the {\PDF} over a subset of $U$
     results in the probability that $x$ takes a value in that subset. Therefore
     all probability distributions must fulfil
 
     \placeformula[eq:probaint]
     \startformula
-        \int_I \PROB{x} \diff x = 1 \EQCOMMA
+        \int_U \PROB{x} \, \diff x = 1 \EQCOMMA
     \stopformula
     
     that is the probability that any value of all possible will be taken must
@@ -66,11 +66,18 @@ by \cite[Downey2013].
     a conditional probability is a probability of one variable being part of a
     set when it is known that the second variable takes a value in a given set.
     The joint {\PDF} is written as $\PROB{x, y}$ (read $x$ and $y$) and the
-    conditional $\PROB{x \GIVEN y}$ (read $x$ given $y$). The extension to
-    more than two variables is straightforward.
+    conditional $\PROB{x \GIVEN y}$ (read $x$ given $y$). It is possible to remove the
+    conditioning of a probability distribution by integrating over all possible
+    values of the variable the provides the condition
 
-    To derive the fundamental theorem of Bayesian statistics, the product rule
-    of probability is needed \cite[authoryears][Bishop2006] which reads
+    \startformula
+        \PROB{y} = \int_U \PROB{x \GIVEN y} \, \PROB{y} \, \diff x \EQSTOP
+    \stopformula
+
+    This process is called marginalization. The extension of these concepts to
+    more than two variables is straightforward.  To derive the fundamental
+    theorem of Bayesian statistics, the product rule of probability is needed
+    \cite[authoryears][Bishop2006] which reads
 
     \startformula
         \PROB{x, y} = \PROB{x \GIVEN y} \, \PROB{y} \EQCOMMA
@@ -96,20 +103,68 @@ by \cite[Downey2013].
 
     All probability distributions must fulfil \ineq{probaint}, therefore the
     denominator is just a normalization and generally does not need to be
-    determined explicitly. Diachronic interpretation: 
-    $\PROB{x \GIVEN y}$ likelihood, $\PROB{y \GIVEN x}$ posterior,
-    $\PROB{x}$ prior, $\PROB{y}$ normalization.
+    determined explicitly. Bayes' theorem allows to turn the conditioning
+    around getting from $\PROB{y \GIVEN x}$ to $\PROB{x \GIVEN y}$ which else
+    may be hard to compute directly. For retrieval applications it is useful
+    to consider the diachronic interpretation of Bayes' theorem
+    \cite[authoryears][Downey2013], which sees \ineq{bayes_theorem} as
+    a Bayesian update of the distribution of $x$ in light of some data $y$. At
+    first only $\PROB{x}$ is known, this is the a-priori distribution of $x$ or
+    just prior for short. Now some data $y$ is observed and $\PROB{x \GIVEN y}$
+    expresses the likelihood of this observation given the prior knowlege $y$.
+    Multiplying prior and likelihood and normalizing the result by $\PROB{y}$
+    yields the so called posterior distribution $\PROB{y \GIVEN x}$
+    representing the distribution of $x$ after having observed $y$. The
+    application of Bayes' theorem updates the knowledge of $x$ with new
+    knowlegde contained in $y$. This is visualized in Figure
+    \in[fig:bayes_theorem] for a variable distributed in two dimensions.
 
-    subjective priors, making assumptions explicit, pdf carries uncertainty
-    estimates, sampling from pdfs and Monte Carlo, marginalization...
-
-    \placefigure[bottom][fig:bayes_theorem]
+    \placefigure[top][fig:bayes_theorem]
         {Visualization of a Bayesian update. A prior {\PDF} is combined
         with the likelihood {\PDF} according to Bayes' theorem resulting in
         a posterior distribution combining the knowledge contained in both.}
         {\externalfigure[bayes_theorem][width=\textwidth]}
 
-    Describe different kinds of solutions: maximum likelihood, MAP, ...
+    The Bayesian framework is valuable because it deals with entire probability
+    distributions instead of just values. This means the uncertainty of a value
+    or a fact is always quantified enabeling better decisions based on this
+    data. Additionally a distribution allows sampling, i.e. generating new data
+    from the distribution. This is useful for example when visualizing the
+    data. But having to deal with probability distributions also complicates
+    calculations and analytical solutions to a problem might not exist. One way
+    to handle these situations is by discretization of the involved {\PDF}s and
+    the use of Monte Carlo methods. As shown by \cite[Downey2013] these methods
+    can work very well but they suffer from the high dimensionality of many
+    problems and quickly become computationally expensive. Sometimes it
+    sufficient to settle for a solution that is just values but still based on
+    the underlying distributions. A common solution of the type is the
+    determination of just the maximum of a probability distribution which often
+    can be derived analytically even for complicated {\PDF}s. Depending on which
+    distribution this solution is determined for, it is called the maximum
+    likelihood (ML) or maximum a-posteriori (MAP) solution.
+
+    There is another issue with the need for probability distributions in
+    Bayesian statistics: sometimes one just has no data at hand to decide how
+    the distribution of some variable should look like. At that point the
+    science becomes subjective and distributions are chosen based on
+    mathematical convenience or personal experience. Subjectivity in science
+    sounds like a bad idea at first but here it is argued that the way it is
+    treated in the Bayesian framework is actually a good thing. The reason is
+    not that subjectivity is good in itself but unavoidable. Most of the time
+    alternative methods starting from a non-Bayesian approach make the
+    same subjective assumption only that they are implicit and sometimes
+    downright hidden. This can be seen for example for the case of linear
+    regression, which will be derived from a Bayesian approach in section
+    \in[ch:linear_regression]. The assumption of Gaussian distributed target
+    variables and regression parameters leads to the same solution as the
+    classical approach of minimizing the sum of squared residuals with $L^2$
+    regularization. The equivalence of solutions implies that both methods rely
+    on the same assumptions but they are relatively hidden in the classical
+    approach while they are clearly exposed in the Bayesian framework and the
+    extension to different assumptions is obvious as well. Making a user
+    explicitly aware of the assumptions that a model is based on allows him/her
+    to include this information into the interpretation of results and the
+    assessment of the applicability of a model which clearly is an advantage.
 
 \stopsection
 
@@ -163,10 +218,12 @@ by \cite[Downey2013].
     assumption is that Gaussian distributions have very convenient analytic
     properties.  Particularly useful is that the marginalization of a Gaussian
     yields a Gaussian and that a conditional distribution of two Gaussian
-    variables is again Gaussian \cite[authoryears][Bishop2006]. TODO
-    The assumption that a continuous variable follows a Gaussian distribution
-    is not only popular due to its well understood analytic behavior. central
-    limit theorem, maximum entropy.
+    variables is again Gaussian if the conditioning is linear
+    \cite[authoryears][Bishop2006].
+    
+    TODO The assumption that a continuous variable follows a Gaussian
+    distribution is not only popular due to its well understood analytic
+    behavior. central limit theorem, maximum entropy.
 
     Because the assumption of Gaussian {\PDF}s is persistent throughout this
     text, some general results are derived in the following sections. These
@@ -830,7 +887,7 @@ by \cite[Downey2013].
 \stopsection
 
 
-\startsection[title=Linear Regression]
+\startsection[title={Linear Regression},reference=ch:linear_regression]
 
     TODO: Introduction. Adding regressors by adding elements to $\VECY$. No
     explicit forward model or error estimate needed.  Who has done it? Problem:
@@ -1005,7 +1062,8 @@ by \cite[Downey2013].
     \stopformula
 
     result \ineq{gaussbayesnorm} is applicable\footnote{The reduction in
-    dimension in \ineq{gaussbayesinityx} does not invalidate the result.},
+    dimension in \ineq{gaussbayesinityx} does not invalidate the result as the
+    dependece of the conditional distribution's mean is still linear.},
     yielding
 
     \startformula
@@ -1071,10 +1129,10 @@ by \cite[Downey2013].
 \stopsection
 
 
-\startsection[title=Comparison of Techniques]
+\startsection[title=Other Retrieval Techniques]
 
-    Ease of use, computational efficiency, inclusion of additional information.
-    Information content of output: uncertainty.
+    Quick mention of neural networks and the whole of regression methods from
+    the field of machine learning. PCA for data reduction.
 
 \stopsection
 
