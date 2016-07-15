@@ -1,3 +1,5 @@
+"""Writing input files, running MonoRTM and parsing output files."""
+
 import os
 from tempfile import TemporaryDirectory
 from subprocess import Popen
@@ -6,12 +8,13 @@ from monortm import paths
 
 
 def write(f, records):
+    """Write records to a file."""
     for rec in records:
         f.write(rec)
 
 
 class MonoRTM:
-    """"""
+    """MonoRTM wrapper."""
 
     def __init__(self, config, profile):
         self.config = config
@@ -23,11 +26,11 @@ class MonoRTM:
     def run(self, async=False):
         """Run MonoRTM with the given configuration and profile.
 
-        Returns output is async is False. If async == True, MonoRTM will run
-        in the background. Use wait, poll and cleanup to control the process
-        manually. Output is not automatically fetched after execution, it
-        has to be fetched manually before cleanup by calling any of the output
-        properties. Then it is also available after cleanup.
+        If async == True, MonoRTM will run in the background. Use wait, poll
+        and cleanup to control the process manually. Output is not
+        automatically fetched after execution, it has to be fetched manually
+        before cleanup by calling any of the output properties or
+        fetch_output. Then it is also available after cleanup.
         """
         self._folder = TemporaryDirectory(prefix="MonoRTM_")
         monortm_in = os.path.join(self._folder.name, "MONORTM.IN")
@@ -39,16 +42,17 @@ class MonoRTM:
             with open(monortm_prof, "w") as f:
                 write(f, self.profile)
             os.symlink(paths["TAPE3"], tape3)
-            self._process = Popen([paths["MonoRTM"]], cwd=self._folder.name)
+            self._process = Popen([paths["MonoRTM"], "2>&1 /dev/null"],
+                    cwd=self._folder.name)
             if not async:
                 self.wait()
-                self._fetch_output()
+                self.fetch_output()
                 self.cleanup()
         except:
             self.cleanup()
             raise
 
-    def _fetch_output(self):
+    def fetch_output(self):
         monortm_out = os.path.join(self._folder.name, "MONORTM.OUT")
         if not os.path.exists(monortm_out):
             raise IOError("MONORTM.OUT not available.")
@@ -57,13 +61,15 @@ class MonoRTM:
 
     @property
     def output(self):
+        """Raw output split into chunks corresponding to profiles."""
         if self.raw_output is None:
-            self._fetch_output()
+            self.fetch_output()
         sep = "MONORTM RESULTS"
         return [sep + block for block in self.raw_output.split(sep) if block]
 
     @property
     def brightness_temperatures(self):
+        """Brightness temperatures."""
         return [[float(line[15:26]) for line in block.splitlines()[4:]]
                 for block in self.output]
 

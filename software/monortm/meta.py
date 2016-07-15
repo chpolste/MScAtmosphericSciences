@@ -1,11 +1,10 @@
+"""Metaprogramming for convenient record definition."""
+
 from collections import OrderedDict
 from fortranformat import FortranRecordWriter
 from fortranformat._exceptions import InvalidFormat
 
-
 __all__ = ["Record"]
-
-__doc__ = """Metaprogramming for convenient record definition."""
 
 
 class DummyRecordWriter:

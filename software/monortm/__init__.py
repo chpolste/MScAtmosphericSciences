@@ -1,12 +1,14 @@
-#from monortm.records import *
+"""Wraps some of MONORTMs functionality (mainly IATM=0 stuff).
+
+Dependencies:
+- fortranformat (https://bitbucket.org/brendanarnold/py-fortranformat/)
+"""
+
+from monortm.core import MonoRTM, write
+from monortm import records
+
 
 __all__ = ["paths"]
-__doc__ = """MONORTM wrapper.
-        
-        Dependencies:
-        - fortranformat (https://bitbucket.org/brendanarnold/py-fortranformat/)
-        """
-
 paths = {
         "MonoRTM": "/home/chris/local/monortm/monortm_v5.2_linux_gnu_dbl",
         "TAPE3": "/home/chris/local/monortm/TAPE3"
