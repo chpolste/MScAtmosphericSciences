@@ -82,7 +82,7 @@ class MWRTM:
             τexp = np.exp(-spi.cumtrapz(α, zz, initial=0)/cosangle)
             cosmic = 2.736 * τexp[-1]
             bt.append(cosmic + np.trapz(α * TT * τexp, zz)/cosangle)
-        return bt if len(bt) > 1 else bt[0]
+        return np.hstack(bt) if len(bt) > 1 else bt[0]
 
     @classmethod
     def simulate_radiometer(cls, interpolator, absorptions, angles, *,

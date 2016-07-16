@@ -46,8 +46,8 @@ def layer(zs, ps, Ts, qvap, qliq, IFORM=1):
     assert dz > 0
     pave = 0.5 * sum(ps)
     Tave = 0.5 * sum(Ts)
-    Rave = 0.622/pave * (Rdry/(0.622 - qvap) + Rwat/qvap)
-    ρave = pave / Tave / Rave
+    Rave = (1-qvap)*Rdry + qvap*Rwat
+    ρave = 100*pave / Tave / Rave
     # Calculate column number density of water from specific humidity
     H2O = (qvap       # Specific humidity [kg/kg]
             * ρave     # Density of water vapor → [kg/m³]
@@ -62,8 +62,8 @@ def layer(zs, ps, Ts, qvap, qliq, IFORM=1):
             * dz   # Column CLW [kg/m²], corresponds to [mm]
             )
     if CLW == 0: CLW = None
-    # Broadening gas amount must be given as column density (see __doc__)
-    broadening = mixing_ratio_Ar * dz * (pave*100) / Tave / boltzmann
+    # Broadening gas amount must be given as column density (see __doc__) ↓cm²
+    broadening = mixing_ratio_Ar * dz * (pave*100) / Tave / boltzmann * 1.0e-4
     # Give species 1 (H2O), 2 (CO2), 7 (O2) and 22 (N2)
     row1 = [H2O, mixing_ratio_CO2, 0., 0., 0., 0., mixing_ratio_O2]
     row2 = [ 0.,               0., 0., 0., 0., 0.,              0.,   0.]
@@ -86,6 +86,18 @@ def from_mwrt_profile(z, p, T, lnq):
 
     """
     from mwrt.fap import partition_lnq
-
-    out = [Record21()]
+    qvap, qliq = partition_lnq(p, T, lnq)
+    zs = [(float(zb), float(zt)) for zb, zt in zip(z[:-1], z[1:])]
+    ps = [(float(pb), float(pt)) for pb, pt in zip(p[:-1], p[1:])]
+    Ts = [(float(Tb), float(Tt)) for Tb, Tt in zip(T[:-1], T[1:])]
+    qvaps = [0.5*(qb + qt) for qb, qt in zip(qvap[:-1], qvap[1:])]
+    qliqs = [0.5*(qb + qt) for qb, qt in zip(qliq[:-1], qliq[1:])]
+    out = []
+    H1 = z[0] / 1000.
+    H2 = z[-1] / 1000.
+    out.append(Record21(IFORM=1, NLAYRS=len(zs), NMOL=22, SECNTO=1.,
+            H1=H1, H2=H2, ANGLE=0., LEN=0))
+    for z, p, T, qvap, qliq in zip(zs, ps, Ts, qvaps, qliqs):
+        out.extend(layer(z, p, T, qvap, qliq, IFORM=1))
     return out
+

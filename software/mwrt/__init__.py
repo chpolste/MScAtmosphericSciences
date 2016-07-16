@@ -13,7 +13,7 @@ Module-wide conventions:
 """
 
 from mwrt.model import MWRTM
-from mwrt.fap import FastAbsorptionPredictor
+from mwrt.fap import FastAbsorptionPredictor, partition_lnq
 from mwrt.autodiff import DiagVector, Vector
 from mwrt.interpolation import LinearInterpolation, atanspace
 import mwrt.evaluation as evaluation

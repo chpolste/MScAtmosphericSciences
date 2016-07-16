@@ -150,15 +150,17 @@ class Record21(Record):
     SECNTO = ("F10.6", None, float,
             """+1 = looking up, -1 = looking down.""")
 
-    H1 = ("20X,F8.2", None, float,
+    H1 = ("20X,F8.3", None, float,
             """Observer altitude.""")
 
-    H2 = ("4X,F8.2", None, float,
+    H2 = ("4X,F8.3", None, float,
             """End point altitude.""")
 
     ANGLE = ("5X,F8.3", None, float,
             """Zenith angle at H1 (degrees). For nadir looking up: ANGLE = 0,
-            for nadir looking down: ANGLE = 180.""")
+            for nadir looking down: ANGLE = 180. It is not possible to
+            select other angles than 0° or 180°. It is just not implemented
+            for IATM = 0.""")
 
     LEN = ("5X,I2", None, int,
             """Apparently not used by MonoRTM. Is 0 in example profiles.""")
@@ -179,7 +181,7 @@ class Record211_IFORM0(Record):
 
     # SECNTK, ITYL, IPATH are not used in MONORTM. Format would be
     # F10.4,A3,I2,1X, therefore a gap of 16 characters is added to ALTZB
-    ALTZB = ("16X,F7.2", None, float,
+    ALTZB = ("16X,F7.3", None, float,
             """Altitude for bottom of current layer.""")
 
     PZB = ("F8.3", None, float,
@@ -188,7 +190,7 @@ class Record211_IFORM0(Record):
     TZB = ("F7.2", None, float,
             """Temperature at ALTZB. Used by MONORTM for Planck function.""")
 
-    ALTZT = ("F7.2", None, float,
+    ALTZT = ("F7.3", None, float,
             """Altitude for top of current layer.""")
 
     PZT = ("F8.3", None, float,
@@ -218,7 +220,7 @@ class Record211_IFORM1(Record):
 
     # SECNTK, ITYL, IPATH are not used in MONORTM. Format would be
     # F10.4,A3,I2,1X, therefore a gap of 16 characters is added to ALTZB
-    ALTZB = ("16X,F7.2", None, float,
+    ALTZB = ("16X,F7.3", None, float,
             """Altitude for bottom of current layer (information only).""")
 
     PZB = ("F8.3", None, float,
@@ -227,7 +229,7 @@ class Record211_IFORM1(Record):
     TZB = ("F7.2", None, float,
             """Pressure at ALTZB. Used by MONORTM for Planck Function Calculation.""")
 
-    ALTZT = ("F7.2", None, float,
+    ALTZT = ("F7.3", None, float,
             """Altitude for top of current layer (information only).""")
 
     PZT = ("F8.3", None, float,

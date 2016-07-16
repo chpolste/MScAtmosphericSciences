@@ -125,7 +125,7 @@ RH.register(lambda T, Td: RH(e=esat(T=Td), esat=esat(T=T)))
 p = ArgNameDispatch("p")
 @p.register
 def _(T, q, z, p0):
-    x = (1/Rdry * (1 - q/0.622) + 1/Rwat * q/0.622) / T
+    x = ((1 - q)/Rdry + q/Rwat) / T
     return p0 * np.exp(-g * cumtrapz(x, z, initial=0))
 
 # Dry air partial pressure

@@ -4,7 +4,7 @@ from monortm.records import (Record11, Record12, Record13, Record131,
         Record132, Record14)
 
 
-MHz2icm = 1 / 29.9792458 # = 1.0e9 / speed of light in cm/s
+MHz2icm = 1.0e6 / 29979245800. # = 1.0e6 / speed of light in cm/s
 
 config = [
         Record11(TOKEN="$", CXID="created for HATPRO simulation"),
@@ -25,6 +25,7 @@ config = [
         Record132(WN=56660*MHz2icm),
         Record132(WN=57300*MHz2icm),
         Record132(WN=58000*MHz2icm),
+        Record14(TBOUND=2.75, SREMIS=[1., 0., 0.], SRREFL=[0., 0., 0.]),
         Record11(TOKEN="%")
         ]
 
