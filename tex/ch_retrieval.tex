@@ -568,27 +568,48 @@ by \cite[Downey2013].
 
 \startsection[title={Optimal Estimation},reference=ch:optimalestimation]
 
-    Reference Rodgers, explain how it fits together.
+    This retrieval technique uses a Bayesian update to incorporate radiometer
+    observations $\VECY$ into prior knowledge of the atmospheric state vector
+    $\VECX$. The resulting state vector is consistent with the forward model
+    (usually a numerical radiative transfer model) necessary for the technique
+    and uses the a-priori information to solve the uniqueness problem
+    associated with retrievals. Because the method employs a numerical forward
+    model simulating the physical processes of measurement, it is often called
+    a physical retrieval.
 
-    The optimal estimation approach directly uses Bayes' theorem
-    \ineq{bayes_theorem} to obtain the posterior probability distribution
-    $\POSTERIOR$ using a forward model and prior information of the state
-    vector.
+    Advantages: instruments, forward model and knowledge are included with
+    their uncertainties and an uncertainty estimate comes out too. NWP models
+    generally provide good priors for upper atmosphere but predict boundary
+    layer processes less good, radiometer gets most information from lower
+    atmosphere the upper atmosphere → ideal combination of information. No
+    climatology needed if prior and likelihood distributions are characterized.
+    Disadvantages: forward model generally requires full description of
+    atmospheric state although \cite[Cimini2011] separated the retrieval
+    of temperature and humidity with success. Computational costs of forward
+    model and its necessary linearization are often mentioned but some
+    forward models can calculate linearizations effectively and computers are
+    increasingly fast making this less of a problem than years ago. Barrier
+    of entry higher as method is more complicated to set up than a regression.
+    Software such as QPACK aims to solve this issue by providing routines
+    for optimal estimation and a forward model (REF).
 
-    Call it physical retrieval because it uses the forward model.
-
-    The assumptions for the prior {\PDF} and the likelihood function
-    are that they are Gaussian.
-
-    Justify assumptions.
-
-    The prior $\PRIOR$ should contain all knowledge about the state vector
-    before the measurement is evaluated. This knowledge might come from
-    a climatology, output from a NWP model, information from other instruments
-    and any combination of these sources. The construction of an optimal prior
-    is not an easy task and will be discussed in section
-    \in[ch:construct_prior]. In any case, due to the assumption that the
-    {\PDF} is Gaussian it is of the form:
+    The most often cited reference for the theory behind optimal estimation
+    schemes is the book by \cite[Rodgers2000]. The derivation here also follows
+    this book but only shows the purely Bayesian parts.  The usual assumption
+    for all probability distributions involved in optimal estimation is that
+    they are Gaussian. The reasons for this are mainly of mathematical nature
+    as Gaussians can be dealt with analytically even for problems of high
+    dimensionality where dicrete approaches are to costly.  While is assumption
+    is good for variables like temperature (REF) some additional work will be
+    neccesary for humidity and cloud liquid water.  These issues are discussed
+    in section \in[ch:statevector]. For now the Gaussian assumption is taken as
+    is and the involved {\PDF}s are derived.  The prior $\PRIOR$ should contain
+    all knowledge about the state vector before the measurement is evaluated.
+    This knowledge might come from a climatology, output from a NWP model,
+    information from other instruments and any combination of these sources.
+    The construction of an optimal prior is not an easy task and will be
+    discussed in section \in[ch:construct_prior]. In any case, due to the
+    assumption that the {\PDF} is Gaussian it is of the form:
 
     \placeformula[eq:optimalest_prior]
     \startformula
@@ -775,8 +796,33 @@ by \cite[Downey2013].
         by applying the Gauss-Newton method. This underlines the equivalence
         of the two approaches.
 
-        TODO: convergence criterion, cite one or two examples where convergence
-        was a problem.
+        It is unnecessary to iterate until the atmospheric state vector has
+        beed determined to machine precision and depending on the method of
+        linearization of the forward model this might never happen. Therefore
+        the iteration is stopped once the difference between $\ITER{\VECX}{i}$
+        and $\ITER{\VECX}{i+1}$ is below some chosen threshold. Because
+        elements of the state vector may differ greatly in their magnitude they
+        should be scaled. An easily available scaling is given by the
+        covariance $\ITER{\COVMAT}{i+1}$ calculated during each iteration
+        \cite[authoryears][Rodgers2000]. The quadratic form
+
+        \startformula
+            (\ITER{\VECX}{i} - \ITER{\VECX}{i+1})^\top \ITER{\COVMATI}{i+1} (\ITER{\VECX}{i} - \ITER{\VECX}{i+1})
+        \stopformula
+
+        is scalar, nonnegative (because $\ITER{\COVMAT}{i+1}$ is positive
+        definite) and considers the different scales of state vector elements
+        appropriately making it a good choice for testing convergence.
+
+        In practical applications, the iterative optimal estimation method
+        converges in 75 to 100 \% of cases
+        \cite[alternative=authoryears,left={(e.g. }][Cimini2011,Blumberg2015,Martinet2015].  The chosen
+        convergence criterion, the included radiometer channels and angles, the
+        minimization technique and the method of forward model linearization
+        are likely to be major influences on convergence.  Generally cloudy
+        cases converge less often than clear-sky cases due to the stronger
+        non-linearity of absorption at the cloud threshold
+        \cite[authoryears][Hewison2006].
 
         \placefigure[top][fig:iteralgo]
                 {Visualization of the iterative retrieval algorithm. Missing
@@ -786,7 +832,7 @@ by \cite[Downey2013].
                 data being produced during the retrieval.}
                 {\FLOWchart[flow:iteralgo]}
 
-        The flowchart in figure \in[fig:iteralgo] visualizes the resulting
+        The flowchart in Figure \in[fig:iteralgo] visualizes the resulting
         iterative retrieval scheme. Given the prior knowledge, the measurement
         and an initial guess of the profile, minimization steps with a
         linearized forward model are taken until convergence. The profile
@@ -896,10 +942,10 @@ by \cite[Downey2013].
 
     In retrieval applications the data pairs are atmospheric state observations
     $x$ and simultaneous radiometer measurements $\VECY$. The atmospheric state
-    usually comes from a radiosonde climatology or NWP output, while the
-    radiometer measurements are often simulated with a numerical radiative
-    transfer model since extensive time series of radiometer measurements are
-    rare.
+    usually comes from a radiosonde climatology but NWP output has been used as
+    well \cite[authoryears][Guldner2013], while the radiometer measurements are
+    often simulated with a numerical radiative transfer model since extensive
+    time series of radiometer measurements are rare.
 
     The classical approach to linear regression is the least squares framework
     but the Bayesian framework provides an equivalent derivation presented
