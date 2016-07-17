@@ -84,7 +84,7 @@ performance or accuracy.
     \stopformula
 
     where the azimuth angle $\theta$ is defined as the deviation from
-    zenith.  Because height increases with height but radiation arriving at
+    zenith. Because height increases with height but radiation arriving at
     the radiometer is downwelling, the sign of the derivative is negative.
 
     In order to solve the radiative transfer equation after the coordinate
@@ -120,7 +120,8 @@ performance or accuracy.
 
     $T_B(\infty)$ is given by the cosmic background (describe), the
     absorption coefficient can be determined from the atmospheric profile
-    (see section REFERENCE).
+    (see section REFERENCE). Mention limitation of fixed zenith angle and
+    that it is wrong to assume angle is constant. Refraction, curvature.
 
 \stopsection
 
@@ -174,16 +175,21 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title={The Choice of State Vector Variables},reference={ch:statevector}]
+\startsection[title={Choice of State Vector Variables},reference={ch:statevector}]
 
     Pressure as fixed variable (recalculated by hydrostatic equilibrium
     after each iteration, check if this is good approximation when compared
-    to radiosonde measurements SHOW THIS). Temperature and humidity as variable
-    state quantities. To reduce dimensionality: use knowledge of qsat to
-    combine water vapor and liquid water content into a single variable qtot.
-    No representation of ice due to negligible absorption in microwave region
-    (see below INSERT REF). The individual components are then recovered by
-    a partition function
+    to radiosonde measurements SHOW THIS).
+
+    \startformula
+        p(z) = p(z_0) + \exp \left( - g \int_{z_0}^{z} \frac{1}{R(h) T(h)}  \diff h \right)
+    \stopformula
+    
+    Temperature and humidity as variable state quantities. To reduce
+    dimensionality: use knowledge of qsat to combine water vapor and liquid
+    water content into a single variable qtot.  No representation of ice due to
+    negligible absorption in microwave region (see below INSERT REF). The
+    individual components are then recovered by a partition function
 
     \startformula
         \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
@@ -229,6 +235,20 @@ performance or accuracy.
 
 \startsection[title=Weighting Functions]
 
+    \placefigure[top][fig:jacobian_frequency]
+        {Normalized weighting functions for the V band (left) and K band
+        (right) channels of the HATPRO instrument (see section \in[ch:hatpro])
+        simulated by the radiative transfer model introduced in section
+        \in[ch:mwrtm] for an upwards looking view from an altitude of 612 m.
+        The V band weighting functions are with respect to temperature, the
+        K band weighting functions with respect to the natural logarithm of
+        humidity. Lighter colors correspond to channels of higher frequency.
+        The assumed atmospheric profile is the U.S. standard atmosphere with
+        relative humidity decreasing from 70 \% at the surface to 10 \% at 11
+        km above which it is constant.
+        }
+        {\externalfigure[jacobian_frequency][width=\textwidth]}
+
     Weighting functions/averaging kernels. Obtained from the linearization of
     solution. Important for analyzing the information content and capabilities
     of resolution of a radiometer. Give examples for different angles. Plots!
@@ -236,18 +256,7 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title=MonoRTM]
-
-    Short description, reference ARM models, used before in IBK, Python
-    wrapper, version 5.2. Previously used for regression studies.
-
-    Clouds vs. elevation scanning. \cite[Blumberg2015] used MonoRTM version 4.2
-    at different elevation angles. It is unclear how they managed this.
-
-\stopsection
-
-
-\startsection[title=Implementation of a Numerical Model Prototype]
+\startsection[title={Implementation of a Numerical Model Prototype},reference=ch:mwrtm]
 
     Presentation of a custom implementation of a line-by-line model. Based on
     absorption models by \cite[Liebe1993] for gaseous absorption and
@@ -264,7 +273,7 @@ performance or accuracy.
         With existing models for radiative transfer, why build another one?
         Driven by the question if a specialized model, stripped down to its
         bare essentials can perform similarly well as full featured models such
-        as MONORTM or ARTS. Hope for better convergence properties if exact
+        as MonoRTM or ARTS. Hope for better convergence properties if exact
         Jacobians are available. ARTS (and the not yet available RTTOV-gb)
         provides linearizations but is quite heavy machinery.
 
@@ -281,7 +290,7 @@ performance or accuracy.
         contributor of errors: Bending due to changing refractive index
         neglected. This affects all angles away from zenith. 
 
-        TODO: hint at MONORTM comparison, is it really that bad, what about
+        TODO: hint at MonoRTM comparison, is it really that bad, what about
         sensitivity mostly in lower atmosphere? Besides, forward model errors
         are accounted for in Bayesian approach, this error should appear in
         MONORTM/MWRTM cov matrix.
@@ -424,14 +433,6 @@ performance or accuracy.
     \stopsubsection
 
 
-    \startsubsection[title=Evaluation of Model Performance]
-
-        Introduce MonoRTM wrapper. Statistical comparison of brightness
-        temperatures (variablility and bias) as well as jacobians for some
-        radiosonde subset.
-
-    \stopsubsection
-
 \stopsection
 
 
@@ -448,4 +449,64 @@ performance or accuracy.
     interpolated profiles with full resolution profiles.
 
 \stopsection
+
+
+\startsection[title=Other Available Models]
+
+    Need arises for quantification of spectral errors as seen in the previous
+    chapter. Refer to comparison study.
+
+    Existing dataset from Massaro/Meyer, using Rosenkranz absorption etc.
+
+    Implementation of a MonoRTM wrapper. Short description of MonoRTM,
+    reference ARM models, version 5.2.
+
+    Clouds vs. elevation scanning. \cite[Blumberg2015] used MonoRTM version 4.2
+    at different elevation angles. It is unclear how they managed this.
+
+\stopsection
+
+
+\startsection[title=Model Comparison]
+
+    Introduce MonoRTM wrapper. Statistical comparison of brightness
+    temperatures (variablility and bias) as well as jacobians for some
+    radiosonde subset.
+
+\stopsection
+
+
+\startsection[title=Elevation Scanning]
+
+    \placefigure[top][fig:jacobian_angle]
+        {Normalized weighting functions for 54.94 GHz (left) and 58.00 GHz
+        (right) for different zenith angles simulated by the radiative transfer
+        model introduced in section \in[ch:mwrtm]. The 0° weighting function
+        for 0° (upward looking) is the  blue line, angles 60°, 65°, 70°, 75°,
+        80°, 85° are the gray lines, with lighter colors being larger zenith
+        angles. Atmospheric profile and radiometer location are the same as in
+        Figure \in[fig:jacobian_frequency].
+        }
+        {\externalfigure[jacobian_angle][width=\textwidth]}
+
+    Off-zenith observations. Additional challenge for retrieval. RTM has to
+    take refraction and Earth's curvature into account. Horizontal homogeneity
+    becomes increasingly important for flat angles, which is problematic the
+    closer one comes to the surface. Humidity most easily violates assumption.
+    Crewell + Löhnert did regression with multiple angles of HATPRO and used
+    only four most opaque channels since path lengths are short. Radiometer
+    needs to be accurate to detect small changes. Obstacles in path complicate
+    situtation.
+
+    Implemented RTM does not have refractivity included yet. This means using
+    transparent channels is not possible in retrieval but As Crewell+Löhnert
+    2007 did the four most opaque are included. Also in unison with Massaro
+    who only used four most opaque channels off-zenith as predictors in
+    regression. Comparison to IGMK calculation shows standard deviations
+    smaller than radiometer noise and path lengths are so short (100 to 2000 m)
+    that refractivity is suspected to be negligible. Show weighting functions
+    from two channels at all angles from model.
+
+\stopsection
+
 
