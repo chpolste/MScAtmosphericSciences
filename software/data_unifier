@@ -1,0 +1,23 @@
+#! /usr/bin/env bash
+
+source /home/chris/local/miniconda3/bin/activate thesis
+
+echo "Database export"
+python data_unifier.py nordkette
+python data_unifier.py cosmo7
+python data_unifier.py raso
+python data_unifier.py bt_igmk
+
+echo "MonoRTM raso"
+python data_unifier.py --levels 130 bt_monortm > /dev/null
+echo "MonoRTM grid"
+python data_unifier.py --levels 50 --source "../data/unified/<VAR>_raso.csv" bt_monortm > /dev/null
+
+echo "MWRTM"
+python data_unifier.py --levels 3000 --source "../data/unified/<VAR>_raso.csv" bt_mwrtm_full &
+python data_unifier.py --levels 3000 --source "../data/unified/<VAR>_raso.csv" bt_mwrtm_fap &
+python data_unifier.py --levels 6000 --source "../data/unified/<VAR>_raso.csv" bt_mwrtm_fap &
+python data_unifier.py --levels 3000 bt_mwrtm_fap &
+wait
+
+echo "done!"

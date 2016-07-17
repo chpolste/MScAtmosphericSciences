@@ -9,8 +9,9 @@ from monortm import paths
 
 def write(f, records):
     """Write records to a file."""
-    f.write("\n".join(map(str, records)))
-    f.write("\n")
+    for rec in records:
+        f.write(str(rec))
+        f.write("\n")
 
 
 class MonoRTM:

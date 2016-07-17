@@ -12,8 +12,6 @@ pid governs the start id for the produced rows, therefore the individual rows
 can be merged without loosing appropriate relations between profiles and
 profiledata. size and offset are used to select subsets of input files.
 
-Available data arguments:
-
 raso_fwf
     Radiosonde data from fixed width format files. These make up the
     high-resolution climatology also used by Massaro (2013) and Meyer (2016).
@@ -37,10 +35,6 @@ igmk
 
 hatpro
     HATPRO raw data import: BLB and BRT joined with data from the MET files.
-
-mwrt
-    Simulates brightness temperature measurements for all radiosonde profiles
-    that exceed 15 km height using the mwrt Python model.
 
 description
     Adds a table information to the database containing descriptions of the
@@ -426,84 +420,6 @@ if __name__ == "__main__":
         print("done!")
 
 
-    if args.data == "mwrt":
-        from scipy.interpolate import interp1d
-        import mwrt
-        from faps_hatpro import *
-        dbin = Database("../data/amalg.db")
-        FAPs = [FAP22240MHz, FAP23040MHz, FAP23840MHz, FAP25440MHz,
-                FAP26240MHz, FAP27840MHz, FAP31400MHz, FAP51260MHz,
-                FAP52280MHz, FAP53860MHz, FAP54940MHz, FAP56660MHz,
-                FAP57300MHz, FAP58000MHz]
-        FAPnames = ["TB_22240MHz", "TB_23040MHz", "TB_23840MHz", "TB_25440MHz",
-                "TB_26240MHz", "TB_27840MHz", "TB_31400MHz", "TB_51260MHz",
-                "TB_52280MHz", "TB_53860MHz", "TB_54940MHz", "TB_56660MHz",
-                "TB_57300MHz", "TB_58000MHz"]
-        raso = dbin.as_dataframe("""
-                SELECT profiles.valid, z, p, T, qvap, qliq
-                FROM profiledata
-                JOIN profiles ON profiles.id = profiledata.profile
-                WHERE profiles.kind = "raso" AND z > 500
-                ORDER BY z ASC, valid ASC;
-                """)
-        lnq = pd.Series(np.log(raso["qvap"] + raso["qliq"]),
-                index=raso.index, name="lnq")
-        lnq[lnq<-30] = -30 # remove -infs
-        raso = pd.concat([raso, lnq], axis=1)
-        angles = [x[0] for x in dbin.execute("""
-                SELECT DISTINCT angle
-                FROM hatpro
-                WHERE kind="igmk"
-                ORDER BY angle ASC;""")]
-        ang = pd.Series(angles, name="angle")
-        kind = pd.Series(np.repeat("mwrt2k", len(angles)), name="kind")
-        gvalids = raso.groupby("valid")
-        valids = select_files(gvalids.groups)
-        print("{} | {} | simulating {} profiles".format(
-                args.data, args.output, len(valids)))
-        rows = []
-        for valid in valids:
-            df = gvalids.get_group(valid).dropna(axis=0).drop_duplicates("z", keep="first")
-            if len(df) < 50: continue
-            # Interpolate to 612 m level at the bottom
-            zs = df["z"].values
-            surface = OrderedDict()
-            for col in df:
-                surface[col] = [float(interp1d(zs, df[col].values)(612))]
-            surface["lnq"] = [np.log(surface["qvap"][0] + surface["qliq"][0])]
-            surface = pd.DataFrame.from_dict(surface)
-            # Remove values below surface and add surface
-            df = pd.concat([surface, df.loc[df["z"]>612]], axis=0)
-            # Additional rows
-            val = pd.Series(np.repeat(valid, len(angles)), name="valid")
-            p = pd.Series(np.repeat(df.ix[0,"p"], len(angles)), name="p")
-            T = pd.Series(np.repeat(df.ix[0,"T"], len(angles)), name="T")
-            qvap = pd.Series(np.repeat(df.ix[0,"qvap"], len(angles)), name="qvap")
-            # Simulate brightness temperatures
-            zs = df["z"].values
-            zsmodel = np.logspace(np.log10(zs[0]), np.log10(zs[-1]), 2000, endpoint=False)
-            itp = mwrt.LinearInterpolation(source=zs, target=zsmodel)
-            out = [mwrt.MWRTM(itp, FAP).forward(angles, data=df) for FAP in FAPs]
-            out = pd.DataFrame(np.array(out).T, columns=FAPnames)
-            # Assemble rows
-            out = pd.concat([kind, val, ang, out, p, T, qvap], axis=1)
-            rows.extend(out.as_matrix().tolist())
-        for row in rows:
-            row.append(pid)
-            pid = pid + 1
-        print("{} | {} | writing {} rows... ".format(
-                args.data, args.output, len(rows)), end="")
-        query = ("INSERT INTO hatpro (kind, valid, angle, "
-                "TB_22240MHz, TB_23040MHz, TB_23840MHz, TB_25440MHz, "
-                "TB_26240MHz, TB_27840MHz, TB_31400MHz, TB_51260MHz, "
-                "TB_52280MHz, TB_53860MHz, TB_54940MHz, TB_56660MHz, "
-                "TB_57300MHz, TB_58000MHz, p, T, qvap, id) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                "?, ?, ?, ?, ?, ?, ?);")
-        db.executemany(query, rows)
-        print("done!")
-
-
     if args.data == "description":
         print("{} | {} | creating and filling description table... ".format(
                 args.data, args.output), end="")
@@ -514,16 +430,13 @@ if __name__ == "__main__":
                 ["profiles", "raso",
                         "Radiosonde profiles from Innsbruck airport"],
                 ["hatpro", "igmk",
-                        "MONORTM simulations of HATPRO measurements based on "
+                        "Simulations of HATPRO measurements based on "
                         "hires radiosonde profiles done by IGMK"],
                 ["hatpro", "hatpro_blb",
                         "HATPRO boundary layer elevation scan measurements "
                         "from the ACINN roof"],
                 ["hatpro", "hatpro_brt",
                         "HATPRO hifreq measurements from the ACINN roof"],
-                ["hatpro", "mwrt",
-                        "MWRTM simulations of HATPRO measurements based on"
-                        "hires radiosonde profiles"],
                 ["nordkette", None,
                         "Nordkette slope temperature measurements by ZAMG"]
                 ]

@@ -21,10 +21,20 @@ class LinearInterpolation:
     """
 
     def __init__(self, source, target):
+        mint, mins = np.min(target), np.min(source)
+        minclose = np.isclose(mint, mins)
+        maxt, maxs = np.max(target), np.max(source)
+        maxclose = np.isclose(maxt, maxs)
+        assert mint >= mins or minclose
+        assert maxt <= maxs or maxclose
+        if minclose or maxclose:
+            target = target.copy()
+        if minclose:
+            target[0] = source[0]
+        if maxclose:
+            target[-1] = source[-1]
         assert strictly_monotonic(source)
         assert strictly_monotonic(target)
-        assert np.min(target) >= np.min(source)
-        assert np.max(target) <= np.max(source)
         self.source = source
         self.target = target
         self._generate_matrix()
