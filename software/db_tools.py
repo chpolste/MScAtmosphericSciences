@@ -1,9 +1,43 @@
-import apsw
+"""Convenience tools for interacting with the database or csv files."""
+
+import os
+from collections import OrderedDict
+
+import pandas as pd
+
+
+def read_csv_profiles(file):
+    return pd.read_csv(file, parse_dates=["valid"], index_col="valid")
+
+
+def read_csv_covariance(file):
+    return pd.read_csv(file, index_col=0)
+
+
+def iter_profiles(pattern, tryvars=("bt", "p", "T", "qvap", "qliq", "lnq")):
+    """Iterate over profiles obtained from multiple csv files.
+    
+    Assumes that columns and index are identical.
+    """
+    assert "<VAR>" in pattern
+    variables = [var for var in tryvars if os.path.exists(pattern.replace("<VAR>", var))]
+    assert len(variables) > 0
+    data = OrderedDict()
+    index = None
+    for var in variables:
+        data[var] = read_csv_profiles(pattern.replace("<VAR>", var))
+        if index is None:
+            index = data[var].index
+    for valid in index:
+        df = pd.concat([d.loc[valid] for d in data.values()], axis=1)
+        df.columns = list(data.keys())
+        yield valid, df
 
 
 class Database:
 
     def __init__(self, database):
+        import apsw
         self.connection = apsw.Connection(database)
 
     def execute(self, query, data=None):
@@ -28,7 +62,6 @@ class Database:
         the query and pd.read_sql_query cannot access the description attribute of
         the cursor. See: https://github.com/rogerbinns/apsw/issues/160.
         """
-        import pandas as pd
         try:
             return pd.read_sql_query(query, self.connection)
         except apsw.ExecutionCompleteError:

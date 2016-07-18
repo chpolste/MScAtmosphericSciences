@@ -153,8 +153,9 @@ if __name__ == "__main__":
     if args.data == "nordkette":
         df = db.as_dataframe("SELECT * FROM nordkette ORDER BY valid ASC;").set_index("valid")
         df.index = df.index.map(dt.datetime.utcfromtimestamp)
+        df.columns = [c.replace("T_", "z=") for c in df.columns]
         df.index.name = "valid"
-        df.to_csv("../data/unified/nordkette.csv")
+        df.to_csv("../data/unified/T_nordkette.csv")
 
 
     if args.data == "cosmo7":
@@ -184,7 +185,7 @@ if __name__ == "__main__":
             valid = pd.Series(valid, name="valid")
             for var, values in out.items():
                 (pd.DataFrame(np.vstack(values), index=valid,
-                        columns=["{}_{}m".format(var, int(z)) for z in zgrid])
+                        columns=["z={}m".format(int(z)) for z in zgrid])
                         .sort_index()
                         .round(10)
                         .to_csv("../data/unified/{}_cosmo7+{:0>2}.csv".format(var, lead//3600))
@@ -215,7 +216,7 @@ if __name__ == "__main__":
         valid = pd.Series(valid, name="valid")
         for var, values in out.items():
             (pd.DataFrame(np.vstack(values), index=valid,
-                    columns=["{}_{}m".format(var, int(z)) for z in zgrid])
+                    columns=["z={}m".format(int(z)) for z in zgrid])
                     .sort_index()
                     .round(10)
                     .to_csv("../data/unified/{}_raso.csv".format(var))
