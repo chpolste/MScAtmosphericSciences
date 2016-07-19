@@ -15,6 +15,8 @@ bt_igmk
     Dumps simulated brightness temperatures from IGMK (only the ones used in
     retrieval algorithms).
 
+cloudy_igmk
+
 bt_monortm
     Simulates zenith BT with MonoRTM. source controls from where to get the
     profiles (None is database, else give a pattern for csv files). levels
@@ -194,7 +196,6 @@ if __name__ == "__main__":
 
     if args.data == "raso":
         # Radiosoundings interpolated to retrieval grid
-
         raso = db.as_dataframe("""
                 SELECT profiles.valid, z, p, T, qvap, qliq
                 FROM profiledata
@@ -249,6 +250,29 @@ if __name__ == "__main__":
                 "TB_58000MHz_84.6", "TB_58000MHz_85.2", "TB_58000MHz_85.8",
                 "p", "T", "qvap"]
         bt_dataset(igmk)[columns].sort_index().to_csv("../data/unified/bt_igmk.csv")
+
+
+    if args.data == "cloudy_igmk":
+        # IGMK has different cloud determination
+        import xarray
+        from glob import glob
+        def read_netcdf(file):
+            xdata = xarray.open_dataset(file)
+            xdata.coords["n_date"] = xdata.data_vars["date"]
+            def to_date(d):
+                return (dt.datetime
+                        .strptime(str(d), "%Y%m%d%H")
+                        )
+            df = xdata["cloud_base"].to_dataframe()
+            df = df.ix[~df.index.duplicated(keep="first")]
+            df = (df.unstack(level=[1,2]) > -1).any(axis=1)
+            df.index = df.index.map(to_date)
+            df.index.name = "valid"
+            df.name = "cloudy"
+            return df.to_frame()
+        pd.concat([read_netcdf(file)
+                for file in sorted(glob("../data/hatpro_netcdf/rt*.cdf"))],
+                axis=0).sort_index().to_csv("../data/unified/cloudy_igmk.csv")
 
 
     if args.data == "bt_monortm":

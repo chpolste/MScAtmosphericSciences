@@ -7,6 +7,7 @@ python data_unifier.py nordkette
 python data_unifier.py cosmo7
 python data_unifier.py raso
 python data_unifier.py bt_igmk
+python data_unifier.py cloudy_igmk
 
 echo "MonoRTM raso"
 python data_unifier.py --levels 130 bt_monortm > /dev/null
