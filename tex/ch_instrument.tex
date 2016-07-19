@@ -1,3 +1,17 @@
+Introduce map with data locations, mention every instrument.
+
+
+\startsection[title={Applied Retrieval techniques}]
+
+    Which are used, short information about choice of parameters, algorithms,
+    components, etc.
+
+    All profiles cut off at 15 km. 50 level retrieval grid starting at 612 m,
+    log spacing.
+
+\stopsection
+
+
 \startsection[title=HATPRO,reference=ch:hatpro]
 
     TODO: avoid repetition with introduction.
@@ -20,11 +34,17 @@
     75.6°, 78.6°, 81.6°, 83.4°.
 
     Raw data available from 07-2015 to 10-2015 (???), this period provides
-    little data gaps and maximum overlap with other data sources.
+    little data gaps and maximum overlap with other data sources. Averaging in
+    ?? min intervals of zenith measurements. Bias (wrt to numerical model)
+    correction by comparison with radiosonde climatology. This means that
+    measurements are not independent of referenc data anymore but else too
+    little data are available. In operational applications one might do rolling
+    updates to the bias correction as well. Profits non-verifiable data during
+    the day.
 
 \stopsection
 
-\placefigure[bottom][fig:map_ibk]
+\placefigure[top][fig:map_ibk]
         {Data locations in the Inn-valley around Innsbruck. 1: Innsbruck
         Airport (577 m), radiosonde launch location. 2: HATPRO location with
         elevation scanning direction (612 m). 3: COSMO7 model grid point.
@@ -41,14 +61,56 @@
 
     Distance airport to university is approximately 2.5 km.
 
-    What available, which resolution. Applied ice-liquid-split of water outside
-    of model. KARSTENS ET AL liquid water content.
+    What available, which resolution, which sensor? Interpolation to retrieval
+    grid. How many night, how many day sondes? KARSTENS ET AL liquid water
+    content.
+
+    Reference Figure \in[fig:raso_prior]. Training dataset: 3229 profiles
+    between ?? and ??. Test dataset 249/250? sondes between ?? and ??. Choice
+    of test and training datasets is data-driven, this way maximum
+    availablility overlap is achieved between raso, cosmo, nordkette and hatpro
+    measurements are available as well.
+
+
+    \placefigure[top][fig:raso_prior]
+            {The radiosonde climatology of temperature (left) and specific
+            humidity (including LWC) used as a prior in subsequent retrievals.
+            The black lines indicate the climatological mean, the grey shadings
+            the one (dark) and two (light) standard deviation interals obtained
+            by sampling the distribution.
+            }
+            {\externalfigure[raso_prior][width=\textwidth]}
 
 \stopsection
 
+
 \startsection[title=COSMO7 Simulated Radiosoundings]
 
-    Determine prior covariance matrix by comparison with raso.
+    One year of simulated profiles (from ??? to ???) for gridpoint near
+    Innsbruck available. Lead times in 6 h steps and up to +30 h are used. To
+    match radiosonde ascent times and other retrieval times, profiles are
+    linearly interpolated between the nearest valid times of model forecasts.
+
+    Problem: model topography end above 1 km (???) but Innsbruck is at
+    approximately 600 m, therefore the profiles have to be extrapolated to the
+    surface. Easy solution considered was connecting COSMO7 profile to
+    radiometer surface measurement but model contains boundary layer processes
+    which would then be elevated. Instead profiles were stretched downward by
+    replacing the height grid such that COSMO surface is IBK surface. Because
+    it is assumed that the forecasts become less displaced farther away from
+    the surface, lower levels are stretched more than upper levels. Because
+    the stretching does not take temperature gradients into account and there
+    might be a possible model bias, the mean bias wrt radiosondes is removed
+    from the dataset. This can be understood as a simple MOS correction.
+    Important implication: profiles are not independent of raso test data set
+    any more. Better would be to use model uncertainty determined by.
+    assimilation system (REFERENCE) but that was not available.
+
+    Determine prior covariance matrix by comparison with raso: Figure
+    \in[fig:cosmo7_prior]. Uncertainty large in lower troposphere, but smaller
+    outside the boundary layer as expected (confirms assumptions made during
+    stretching). Example profile shows that model resolution is fine enough
+    that inversions may be represented in the model.
 
     In clouds always 100 \% RH. Partition specific cloud content into liquid
     and solid parts using
@@ -62,19 +124,13 @@
         \stopcases
     \stopformula
 
-    Ice content is thrown away.
-
-    Problem: model topography end above 1 km (???) but Innsbruck is at
-    approximately 600 m, therefore the profiles have to be extrapolated to the
-    surface. Done by connecting lowest COSMO7 level temperature with radiometer
-    surface measurement, then recalculating the pressure using the hydrostatic
-    equation.
+    Ice content is thrown away. (REFRENCE)
 
     \placefigure[top][fig:cosmo7_prior]
             {A COSMO7 prior distribution of temperature (left) and specific
             humidity (right) for the lower half of the troposphere, valid at
             2015-02-06 03:02 UTC. The means (black lines) are interpolated from
-            lead times +00 and +06 of the 2015-02-06 00:00 UTC run. The gray
+            lead times +00 and +06 of the 2015-02-06 00:00 UTC run. The grey
             shadings show the one (dark) and two (light) standard deviation
             intervals obtained by sampling.
             }
@@ -86,15 +142,10 @@
 \startsection[title={Nordkette Slope Measurements}]
 
     Data by ZAMG, previously used by Daniel Meyer, describe location of
-    stations and their height. Hint at use as likelihoof function/prior.
-
-\stopsection
-
-
-\startsection[title={Applied Retrieval techniques}]
-
-    Which are used, short information about choice of parameters, algorithms,
-    components, etc.
+    stations and their height. Will be used as additional regressors.
+    Just as surface measurements are questionable in their use as additional
+    information the same can be said about these measurements which are also
+    taken in the surface layer of the slope.
 
 \stopsection
 

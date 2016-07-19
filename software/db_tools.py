@@ -9,9 +9,12 @@ import pandas as pd
 def read_csv_profiles(file):
     return pd.read_csv(file, parse_dates=["valid"], index_col="valid")
 
-
 def read_csv_covariance(file):
     return pd.read_csv(file, index_col=0)
+
+def read_csv_mean(file):
+    df = pd.read_csv(file, index_col=0)
+    return df[df.columns[0]]
 
 
 def iter_profiles(pattern, tryvars=("bt", "p", "T", "qvap", "qliq", "lnq")):
