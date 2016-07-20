@@ -26,19 +26,21 @@ class VirtualHATPRO:
 
     angles = [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8]
 
-    def __init__(self, z, zgrid=zgrid):
+    def __init__(self, z_retrieval, z_model, model_error):
         """
 
         Use only zenith for K band and three most transparent channels of
         V band but all angles for four most opaque channels of V band.
         """
-        self.z = z
-        itp = LinearInterpolation(source=z, target=zgrid)
+        self.z = z_retrieval
+        itp = LinearInterpolation(source=z_retrieval, target=z_model)
         self.mod_ang = []
         for a in self.absorp[:10]:
-            self.mod_ang.append([MWRTM(itp, a), self.angles[0]])
+            self.mod_ang.append([MWRTM(itp, a), self.angles[0:1]])
         for a in self.absorp[10:]:
             self.mod_ang.append([MWRTM(itp, a), self.angles])
+        self.model_error = model_error
+        assert len([0 for _ in self.mod_ang for __ in _[1]]) == len(self.model_error)
 
     def separate(self, x, p0):
         """Take apart the state vector and calculate pressure.
@@ -51,8 +53,8 @@ class VirtualHATPRO:
         and the error is small enough that an iterative procedure for
         determining R is unnecessary.
         """
-        n = len(x)
-        T, lnq = x[:n], x[n:]
+        n = x.shape[0]//2
+        T, lnq = x[:n,:].flatten(), x[n:,:].flatten()
         p = p0 * np.exp(-9.8076 * cumtrapz(1/(288*T), self.z, initial=0))
         return p, T, lnq
 
@@ -69,8 +71,61 @@ class VirtualHATPRO:
             fwd.append(result.fwd)
         fwd = np.vstack(fwd)
         jac = np.vstack(jac)
-        return fwd if only_fwd else (fwd, jac)
+        return fwd if only_forward else (fwd, jac)
+    
+    def retrieve(self, y, μ0, p0, prior, γ0=5.0e3, max_iterations=15):
+        """Levenberg Marquard minimization using form 5.36 from Rodgers (2000)"""
+        μ, cov = μ0, prior.cov
+        γ, dist = γ0, 1.0e20
+        me = self.model_error
+        for i in range(15):
+            Fμ, jac = self.simulate(μ, p0)
+            rhs = jac.T @ me.covi @ (y - Fμ - me.mean) + prior.covi @ (μ - prior.mean)
+            cov = prior.covi + jac.T @ me.covi @ jac
+            lhs = cov + γ * prior.covi
+            diff = np.linalg.solve(lhs, rhs)        
+            μ = μ + diff
+            # Convergence check
+            dist_old = dist
+            dist = diff.T @ np.linalg.inv(cov) @ diff
+            if dist < 2/γ: # how to do this best...? gamma influences dist
+                return μ, cov
+            # No convergence, adjust γ, try again
+            if dist/dist_old > 0.75:
+                γ = γ * 5
+            elif dist/dist_old < 0.25:
+                γ = γ * 0.5
+        raise StopIteration()
 
 
+class Gaussian:
+    """Gaussian distribution with convenience methods/properties."""
+    
+    def __init__(self, mean, cov):
+        self.mean = np.array(mean).reshape(-1,1)
+        self.cov = np.array(cov)
+        assert self.mean.shape[0] == self.cov.shape[0] == self.cov.shape[1]
+    
+    def sample(self, size):
+        return np.random.multivariate_normal(mean=self.mean.flatten(), cov=self.cov, size=size)
+    
+    @property
+    def covi(self):
+        """Memoized inverse of covariance."""
+        if not hasattr(self, "_covi"):
+            self._covi = np.linalg.inv(self.cov)
+        return self._covi
+    
+    @classmethod
+    def read_csv(cls, mean, cov):
+        from db_tools import read_csv_covariance, read_csv_mean
+        cov = read_csv_covariance(cov)
+        if mean is None:
+            mean = np.zeros(cov.shape[0])
+        else:
+            mean = read_csv_mean(mean)
+        return cls(mean, cov)
 
+    def __len__(self):
+        return self.mean.shape[0]
 
