@@ -137,17 +137,54 @@ performance or accuracy.
         }
         {\externalfigure[absorption][width=\textwidth]}
 
+    Westwater2004 used al lot, maybe cite once as main reference?
+
+    Microwave region 20 - 200 GHz Main contributions to absorption of microwave
+    radiation by oxygen and water vapor, which have rotational and vibrational
+    transitions, and liquid water, whose apsorption can be treated with the
+    Rayleigh-approximation.  Other effects include pressure-broadening,
+    self-broadening, non-resonant continuum absorption.
+
+    Water vapor: weak absorption at 22.235 (K band), strong line at 183.31 (not
+    used here), also continuum absorption. Emission is proportional to water
+    vapor density.  \cite[Westwater2004]
+
+    Oxygen: absorption band between 50 and 70 GHz (V band) due to dipole
+    transitions. Isolated line at 118, pressure broadening. Emission prop to
+    local temperature, oxygen well mixed in the atmosphere.
+    \cite[Westwater2004]
+
+    Liquid water: cloud droplets small so that scattering can be neglected and
+    Rayleigh approximation be used e.g. \cite[Westwater2004]. Then size
+    distribution not needed. Rain droplets big enough so that this
+    approximation is no longer valid, nevertheless retrievals in precipitation
+    have been done. Problem also accumulation of rainwater on radome. Cloud
+    absorption has stronger effect on weaker H2O band than oxygen absorption
+    (also figure). Ice content can be neglected as it does not affect microwave
+    radiation substantially e.g. \cite[Sanchez2013].
+
+    Additional contributions to gaseous absorption by minor species such as N2
+    (and CO2) \cite[Hewison2006] which contribute to broadening of other lines
+    (check if true). All well mixed.
+
     Size of molecules and cloud particles too small for effective scattering
     therefore only absorption is considered in microwave region. Only at
     droplet sizes occuring during precipitation does scattering become
     important, these cases are problematic due to little knowledge of acutal
     LWC and droplet size distributions.
 
-    Main contributions to absorption of microwave radiation by oxygen and water
-    vapor, which have rotational and vibrational transitions, and liquid
-    water, whose apsorption can be treated with the Rayleigh-approximation.
-    Other effects include pressure-broadening, self-broadening, non-resonant
-    continuum absorption.
+    Rasos do not measure CLW, therefore (semi-)empirical cloud models are used.
+    Popular: \cite[Karstens1994]. Other authors have used fixed amounts based
+    on local measurements (REF some chinese paper, Tan11?). \cite[Tan2011]
+    found that impact of cloud liquid water on chosen cloud liquid amount is
+    not monotonic (read again).
+
+    Selection of radiometer channels according to information content.
+    Measuring at different positions of an absorption band gives altitude
+    information \cite[Westwater2004,Churnside1994]. But information content is
+    limited by correlation between frequencies, channels are not independent.
+    Other influence on channel selection for optimal estimation: fulfilment of
+    Gaussian assumption \cite[Martinet2015].
 
     Multiple absorption models exist in the literature (e.g. Rosenkranz, Liebe,
     MONORTM which is based on HITRAN or similar?). These usually describe
@@ -171,6 +208,13 @@ performance or accuracy.
     of oxygen (V band) and water vapor (K band) allows profiling of the
     atmosphere as radiation at each frequency is differently absorbed along the
     way.
+
+    RTMs built on top of these absorption models agree best in high absorbing
+    spectral regions \cite[Westwater2004], weaker lines like water vapor allow
+    looking further into atmosphere but deeper penetration also means more
+    uncertainty. Uncertainty of RT is major limit on retrieval especially water
+    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
+    terms of brightness temperatures.
 
 \stopsection
 
@@ -236,6 +280,9 @@ performance or accuracy.
 
     better error characteristics.
 
+    Because temperature is critical for determination of humidity/cloud split
+    it becomes an important influence on the humidity retrieval \cite[Bleisch2012].
+
     \cite[Hewison2006]
 
 \stopsection
@@ -260,6 +307,16 @@ performance or accuracy.
     Weighting functions/averaging kernels. Obtained from the linearization of
     solution. Important for analyzing the information content and capabilities
     of resolution of a radiometer. Give examples for different angles. Plots!
+
+    Jacobian shows where information comes from \cite[Martinet2015] and
+    determines smoothness of solutions. In framework of optimal estimation they
+    might be viewed as sort of basis functions with which the profile can be
+    changed. This highlights the importance of the first guess which has
+    major influence on small scale features.
+
+    Diversity of temperature weighting functions shows that resolution for
+    temperature is generally better than for water vapor/humidity
+    \cite[Cimini2011].
 
 \stopsection
 
@@ -446,6 +503,10 @@ performance or accuracy.
 
 \startsection[title={Characterization of Errors},reference={ch:rtm_errors}]
 
+    Instrument random noise and forward model errors important for retrieval
+    \cite[Caddedu2002]. Instrument noise of radiometers often assumed to be
+    0.5 K and Gaussian \cite[Chu1994,Frate1998,Lohnert2004]
+
     Building part of the forward model covariance matrix.
 
     Compare exact Jacobian with brute force Jacobian.
@@ -455,6 +516,13 @@ performance or accuracy.
 
     Discretization errors: deterine from climatology by comparing
     interpolated profiles with full resolution profiles.
+
+    Bias correction important
+    \cite[Turner2007,Turner2013,Lohnert2012,Guldner2013,Martinet2015] but
+    \cite[Cimini2011] found this is not that beig an issue....
+
+    Calibration of radiometer can cause jumps in retrieval performance due to
+    bias changing \cite[Lohnert2012,Guldner2013].
 
 \stopsection
 
@@ -488,14 +556,45 @@ performance or accuracy.
         }
         {\externalfigure[jacobian_angle][width=\textwidth]}
 
+    Elevation scanning, obtaining brightness temperatures while pointing the
+    radiometer away from zenith. Changes weighting functions, more sensitivity
+    for the boundary layer leads to better accuracy there \cite[Westwater2004].
+    Little impact on higher levels \cite[Cimini2006].
+
+    Horizontal homogeneity becomes increasingly important for flat angles,
+    which is problematic the closer one comes to the surface. Likely that
+    different air masses are probed \cite[Cimini2006]. Also inhomogeneous
+    clouds are problem \cite[Guldner2013]. Scan in two directions and average
+    to reduce influence of inhomogeneity. \cite[Cimini2006] noticed a strong
+    impact of inhomogeneity problems in neural network retrievals, likely due
+    to the non-linearity of the method.
+
+    Requires a high accuracy/sensitivity radiometer, therefore wide bandwidths
+    are used \cite[Caddedu2002,Crewell2007].
+
+    Elevation scanning very sensitive to angle misalignment in transparent
+    channels \cite[Hewison2006]. One reason why here and in other works, e.g.
+    \cite[Massaro2015] or \cite[Crewell2007], only most opaque channels from
+    oxygen band are used away from zenith.
+
+    Elevation scans take time and reduce temporal resolution of measurements,
+    else trade-offs have to be made wrt to integration time
+    \cite[Caddedu2002,Hewison2006].
+
+    Elevation scanning might be useful for rain situation due to less influence
+    of rainwater on radiometer \cite[Tan2011,Xu2014], giving better
+    signal-to-noise ratio \cite[Cimini2011].
+
+    Some authors have used elevation angles only for lowest layers in
+    regression retrievals in order to aviod introduction of noisy predictors
+    for upper levels \cite[Chan2010]. Not a problem for optimal estimation.
+
     Off-zenith observations. Additional challenge for retrieval. RTM has to
-    take refraction and Earth's curvature into account. Horizontal homogeneity
-    becomes increasingly important for flat angles, which is problematic the
-    closer one comes to the surface. Humidity most easily violates assumption.
+    take refraction and Earth's curvature into account. Humidity most easily violates assumption.
     Crewell + Löhnert did regression with multiple angles of HATPRO and used
     only four most opaque channels since path lengths are short. Radiometer
     needs to be accurate to detect small changes. Obstacles in path complicate
-    situtation.
+    situation, might contribute to emission \cite[Massaro2015].
 
     Implemented RTM does not have refractivity included yet. This means using
     transparent channels is not possible in retrieval but As Crewell+Löhnert
@@ -505,6 +604,7 @@ performance or accuracy.
     smaller than radiometer noise and path lengths are so short (100 to 2000 m)
     that refractivity is suspected to be negligible. Show weighting functions
     from two channels at all angles from model.
+    
 
 \stopsection
 

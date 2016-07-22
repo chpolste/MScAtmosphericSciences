@@ -928,6 +928,26 @@ by \cite[Downey2013].
         Choosing the prior (=background) state. Constructing the covariance
         matrix.
 
+        Chossing prior faces same challenges as chossing a training data set
+        for regression.
+
+        Important since radiometer information mainly limited to lower
+        atmosphere \cite[Caddedu2013,Cimini006,Lohnert2012].
+
+        Fixed points ....
+
+        A-priori knowledge may produce bias, pulling retrievals towards
+        statistical mean \cite[Caddedu2002]. Possible solution for optimal
+        estmation not based on model output and regression techniques:
+        specialization into seasons (e.g.
+        \cite[Chan2010,Tan2011,Massaro2015,Peckam2000])
+        or even monthly \cite[Turner2007]. Cloud-free sky can often be
+        classified befor retrieval (ceilometer, possibly camera) and incorporated
+        into prior/training dataset, e.g.
+        \cite[Solheim1998,Lohnert2012,Martinet2015,Xu2015]. Transition between
+        different priors may not be smooth and has to be managed
+        \cite[Massaro2015].
+
     \stopsubsection
 
 \stopsection
@@ -1194,27 +1214,27 @@ by \cite[Downey2013].
     in available regression models.
 
     Aside from the method itself there are additional components of the
-    retrieval that can be tweaked. REF, REF and REF have used principal
+    retrieval that can be tweaked. \cite[Frate1998,Tan2011] have used principal
     component analysis/empirical orthogonal functions to reduce the
     dimensionality of the retrieval problem. This is possible because
     simultaneous measurements from different radiometer channels are generally
-    correlated and contain less independent pieces of information than the
-    number of channels REF. The inclusion of additional information is
-    a current topic of research. LÖHNERT ET AL have designed a retrieval system
-    that combines cloud radar, cloud base radiometer (and more?). It is common
-    practice to include surface measurements of temperature, humidity and
-    pressure into regression retrievals. These measurements as well as
-    measurements of cloud base height and -temperature have also been included
-    as fixed points in optimal estimation retrievals (I SHOULD HAVE A REF FOR
-    THAT). As mentioned in the introduction \cite[Massaro2013] and
-    \cite[Meyer2016] have studied the inclusion of measurements from different
-    altitudes as they are available in mountainous locations. The choice of
-    variables that quantify the atmospheric state is also of importance. While
-    regression techniques are able to retrieve temperature, humidity or liquid
-    water alone, optimal estimation techniques only work with a complete
-    description of the atmospheric state to ensure accurate radiative transfer
-    calculations. These aspects are one of the topics discussed in the
-    following chapter.
+    correlated and contain less independent pieces of
+    information than the number of channels REF. The inclusion of additional
+    information is a current topic of research. LÖHNERT ET AL have designed
+    a retrieval system that combines cloud radar, cloud base radiometer (and
+    more?). It is common practice to include surface measurements of
+    temperature, humidity and pressure into regression retrievals. These
+    measurements as well as measurements of cloud base height and -temperature
+    have also been included as fixed points in optimal estimation retrievals (I
+    SHOULD HAVE A REF FOR THAT). As mentioned in the introduction
+    \cite[Massaro2013] and \cite[Meyer2016] have studied the inclusion of
+    measurements from different altitudes as they are available in mountainous
+    locations. The choice of variables that quantify the atmospheric state is
+    also of importance. While regression techniques are able to retrieve
+    temperature, humidity or liquid water alone, optimal estimation techniques
+    only work with a complete description of the atmospheric state to ensure
+    accurate radiative transfer calculations. These aspects are one of the
+    topics discussed in the following chapter.
 
     TODO: talk about inclusion of surface measurements and that some authors
     think they don't do anything. Mention specialized climatologies combined
