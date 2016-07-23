@@ -221,19 +221,53 @@ performance or accuracy.
 
 \startsection[title={Choice of State Vector Variables},reference={ch:statevector}]
 
-    Pressure as fixed variable (recalculated by hydrostatic equilibrium
-    after each iteration, check if this is good approximation when compared
-    to radiosonde measurements SHOW THIS).
+    In order to determine atmospheric emission and absorption, the atmospheric
+    state has to be represented somehow on the retrieval grid. Naively one
+    would directly choose the quantites that are to be retrieved as state
+    vector variables and this approach can work reasonably well for regression
+    retrievals. Any method that makes the assumption of Gaussian distributed
+    state vector variables however might require variable transformations to
+    fulfil this requirement. For optimal estimation retrievals it is common to
+    combine water vapor and liquid water into a single quantity and retrieve
+    the logarithm of this quantity \cite[alternative=authoryears,left={(e.g.
+    }][Lohnert2004,Hewison2006,Cimini2011]. Figure \in[fig:gauss_verification]
+    shows the benefits of using the logarithm of humidity on the example of
+    the climatological distribution at a single altitude: while temperatures in
+    the atmosphere generally follow a Gaussian shape, humidity\footnote{In this
+    case specific humidity but the same applies to water vapor density
+    (absolute humidity) and relative humidity} is a positive variable and
+    therefore not symmetrically distributed. Using its logarithm enforces
+    positivity of values and reduces the skewness of the distribution, bringing
+    it closer to a Gaussian shape.
 
-    \startformula
-        p(z) = p(z_0) + \exp \left( - g \int_{z_0}^{z} \frac{1}{R(h) T(h)}  \diff h \right)
-    \stopformula
-    
-    Temperature and humidity as variable state quantities. To reduce
-    dimensionality: use knowledge of qsat to combine water vapor and liquid
-    water content into a single variable qtot.  No representation of ice due to
-    negligible absorption in microwave region (see below INSERT REF). The
-    individual components are then recovered by a partition function
+    \placefigure[top][fig:gauss_verification]
+        {Histograms of temperature (left), specific humidity (center) and
+        the natural logarithm of specific humidity (right) for the 1339 m
+        level of the radiosonde dataset (section \in[]).
+        }
+        {\externalfigure[gauss_verification][width=\textwidth]}
+
+    Reducing water vapor and liquid water to a combined total water content
+    variable is practical in multiple ways. In terms of the distribution
+    functions the asymmetry found for liquid water content is even worse than
+    for water vapor since many atmospheric profiles are cloud-free resulting
+    in a mode at zero. Because the logarithm is not defined at zero a variable
+    transformation does not help. Since there always is some water vapor in the
+    atmosphere this mathematical problem is avoided by adding both components
+    of water content and then applying the logarithm transformation. Another
+    advantage of the combined variable is the reduction of state vector
+    dimensionality resulting in smaller Jacobians and computationally faster
+    optimal estimation retrievals. Of course the combination is only sensible
+    if there is a way to separate the components again for the calculation of
+    absorption coefficients.
+
+    Ice negligible (section ???) therefore only vapor and liquid must be
+    separated. Saturation vapor pressure function of temperature only making it
+    possible to calculate the separation threshold using known quanties of the
+    atmospheric state. In order to achive differentiability the partition
+    function has a transition region starting at 95 \% relative humidity. This
+    partition function approach has been previously employed by
+    \cite[Hewison2006] and \cite[Deblonde]. The chosen form here is
 
     \startformula
         \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
@@ -247,11 +281,13 @@ performance or accuracy.
     where
 
     \startformula
-        \RHL = \frac{\QTOT}{\QSAT} = \frac{\QVAP + \QLIQ}{\QSAT} \EQSTOP
+        \RHL = \frac{\QTOT}{\QSAT} = \frac{\QVAP + \QLIQ}{\QSAT}
     \stopformula
 
-    Hewison, Deblonde, (COSMO7 fixes RH at 100 \% in clouds). Integrate,
-    get values for qliq and qvap.
+    is the fraction of total water content to water content at saturation,
+    a generalization of relative humidity that includes liquid water.
+    Integration yields the desired expressions for liquid water content and
+    specific humidity
 
     \startformula
         \QLIQ(\RHL) = \startcases
@@ -263,32 +299,73 @@ performance or accuracy.
         \stopcases
     \stopformula
 
-    and from REF to s = qtot/qsat
+    and
 
     \startformula
         \QVAP(\RHL) = \QTOT(\RHL) - \QLIQ(\RHL) \EQSTOP
     \stopformula
 
-    \placefigure[top][fig:gauss_verification]
-        {Histograms of temperature (left), specific humidity (center) and
-        the natural logarithm of specific humidity (right) for the 1339 m
-        level of the radiosonde dataset (section \in[]).
-        }
-        {\externalfigure[gauss_verification][width=\textwidth]}
+    It is important to note that because temperature is critical for
+    determination of the saturation value of humidity the introduction of this
+    partion of water content results in a strongly dependency of the humidity
+    retrieval on the temperature retrieval \cite[authoryears][Bleisch2012]
+    making it impossible to retrieve humidity independently of temperature.
+    Another important consequence is that cloud water is intrinsically tied to
+    relative humidity. The \cite[Karstens1994] cloud model used in this thesis
+    assumes cloud liquid water exists wherever relative humidity exceeds 95 \%
+    and then calculates the liquid water content independently. The output of
+    COSMO-7 used later to provide prior distributions for retrievals fixes
+    relative humidity at 100 \% in all clouds. In both cases it happens that
+    the particular combination of humidity and cloud water is not representable
+    by the chose partition. In practice both components are nevertheless added
+    and any changes after separation are accepted due to there being a large
+    uncertainty in the determination of cloud liquid water from the start (REF
+    this).
 
-    Additionally: use ln(qtot) in state vector to enforce positivity and
+    For optimal estimation retrievals there is an additional need to update
+    pressure information after each iteration since pressure depends on
+    temperature and humidity but is not part of the explicitly retrieved
+    atmospheric state variables. Pressure is therefore calculated after each
+    iteration by numerical integration of the hydrostatic equation
 
-    better error characteristics.
-
-    Because temperature is critical for determination of humidity/cloud split
-    it becomes an important influence on the humidity retrieval \cite[Bleisch2012].
-
-    \cite[Hewison2006]
+    \startformula
+        p(z) = p(z_0) + \exp \left( - g \int_{z_0}^{z} \frac{1}{R(h) T(h)} \, \diff h \right) \EQSTOP
+    \stopformula
+    
+    The errors of this approximation have been assessed by comparison with
+    measured values of radiosonde ascents and are found to be neglible small.
 
 \stopsection
 
 
 \startsection[title=Weighting Functions]
+
+    A common way to analyze the information content of a radiometer measurement
+    is calculating the weighting functions, each one corresponding to one
+    brightness temperature observation or rather simulation since weighting
+    functions have to be obtained from a forward model. They are found by
+    taking the derivative of the measured brightness temperature with respect
+    to the atmospheric state vector. In the case of a vertically discretized
+    atmosphere the weighting functions are the rows of the Jacobian of the
+    forward model containing the derivatives with respect to each state vector
+    element \cite[Rodgers2000]. Weighting functions are therefore a concept
+    only applicable if the forward model can be linearly approximated.
+
+    Because these functions have the same dimension as the atmospheric state
+    vector they can conveniently be visualized on the retrieval grid. In this
+    representation one can interpret the magnitude as the sensitivity of the
+    measurement to the considered state vector component at the given height.
+    Hence weighting functions can be used to assess from which heights in the
+    atmosphere a radiometer channel obtains its information
+    \cite[authoryears][Martinet2015]. In the optimal estimation framework the
+    Jacobian is directly used in the inversion process with individual
+    weighting functions acting somewhat similar to basis functions which
+    determine where and at which scales the profile is modified during the
+    retrieval. The functions' smoothness is therefore a limiting factor on
+    details that can be recovered during the inversion. This highlights the
+    importance of the first guess in the optimal estimation framework as its
+    small scale features may be impossible to change during the retrieval if
+    the weighting functions are too smooth.
 
     \placefigure[top][fig:jacobian_frequency]
         {Normalized weighting functions for the V band (left) and K band
@@ -304,19 +381,13 @@ performance or accuracy.
         }
         {\externalfigure[jacobian_frequency][width=\textwidth]}
 
-    Weighting functions/averaging kernels. Obtained from the linearization of
-    solution. Important for analyzing the information content and capabilities
-    of resolution of a radiometer. Give examples for different angles. Plots!
-
-    Jacobian shows where information comes from \cite[Martinet2015] and
-    determines smoothness of solutions. In framework of optimal estimation they
-    might be viewed as sort of basis functions with which the profile can be
-    changed. This highlights the importance of the first guess which has
-    major influence on small scale features.
-
-    Diversity of temperature weighting functions shows that resolution for
-    temperature is generally better than for water vapor/humidity
-    \cite[Cimini2011].
+    Figure \in[fig:jacobian_frequency] shows weighting functions for HATPRO
+    channels in the V band with respect to temperature and in the K band with
+    respect to humidity. It can be seen that information originates mainly from
+    the lower part of the troposphere. The larger diversity of temperature
+    weighting functions compared to those of humidity indicates that the
+    resolution of temperature retrievals is generally better than for humidity
+    retrievals \cite[authoryears][Cimini2011].
 
 \stopsection
 
