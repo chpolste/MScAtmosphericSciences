@@ -163,13 +163,14 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title=Atmospheric Extinction and Absorption Models]
+\startsection[title={Atmospheric Extinction and Absorption Models},reference=ch:extinction]
 
-    To calculate brightness temperatures with \ineq{rte_solution} atmospheric
-    absorption/emission coefficients need to be determined. The review of
-    \cite[Westwater2004] includes a chapter on atmospheric absorption in the
-    microwave region from 20 to 200 GHz. Its main features are repeated here
-    with some additions.
+    Simulation of brightness temperatures using \ineq{rte_solution} requires
+    the determination of atmospheric absorption/emission coefficients. The
+    review of \cite[Westwater2004] includes a chapter on the properties of
+    atmospheric absorption in the microwave region from 20 to 200 GHz. Its main
+    features are repeated here with some additions. Also discussed are
+    numerical models for calculation of absorption coefficients.
 
     \placefigure[top][fig:absorption]
         {Absorption coefficients (black) and contributions of individual terms
@@ -180,8 +181,9 @@ performance or accuracy.
         }
         {\externalfigure[absorption][width=\textwidth]}
 
-    The three main contributing constituents in the atmosphere are oxygen,
-    water vapor and liquid water. A typical absorption spectrum of an
+    The three main constituents in the atmosphere contributing to extinction
+    and emission of microwave radiation are oxygen, water vapor and liquid
+    water. A typical absorption spectrum of an
     atmospheric layer is shown in Figure \in[fig:absorption]. Water vapor has
     a relatively weak absorption band around 22.235 GHz (K band) and oxygen
     a stronger band around 60 GHz (V band). Outside of the shown frequency
@@ -272,13 +274,18 @@ performance or accuracy.
     if there is a way to separate the components again for the calculation of
     absorption coefficients.
 
-    Ice negligible (section ???) therefore only vapor and liquid must be
-    separated. Saturation vapor pressure function of temperature only making it
-    possible to calculate the separation threshold using known quanties of the
-    atmospheric state. In order to achive differentiability the partition
-    function has a transition region starting at 95 \% relative humidity. This
-    partition function approach has been previously employed by
-    \cite[Hewison2006] and \cite[Deblonde]. The chosen form here is
+    Because the effect of ice on microwave radiative transfer is negligible
+    (see section \in[ch:extinction]) only water vapor and liquid has to be
+    included in the total water content variable and subsequently separated.
+    The governing quantity of the partitioning scheme is the saturation vapor
+    pressure since it determines when the capabilities of the gaseos water
+    content is exceeded and cloud droplets form. Since saturation vapor
+    pressure is a function of temperature alone, it is possible to calculate
+    the separation threshold from known quantities of the atmospheric state. In
+    order to achive differentiability the chosen partition function has
+    a transition region starting at 95 \% relative humidity. This approach has
+    previously been employed by \cite[Hewison2006] who modified it from
+    \cite[Deblonde2003]. The chosen form here is
 
     \startformula
         \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
@@ -624,10 +631,28 @@ performance or accuracy.
     Calibration of radiometer can cause jumps in retrieval performance due to
     bias changing \cite[Lohnert2012,Guldner2013].
 
+    Uncertainty of RT is major limit on retrieval especially water
+    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
+    terms of brightness temperatures.
+
 \stopsection
 
 
 \startsection[title={Model Comparison},reference={ch:model_comparison}]
+
+    The implemented model from section \in[ch:mwrtm] should be compared to
+    established radiative transfer models to ensure its correctness. A model
+    comparison also allows a quantification of spectroscopy errors which are
+    an important part of the forward model error covariance
+    \cite[authoryears][Hewison2006]. Two models are available for the
+    comparison: MonoRTM version 5.2 \cite[authoryears][Clough2005] and a model
+    using gas absorption according to \cite[Rosenkranz1998] which was used
+    previously by \cite[Massaro2015]. The test dataset is made up of 1568
+    radiosonde profiles from Innsbruck. Because the data from
+    \cite[Massaro2015] use a slightly different cloud liquid water
+    parameterization than this thesis does (see section \in[ch:???]) and only
+    spectroscopic errors should be assessed here all profiles of the test data
+    set are clear sky cases.
 
     \placefigure[top][fig:model_comparison]
         {Mean difference (saturated) and covariance (pale) of brightness
@@ -639,30 +664,50 @@ performance or accuracy.
         }
         {\externalfigure[model_comparison][width=\textwidth]}
 
-    RTMs built on top of these absorption models agree best in high absorbing
-    spectral regions \cite[Westwater2004], weaker lines like water vapor allow
-    looking further into atmosphere but deeper penetration also means more
-    uncertainty. Uncertainty of RT is major limit on retrieval especially water
-    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
-    terms of brightness temperatures.
+    Figure \in[fig:model_comparison] shows the results of the model comparison
+    in terms of mean and standard deviation of model differences. As noticed
+    before by \cite[Westwater2004] and \cite[Cimini2004], the absorption models
+    agree best in opaque spectral regions. Biases change sign between V and
+    K band and their magnitude in the more transparent V band channels is
+    generally higher than in the K band channels. Overall, MWRTM agrees better
+    with MonoRTM than with Rosenkranz and MonoRTM and Rosenkranz agree better
+    with each other than with MWRTM.
 
-    Need arises for quantification of spectral errors as seen in the previous
-    chapter. Refer to comparison study.
+    Magnitudes of the bias values can be compared to a study by
+    \cite[Cimini2004] who evaluated four absorption models including all of the
+    ones used here (although they used an older version of MonoRTM).  Overall
+    bias values on the order of 1 - 2 K are found in their comparison as well.
+    In the K band their implementation of a RTM using \cite[Rosenkranz1998]
+    absorption also showed better agreement with MonoRTM than with the
+    \cite[Liebe1993] model. In the V band however agreement between absorption
+    by \cite[Rosenkranz1998] and \cite[Liebe1993] is better than seen in Figure
+    \in[fig:model_comparison] with a significantly smaller bias in the more
+    transparent channels. This discrepancy might require more investigation if
+    the MWRTM is developed further but for the rest of this thesis it is still
+    the model used for all retrievals. This is justified by the following
+    arguments: Since there is no bias between the MWRTM and other models in
+    the more opaque channels of the V band and the standard deviation between
+    models is less than 1 K even for the transparent channels, it is unlikely
+    that the source of this discrepancy is a fundamental error in the
+    implementation of the \cite[Liebe1993] absorption model. A more likely
+    source are different discretization, interpolation and numerical quadrature
+    schemes between the model implementations or differences in the test data
+    sets (the test data set of \cite[Cimini2004] contained only 34 profiles).
+    In practice, when assessing the performance of synthetic retrievals,
+    a model bias is irrelevant as long as the entire retrieval is affected by
+    the same bias. In applications involving real radiometer measurements model
+    biases are determined by a comparison between matching observations and
+    model calculations and subsequently accounted for. The observed discrepancy
+    will therefore have no effect on the retrieval performance investigated
+    here.
 
-    Compare Figure \in[fig:model_comparison] with results from \cite[Cimini2004]
-
-    Existing dataset from Massaro/Meyer, using Rosenkranz absorption etc.
-
-    Implementation of a MonoRTM wrapper. Short description of MonoRTM,
-    reference ARM models, version 5.2.
-
-    Clouds vs. elevation scanning. \cite[Blumberg2015] used MonoRTM version 4.2
-    at different elevation angles. It is unclear how they managed this.
+    The spectroscopic error covariance matrix is assembled from the comparison
+    with the model used by \cite[Massaro2015].
 
 \stopsection
 
 
-\startsection[title={[Elevation Scanning},reference={ch:elevation_scanning}]
+\startsection[title={Elevation Scanning},reference={ch:elevation_scanning}]
 
     Many radiometers are able to rotate their antenna in order to measure
     brightness temperatures at off-zenith angles, a procedure called elevation

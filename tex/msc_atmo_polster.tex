@@ -115,6 +115,22 @@
 \setuppublicationlist[artauthoretallimit=40,criterium=all]
 \setupcite[authoryears][pubsep={; },lastpubsep={; },inbetween={ },compress=no]
 
+% Taken from bibl-apa.tex and added doi
+\setuppublicationlayout[article]{%
+   \insertartauthors{}{ }{\insertthekey{}{ }{}}%
+   \insertpubyear{(}{). }{\unskip.}%
+   \insertarttitle{\bgroup }{\egroup. }{}%
+   \insertjournal{\bgroup \it}{\egroup}
+    {\insertcrossref{In }{}{}}%
+   \insertvolume
+    {\bgroup \it, }
+    {\egroup\insertissue{\/(}{)}{}\insertpages{, }{.}{.}}
+    {\insertpages{, pp. }{.}{.}}%
+   \insertdoi{ doi:}{.}{}%
+   \insertnote{ }{.}{}%
+   \insertcomment{}{.}{}%
+}
+
 
 % Section block setups
 % This could probably be solved more elegantly, but it worked for my
