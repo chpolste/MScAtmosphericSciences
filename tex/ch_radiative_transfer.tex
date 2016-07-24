@@ -1,7 +1,10 @@
-Numerical radiative transfer calculations play a central role in retrieval.
-Iterative retrieval impossible without, statistical requires long history of
-measurements and radiosondes, which is available at only very few locations in
-the world and not transferrable (is that true???).
+The only retrieval technique that does not depend on a numerical radiative
+transfer model is regression based on a training data set of simultaneous
+radiometer observations and radiosonde ascents. This requires long time series
+of observations available only in very few locations. Instead retrieval schemes
+use simulations of radiometer measurements in order to generate training data
+sets or determine the likelihood of a brightness temperature measurement given
+a vertical atmospheric profile.
 
 A few common model are used: MONORTM (which is the basis of the previous
 retrieval studies from Innsbruck), MPM, ARTS, .... TODO: refer to comparison
@@ -430,43 +433,53 @@ performance or accuracy.
 
 \startsection[title={Implementation of a Numerical Model Prototype},reference=ch:mwrtm]
 
-    Presentation of a custom implementation of a line-by-line model. Based on
-    absorption models by \cite[Liebe1993] for gaseous absorption and
-    \cite[Turner2016] for cloud liquid water absorption. It features complete
-    forward-mode automatic differentiation with respect to temperature and
-    humidity. Jacobians can therefore be calculated exactly and relatively
-    quick. The following sections expand on the individual aspects of this
-    model, describe challenges of implementation and evaluate the model
-    performance including the determination of the model's error covariance
-    matrix for the Bayesian retrieval.
+    A numerical microwave radiative transfer model has been implemented as
+    part of this thesis. It is based on the absorption models by
+    \cite[Liebe1993] for gaseous absorption and \cite[Turner2016] for cloud
+    liquid water absorption. The prototype's distinguishing features are its
+    accessible implementation in a high-level, dynamic programming language
+    (Python 3) and the calculation of temperature and humidity Jacobians by
+    forward-mode automatic differentiation. 
 
     \startsubsection[title={Motivation}]
 
-        With existing models for radiative transfer, why build another one?
-        Driven by the question if a specialized model, stripped down to its
-        bare essentials can perform similarly well as full featured models such
-        as MonoRTM or ARTS. Hope for better convergence properties if exact
-        Jacobians are available. ARTS (and the not yet available RTTOV-gb)
-        provides linearizations but is quite heavy machinery.
+        It is not obvious why another implementation of a numerical radiative
+        transfer model is attempted when established and freely available
+        software such as MonoRTM \cite[authoryears][Clough2005] and ARTS
+        \cite[authoryears][Buehler2005] exists. The development of a new model
+        prototype is motivated by three aspects:
 
-        Learning experience, understanding by doing. Knowing each component of
-        the retrieval method well should help overall understanding of results.
-        
-        Implementation completely in a high-level language allows easy
-        integration of model with other data analysis, quick setup and rapid
-        development of new features in the future. Thanks to numpy it is still
-        relatively fast.
+        Current RTMs either resort to expensive finite difference approaches
+        when calculating Jacobians or use hand-crafted routines mixing
+        analytically derived expressions and finite difference approximations
+        where analytical expressions are unavailable. As examples, MonoRTM
+        currently has no implementation of derivatives making finite
+        differencing necessary while ARTS has specially written modules for
+        calculating Jacobians. The rising interest in machine learning in
+        recent years has lead to the widespread use of automatic
+        differentiation, a method with which any numerical program can be
+        differentiated to machine precision without the need to explicitly
+        write code for the derivatives. This technique has proven its
+        usefulness in machine learning models and is used in the radiative
+        transfer model for the exact calculation of weighting functions.
 
-        Expected is a somewhat worse model performance than reference models
-        such as MONORTM (against which it will be compared). Suspected main
-        contributor of errors: Bending due to changing refractive index
-        neglected. This affects all angles away from zenith. 
+        Current radiative transfer models are written in statically typed,
+        compiled languages such as Fortran or C++. Data analysis however is
+        usually done in a high-level language such as Python. A question of
+        interest is if it is computationally feasible to implement a RTM
+        completely in a dynamic language. This would make the model code more
+        accessible to the user and simplify the setup procedure. Finally there
+        is a personal motivation of the author associated with the decision to
+        implement a radiative transfer model. It is assumed that detailed
+        knowledge of all implementation aspects and calculations will help with
+        the overall understanding of retrievals and their results.
 
-        TODO: hint at MonoRTM comparison, is it really that bad, what about
-        sensitivity mostly in lower atmosphere? Besides, forward model errors
-        are accounted for in Bayesian approach, this error should appear in
-        MONORTM/MWRTM cov matrix.
-        
+        The expected outcome is not a perfect model, surpassing existing RTMs in
+        terms of accuracy and performance, but a flexible, easy to understand,
+        reasonable fast and adequately accurate prototype. Implementation
+        details as well as a discussion of the fulfilment of these expectations
+        are given in the following sections.
+
     \stopsubsection
 
     \startsubsection[title=Discretization and Interpolation]
@@ -488,6 +501,9 @@ performance or accuracy.
         levels as possible) and actual information content (only few levels).
         More levels are more expensive to calculate. Inclusion of upper
         atmosphere or not.
+
+        Interpolation of absorption coefficients resulted in large errors,
+        must be calculated on finer grid.
 
         Levels in input atmospheric state determine size of Jacobian and
         therefore also computational cost. Higher resolution does not mean
