@@ -74,7 +74,7 @@ performance or accuracy.
     radiances. Brightness temperature $\BT$ is the temperature of a black body
     that emits the same spectral radiance as an observed grey body. In the
     Rayleigh-Jeans limit the relationship between temperature and brightness
-    temperature is particularly simple: $\BT = \epsilon T$. Expressing
+    temperature is particularly simple: $\BT = \epsilon \, T$. Expressing
     observed spectral radiance in terms of Planck emission and again
     applying the Rayleigh-Jeans approximation
 
@@ -133,8 +133,8 @@ performance or accuracy.
     \stopformula
 
     Applying the coordinate transformation to \ineq{rte_radiometer},
-    multiplying by $e^{\OD}$ and applying the chain and product rule of
-    differentiation yields
+    multiplying by $e^{\OD}$ and applying the product rule of differentiation
+    yields
 
     \startformula
         \DERIV{\BT}{z} e^\OD + \frac{\ABSCOEF \BT e^\OD}{\cos(\theta)}
@@ -163,7 +163,13 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title=Atmospheric Extinction]
+\startsection[title=Atmospheric Extinction and Absorption Models]
+
+    To calculate brightness temperatures with \ineq{rte_solution} atmospheric
+    absorption/emission coefficients need to be determined. The review of
+    \cite[Westwater2004] includes a chapter on atmospheric absorption in the
+    microwave region from 20 to 200 GHz. Its main features are repeated here
+    with some additions.
 
     \placefigure[top][fig:absorption]
         {Absorption coefficients (black) and contributions of individual terms
@@ -174,84 +180,52 @@ performance or accuracy.
         }
         {\externalfigure[absorption][width=\textwidth]}
 
-    Westwater2004 used al lot, maybe cite once as main reference?
+    The three main contributing constituents in the atmosphere are oxygen,
+    water vapor and liquid water. A typical absorption spectrum of an
+    atmospheric layer is shown in Figure \in[fig:absorption]. Water vapor has
+    a relatively weak absorption band around 22.235 GHz (K band) and oxygen
+    a stronger band around 60 GHz (V band). Outside of the shown frequency
+    range are also an oxygen absorption line at 118.75 GHz and a stronger water
+    vapor line at 183.31 GHz. The wings of these lines and others outside the
+    microwave region as well as broadening processes associated with pressure
+    and interactions with other atmospheric species also contribute to the
+    overall absorption as so-called continuum terms
+    \cite[authoryears][Liebe1993,Hewison2006]. Finally, in the presence of
+    clouds there is absorption by water droplets. Due to the
+    size-wavelength-ratio of droplets in non-precipitating clouds and microwave
+    radiation, scattering can be neglected and the Rayleigh-approximation is
+    apropriate for the description of absorption of radiation by liquid water.
+    Absorption and scattering by snow and ice in the atmosphere has negligible
+    effect on radiation in the K and V bands \cite[authoryears][Sanchez2013].
+    During rain events scattering of microwave radiation cannot be neglected
+    and rainwater accumulation on the radiometer's radome must be accounted
+    for as well. Since these effects are much more difficult to quantify than
+    absorption they are usually not included in radiative transfer models and
+    the resulting errors are accepted or retrievals are not performed during
+    precipitation at all.
 
-    Microwave region 20 - 200 GHz Main contributions to absorption of microwave
-    radiation by oxygen and water vapor, which have rotational and vibrational
-    transitions, and liquid water, whose apsorption can be treated with the
-    Rayleigh-approximation.  Other effects include pressure-broadening,
-    self-broadening, non-resonant continuum absorption.
-
-    Water vapor: weak absorption at 22.235 (K band), strong line at 183.31 (not
-    used here), also continuum absorption. Emission is proportional to water
-    vapor density.  \cite[Westwater2004]
-
-    Oxygen: absorption band between 50 and 70 GHz (V band) due to dipole
-    transitions. Isolated line at 118, pressure broadening. Emission prop to
-    local temperature, oxygen well mixed in the atmosphere.
-    \cite[Westwater2004]
-
-    Liquid water: cloud droplets small so that scattering can be neglected and
-    Rayleigh approximation be used e.g. \cite[Westwater2004]. Then size
-    distribution not needed. Rain droplets big enough so that this
-    approximation is no longer valid, nevertheless retrievals in precipitation
-    have been done. Problem also accumulation of rainwater on radome. Cloud
-    absorption has stronger effect on weaker H2O band than oxygen absorption
-    (also figure). Ice content can be neglected as it does not affect microwave
-    radiation substantially e.g. \cite[Sanchez2013].
-
-    Additional contributions to gaseous absorption by minor species such as N2
-    (and CO2) \cite[Hewison2006] which contribute to broadening of other lines
-    (check if true). All well mixed.
-
-    Size of molecules and cloud particles too small for effective scattering
-    therefore only absorption is considered in microwave region. Only at
-    droplet sizes occuring during precipitation does scattering become
-    important, these cases are problematic due to little knowledge of acutal
-    LWC and droplet size distributions.
-
-    Rasos do not measure CLW, therefore (semi-)empirical cloud models are used.
-    Popular: \cite[Karstens1994]. Other authors have used fixed amounts based
-    on local measurements (REF some chinese paper, Tan11?). \cite[Tan2011]
-    found that impact of cloud liquid water on chosen cloud liquid amount is
-    not monotonic (read again).
-
-    Selection of radiometer channels according to information content.
-    Measuring at different positions of an absorption band gives altitude
-    information \cite[Westwater2004,Churnside1994]. But information content is
-    limited by correlation between frequencies, channels are not independent.
-    Other influence on channel selection for optimal estimation: fulfilment of
-    Gaussian assumption \cite[Martinet2015].
-
-    Multiple absorption models exist in the literature (e.g. Rosenkranz, Liebe,
-    MONORTM which is based on HITRAN or similar?). These usually describe
-    the most important lines, correct for the missing ones and parameterize
-    the continuum. Cloud absorption is parameterized by a double-Debey model.
-    Models are formulated in terms of refractivity $N$ (which is complex
-    refractive index minus 1), absorption can be calculated by (REFERENCE?)
+    The absorption spectrum in Figure \in[fig:absorption] was calculated by
+    a model from \cite[Liebe1993] for gaseous absorption and a model from
+    \cite[Turner2016] for absorption by cloud liquid water. There are multiple
+    of such models in use, popular ones include a model by
+    \cite[Rosenkranz1998], MonoRTM \cite[authoryears][Clough2005] and ARTS
+    \cite[Buehler2005] (the latter two are not just absorption models but
+    entire radiative transfer simulators). These model usually account for the
+    most important absorption lines explicitly, correct for missing ones and
+    parameterize the continuum term by an empirical function. The
+    \cite[Liebe1993] model for example describes oxygen line absorption in the
+    microwave region by 44 lines and water vapor by 34 lines. Cloud absorption
+    is most often parameterized by a double-Debey model
+    \cite[alternative=authoryears,left={(e.g. }][Turner2016]. Instead of only
+    describing atmospheric absorption, these models are formulated in terms of
+    the more general refractivity $N$ which is the complex refractive index
+    reduced by one. With knowledge of $N$, absorption can be calculated by
 
     \startformula
-        \ABSCOEF = \frac{4 \pi \nu}{c}~ {\rm Im}(N) \EQCOMMA
+        \ABSCOEF = \frac{4 \pi \nu}{c}~ {\rm Im}(N)
     \stopformula
 
     where $c$ is the speed of light and $\nu$ is frequency.
-
-    Here model by \cite[Liebe1993], containing ??? lines ..., is used to
-    calculate absorption coefficients of gaseous absorption and model by
-    \cite[Turner2016] for cloud liquid water absorption.
-
-    Example of absorption in typical atmospheric conditions shown in Figure
-    REF. Selecting frequencies along the sides of the absorption complexes
-    of oxygen (V band) and water vapor (K band) allows profiling of the
-    atmosphere as radiation at each frequency is differently absorbed along the
-    way.
-
-    RTMs built on top of these absorption models agree best in high absorbing
-    spectral regions \cite[Westwater2004], weaker lines like water vapor allow
-    looking further into atmosphere but deeper penetration also means more
-    uncertainty. Uncertainty of RT is major limit on retrieval especially water
-    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
-    terms of brightness temperatures.
 
 \stopsection
 
@@ -375,11 +349,29 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title=Weighting Functions]
+\startsection[title={Retrieval Information Content and Weighting Functions}]
 
-    A common way to analyze the information content of a radiometer measurement
-    is calculating the weighting functions, each one corresponding to one
-    brightness temperature observation or rather simulation since weighting
+    Two important properties associated with atmospheric absorption govern the
+    selection of frequencies at which a microwave radiometer measures in order
+    to retrieve vertical profiles of thermodynamic variables. Because oxygen is
+    a well mixed gas, its emission and absorption in the atmosphere does not
+    depend on its mixing ratio but is directly proportional to local
+    temperature. Water vapor amounts on the other hand vary strongly throughout
+    the atmosphere but with temperature known, water vapor emission is
+    proportional to its partial density \cite[Westwater2004]. These properties
+    allow the retrieval of temperature an humidity. In order to obtain vertical
+    profiles channels along the sides of the K and V band are observed. Because
+    of the differently strong absorption each channel allows to looking
+    differently far into the atmosphere \cite[authoryears][Churnside1994]. The
+    actual information content does not scale with the number of channels since
+    measurements at different positions of the same absorption band are not
+    independent of one another \cite[authoryears][Hewison2006]. The use of
+    multiple frequencies can be complemented by elevation scanning, discussed
+    in section \in[ch:elevation_scanning].
+
+    A common way to visualize the information content of a radiometer
+    observation are the weighting functions, each one corresponding to
+    a brightness temperature observation or rather simulation since weighting
     functions have to be obtained from a forward model. They are found by
     taking the derivative of the measured brightness temperature with respect
     to the atmospheric state vector. In the case of a vertically discretized
@@ -423,8 +415,8 @@ performance or accuracy.
     respect to humidity. It can be seen that information originates mainly from
     the lower part of the troposphere. The larger diversity of temperature
     weighting functions compared to those of humidity indicates that the
-    resolution of temperature retrievals is generally better than for humidity
-    retrievals \cite[authoryears][Cimini2011].
+    vertical resolution of temperature retrievals is generally better than for
+    humidity retrievals \cite[authoryears][Cimini2011].
 
 \stopsection
 
@@ -646,6 +638,13 @@ performance or accuracy.
         matrices.
         }
         {\externalfigure[model_comparison][width=\textwidth]}
+
+    RTMs built on top of these absorption models agree best in high absorbing
+    spectral regions \cite[Westwater2004], weaker lines like water vapor allow
+    looking further into atmosphere but deeper penetration also means more
+    uncertainty. Uncertainty of RT is major limit on retrieval especially water
+    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
+    terms of brightness temperatures.
 
     Need arises for quantification of spectral errors as seen in the previous
     chapter. Refer to comparison study.

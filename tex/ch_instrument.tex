@@ -29,6 +29,9 @@ Introduce map with data locations, mention every instrument.
     Frequencies in oxygen band (V-band): 51.26, 52.28, 53.86, 54.94, 56.66,
     57.30, 58.00 GHz.
 
+    TODO: channel selection for optimal estimation: fulfilment of Gaussian
+    assumption \cite[Martinet2015].
+
     Boundary layer scans every ??? minutes, otherwise zenith measurements.
     Angles of boundary layer scans (deviation from zenith): 0°, 60°, 70.8°,
     75.6°, 78.6°, 81.6°, 83.4°.
@@ -71,6 +74,11 @@ Introduce map with data locations, mention every instrument.
     availablility overlap is achieved between raso, cosmo, nordkette and hatpro
     measurements are available as well.
 
+    Rasos do not measure CLW, therefore (semi-)empirical cloud models are used.
+    Popular: \cite[Karstens1994]. Other authors have used fixed amounts based
+    on local measurements (REF some chinese paper, Tan11?). \cite[Tan2011]
+    found that impact of cloud liquid water on chosen cloud liquid amount is
+    not monotonic (read again).
 
     \placefigure[top][fig:raso_prior]
             {The radiosonde climatology of temperature (left) and specific
