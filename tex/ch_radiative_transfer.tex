@@ -21,87 +21,120 @@ performance or accuracy.
 
 \startsection[title=The Radiative Transfer Equation]
 
-    General form, absorption only, Rayleigh-Jeans → Brightness Temperatures.
-    Discretization.
+    The differential form of the radiative transfer equation in
+    a non-scattering medium is given by
+    \cite[alternative=authoryears,left={(e.g. }][Buehler2005]
 
-    Differential form of RTE without scattering
-
+    \placeformula[eq:rte_general]
     \startformula
-        \DERIV{I_\nu}{s} = - I_\nu \ABSCOEF + F \EQCOMMA
+        \DERIV{I_\nu}{s} = - I_\nu \ABSCOEF + F
     \stopformula
 
-    where $I_\nu$ is spectral radiance (power per frequency and solid angle in
-    a specific direction), $\ABSCOEF$ is the absorption coefficient of the medium
-    ($0 \lt \ABSCOEF \lt 1$), $F$ is a source term and $s$ is distance in beam
-    direction.
-
-    The only source term considered here is emission according to Planck's law
+    where $I_\nu$ is radiative power per frequency, solid angle and area in
+    a specific direction (spectral radiance), $\ABSCOEF$ is the absorption
+    coefficient of the medium, $F$ contains all sources of radiation and $s$ is
+    distance in beam direction. The only source term considered here is the
+    emission of the medium itself in thermal equilibrium according to Plank's
+    law
 
     \startformula
-        F = \epsilon B_\nu(T) \EQCOMMA
+        F = \epsilon \, B_\nu(T)
     \stopformula
 
-    where $\epsilon$ is the emission coefficient of the radiating medium
-    describing its difference to an ideal black body ($0 \lt \epsilon \lt 1$)
-    and $B_\nu(T)$ is the Planck function giving the emitted spectral radiance
-    of a black body. Under the assumption of thermodynamic equilibrium the
-    absorption and emission coefficients are equal (Kirchhoff's law).
-    Substitute into RTE (REFERENCE) to obtain
+    where $\epsilon$ is the emission coefficient of the grey body and
+    $B_\nu(T)$ is the Planck function describing the emitted spectral radiance
+    of a black body at a given temperature $T$. The emission coefficient
+    quantifies the difference of the medium to a perfect black body as
+    described by the Planck function and dependent on the considered frequency.
+    Because thermodynamic equilibrium is assumed Kirchhoff's law allows to
+    equal the absorption and emission coefficients of the medium
+
+    \startformula
+        0 \le \ABSCOEF = \epsilon \le 1
+    \stopformula
+
+    Substituting the results of Plank's law and Kirchhoff's law into the
+    radiative transfer equation \ineq{rte_general} yields
 
     \startformula
         \DERIV{I_\nu}{s} = - \ABSCOEF(I_\nu - B_\nu(T)) \EQSTOP
     \stopformula
 
-    For temperatures occuring in the atmosphere the Planck function in the
-    microwave region is represented well by the Rayleigh-Jeans approximation
-    which relates the spectral radiance at a given frequency linearly to
-    temperature
+    For temperatures occuring in the atmosphere and the spectral region of
+    microwave radiation the Planck function $B_\nu (T)$ is approximated
+    well by the Rayleigh-Jeans approximation which relates the spectral
+    radiance at a given frequency linearly to temperature $T$
 
     \startformula
-        B_\nu(T) \approx \frac{2 \nu^2 k T}{c^2} \EQSTOP
+        B_\nu(T) \approx \frac{2 \nu^2 k T}{c^2}
     \stopformula
 
-    By expressing the spectral radiance $I_\nu$ with the concept of brightness
-    temperature $\BT$ (which is the temperature a blackbody would have to have
-    in order to reproduce the emission by a grey body) and the Rayleigh-Jeans
-    approximation, the radiative transfer equation can be expressed exclusively
-    in terms of temperatures:
+    where $c$ is the speed of light and $k$ is the Boltzmann constant.
+    Microwave radiometers measure brightness temperatures instead of spectral
+    radiances. Brightness temperature $\BT$ is the temperature of a black body
+    that emits the same spectral radiance as an observed grey body. In the
+    Rayleigh-Jeans limit the relationship between temperature and brightness
+    temperature is particularly simple: $\BT = \epsilon T$. Expressing
+    observed spectral radiance in terms of Planck emission and again
+    applying the Rayleigh-Jeans approximation
 
+    \startformula
+        I_\nu := \epsilon \, B_\nu(T)
+            \approx \epsilon \, \frac{2 \nu^2 k T}{c^2}
+            = \frac{2 \nu^2 k}{c^2} \, \BT \EQCOMMA
+    \stopformula
+
+    and noting that the term $\frac{2 \nu^2 k}{c^2}$ is constant for a
+    fixed frequency, the radiative transfer equation \ineq{rte_general} for
+    a given frequency can be expressed exclusively in terms of temperature and
+    brightness temperature
+
+    \placeformula[eq:rte_radiometer]
     \startformula
         \DERIV{\BT}{s} = - \ABSCOEF (\BT - T) \EQSTOP
     \stopformula
+
+    Because $T = T(s)$, analytical solutions of equation \ineq{rte_radiometer}
+    can only be found in a few special cases and numerical solutions have to
+    be seeked in general.
 
 \stopsection
 
 
 \startsection[title={A Solution for Ground-based Radiometer Applications}]
 
-    Assumption of horizontally homogeneous atmosphere, relate distance
-    towards radiometer $s$ to height above radiometer $z$
+    For a radiometer looking up or at an angle to the side from the surface the
+    absorbing and emitting medium is the atmosphere. To simulate a radiometer
+    measurement by solving the radiative transfer equation, the atmospheric
+    state has to be projected onto the light path observed by the radiometer.
+    Since atmospheric state is usually known as a function of altitude the
+    first step towards a solution of \ineq{rte_radiometer} is a coordinate
+    transform into height coordinates
 
     \startformula
-        \DERIV{s}{z} = - \frac{1}{\cos(\theta)} \EQCOMMA
+        \DERIV{s}{z} = - \frac{1}{\cos(\theta)} \EQSTOP
     \stopformula
 
-    where the azimuth angle $\theta$ is defined as the deviation from
-    zenith. Because height increases with height but radiation arriving at
-    the radiometer is downwelling, the sign of the derivative is negative.
-
-    In order to solve the radiative transfer equation after the coordinate
-    transformation, optical depth $\OD$ is introduced
+    $z$ is the altitude coordinate and $\theta$ the zenith angle describing the
+    deviation of the radiometers viewing direction from zenith. Because $z$
+    increases with height but $s$ is the distance along the light path which
+    points downward (the observed radiation is downwelling), $\DERIV{s}{z}$
+    must be negative. It is convenient for the solution of
+    \ineq{rte_radiometer} to introduce optical depth
 
     \startformula
     \startalign[n=3,align={left,right,left}]
-        \NC \NC \OD(s) = \NC \int_{s_0}^{s} \ABSCOEF(u) \diff u \NR
+        \NC \NC \OD(s) := \NC \int_{s_0}^{s} \ABSCOEF(u) \diff u \NR
         \NC \Rightarrow~ \NC \OD(z) = \NC
             - \frac{1}{\cos(\theta)} \int_{z_0}^{z} \ABSCOEF(u) \diff u \NR
         \NC \Rightarrow~ \NC \DERIV{\OD}{z} = \NC
-            - \frac{\ABSCOEF}{\cos(\theta)} \EQCOMMA \NR
+            - \frac{\ABSCOEF}{\cos(\theta)} \EQSTOP \NR
     \stopalign
     \stopformula
 
-    and REFERENCE is multiplied on both sides by $e^{\OD}$ and
-    rearranged, yielding
+    Applying the coordinate transformation to \ineq{rte_radiometer},
+    multiplying by $e^{\OD}$ and applying the chain and product rule of
+    differentiation yields
 
     \startformula
         \DERIV{\BT}{z} e^\OD + \frac{\ABSCOEF \BT e^\OD}{\cos(\theta)}
@@ -109,19 +142,23 @@ performance or accuracy.
         = - \frac{\ABSCOEF T e^\OD}{\cos(\theta)} \EQSTOP
     \stopformula
 
-    Integrating this from the surface ($z = 0$) to space ($z = \infty$)
-    gives an expression for the brightness temperature measured by the
-    radiometer $\BT(0)$:
+    Integrating this differential equation from the surface ($z = 0$) to space
+    ($z = \infty$) gives an expression for the brightness temperature observed
+    by the (virtual) radiometer
 
+    \placeformula[eq:rte_solution]
     \startformula
         \BT(0) = \BT(\infty) e^{\OD(\infty)} + \frac{1}{\cos(\theta)}
             \int_{0}^{\infty} \ABSCOEF(z) T(z) e^{\OD(z)} \diff z \EQSTOP
     \stopformula
 
-    $T_B(\infty)$ is given by the cosmic background (describe), the
-    absorption coefficient can be determined from the atmospheric profile
-    (see section REFERENCE). Mention limitation of fixed zenith angle and
-    that it is wrong to assume angle is constant. Refraction, curvature.
+    $T_B(\infty)$ is the brightness temperature of the cosmic background
+    radiation which has a value of approximately 2.75 K for frequencies in the
+    microwave spectrum \cite[authoryears][Westwater2004]. It is important to
+    note that \ineq{rte_solution} is only valid at off-zenith angles if the
+    vertical profiles of $T$ and $\ABSCOEF$ are horizontally homogeneous and if
+    refraction of light and Earth's curvature are neglected. These restrictions
+    are further discussed in section \in[ch:elevation_scanning].
 
 \stopsection
 
@@ -307,20 +344,20 @@ performance or accuracy.
 
     It is important to note that because temperature is critical for
     determination of the saturation value of humidity the introduction of this
-    partion of water content results in a strongly dependency of the humidity
+    partion of water content results in a strong dependency of the humidity
     retrieval on the temperature retrieval \cite[authoryears][Bleisch2012]
     making it impossible to retrieve humidity independently of temperature.
     Another important consequence is that cloud water is intrinsically tied to
     relative humidity. The \cite[Karstens1994] cloud model used in this thesis
     assumes cloud liquid water exists wherever relative humidity exceeds 95 \%
-    and then calculates the liquid water content independently. The output of
-    COSMO-7 used later to provide prior distributions for retrievals fixes
-    relative humidity at 100 \% in all clouds. In both cases it happens that
-    the particular combination of humidity and cloud water is not representable
-    by the chose partition. In practice both components are nevertheless added
-    and any changes after separation are accepted due to there being a large
-    uncertainty in the determination of cloud liquid water from the start (REF
-    this).
+    and but calculates the liquid water content independently of the specific
+    value. The output of COSMO-7 used later to provide prior distributions for
+    retrievals fixes relative humidity at 100 \% in all clouds. In both cases
+    it happens that the particular combination of humidity and cloud water is
+    not representable by the chosen partition. In practice both components are
+    nevertheless added and any changes after separation are accepted due to
+    there being a large uncertainty in the determination of cloud liquid water
+    from the start (REF this).
 
     For optimal estimation retrievals there is an additional need to update
     pressure information after each iteration since pressure depends on
@@ -626,7 +663,7 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title=Elevation Scanning]
+\startsection[title={[Elevation Scanning},reference={ch:elevation_scanning}]
 
     Many radiometers are able to rotate their antenna in order to measure
     brightness temperatures at off-zenith angles, a procedure called elevation
