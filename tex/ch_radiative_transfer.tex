@@ -575,7 +575,9 @@ performance or accuracy.
     liquid water absorption. The prototype's distinguishing features are its
     accessible implementation in a high-level, dynamic programming language
     (Python 3) and the calculation of temperature and humidity Jacobians by
-    forward-mode automatic differentiation. 
+    forward-mode automatic differentiation. Given an atmospheric profile of
+    pressure, temperature and humidity, it first calculates absorption
+    coefficients and then evaluates equation \ineq{rte_solution} numerically.
 
 \startsubsection[title={Motivation}]
 
@@ -660,7 +662,7 @@ performance or accuracy.
     blowup of expressions. Instead, implementations of automatic
     differentiation are able to compute derivatives simultaneously with the
     forward code or in a second pass and a decent implementation has to visit
-    each node of the computational graph only once resulting in equal
+    each edge of the computational graph only once resulting in equal
     complexities of forward and Jacobian calculations. A short and good
     (although not peer-reviewed) explanation of the idea behind automatic
     differentiation is found at
@@ -677,42 +679,47 @@ performance or accuracy.
     overloading the usd operators and functions, only minor or no changes to
     the program at all are necessary. The reverse-mode moves from the output
     leafs toward the input nodes, computing the derivative of each output with
-    respect to each node of the computational graph. Both techniques yield the
-    same results but can be very different in terms of computational cost.
-    Generally speaking, reverse-mode is suitable for problems with many inputs
-    and only few outputs while the forward mode is more efficient for problems
-    with more outputs than inputs.
+    respect to each node of the computational graph. Because the reverse-mode
+    requires a second pass thorough the graph implementations need to keep
+    track of intermediate results calculated in the first pass. Both techniques
+    yield the same results but can be very different in terms of computational
+    cost. Generally speaking, reverse-mode is suitable for problems with many
+    inputs and only few outputs while the forward mode is more efficient for
+    problems with more outputs than inputs.
 
     A radiative transfer model, with many atmospheric layers as input and only
-    a few brightness temperatures as output is well suited for reverse-mode
-    differentiation. The implementation uses a custom type and overloading,
-    requiring only minimal changes to the forward model code. The only
-    performance optimization made is a special consideration of derivatives
-    associated with the calculation of the absorption coefficients on the 
-    internal model grid.
+    a few brightness temperatures as output is better suited for reverse-mode
+    differentiation. The prototype here nevertheless uses the much easier to
+    implement forward-mode. Transformation of the forward model code required
+    a custom type, the overloading of a few operators and functions and minimal
+    changes to the existing code. The only performance optimization made is
+    a special consideration of derivatives associated with the calculation of
+    the absorption coefficients on the internal model grid.
 
 \stopsubsection
 
 \startsubsection[title=Fast Absorption Prediction]
 
-    A major part of the radiative transfer calculations is the determination of
-    the absorption coefficient of each layer of the discretization. Although
-    the models of \cite[Liebe1993] and \cite[Turner2016] are already fairly
-    simple, the forward model spends a large fraction of computing time in
-    these components. The purpose of a \infull{FAP} (\FAP) is to reduce this
-    time. It also simplifies the task of model linearization greatly (section
-    \in[ch:linearization]). The {\FAP} is chosen to be a polynomial of the
-    state vector variables $p$, $T$, $\LNQ$ (although with some prior
-    processing of the variables, as seen shortly). The polynomial coefficients
-    are determined by multiple linear regression.
-    
-    In a first implementation both gaseous and cloud absorption were modelled
-    together by a single polynomial of the state vector variables. Up to
-    polynomials of degree 5 yielded large errors in the approximated absorption
-    coefficients. The polynomial was not able to adequately represent the
-    strong nonlinearity at the cloud threshold. Higher order polynomials are
-    affected by combinatorial blowup of interaction terms and numerical
-    stability, therefore a more refined approach is taken.
+    The radiative transfer model spends the majority of its time calculating
+    absorption coefficients. Although the models of \cite[Liebe1993] and
+    \cite[Turner2016] are already fairly simple, it is convenient to replace
+    them by a Fast Absorption Predictor (FAP) in order to reduce the overall
+    model computation time. FAPs are regression models of the absorption
+    coefficient as a funcion of the state vector, trained on data representing
+    typical atmospheric conditions. Fast Absorption Predictors have previously
+    been used by \cite[Lohnert2004], \cite[Hewison2006] and others.
+
+    Following the choice of state vector variables from section
+    \in[ch:statevector], the predictors are chosen to be pressure, temperature
+    and the natural logarithm of total specific water content. A first
+    implementation modelled both gaseous and cloud absorption together using a
+    polynomial of the state vector variables. Even for polynomials of degree
+    five including all interaction terms large errors were found in the
+    approximated absorption coefficients. Investigation of this issue showed
+    that the polynomial was unable to adequately represent the strong
+    non-linearity of absorption near the cloud threshold. Polynomials of higher
+    order are strongly affected by combinatorial blowup of interaction terms
+    and numerical stability issues, therefore a more refined approach is taken.
 
     Instead of fitting a polynomial to the combined gaseous and cloud
     absorption, the components are approximated separately. Specific cloud
@@ -729,6 +736,9 @@ performance or accuracy.
     $\ln(\ABSCOEF)$ is used in order to guarantee positivity of the
     approximated $\ABSCOEF$.
 
+    It also simplifies the task of model linearization greatly (section
+    \in[ch:linearization]).
+    
     TODO: describe test data set. FAP scpecialized for each frequency.
     Evaluate FAP performance for each line of the HATPRO. Training data:
     synthetic gridded data representative for a wide variety of atmospheric
@@ -742,19 +752,18 @@ performance or accuracy.
 
 \startsubsection[title={Model Comparison},reference={ch:model_comparison}]
 
-    The implemented model from section \in[ch:mwrtm] should be compared to
-    established radiative transfer models to ensure its correctness. A model
-    comparison also allows a quantification of spectroscopy errors which are an
-    important part of the forward model error covariance
-    \cite[authoryears][Hewison2006]. Two models are available for the
-    comparison: MonoRTM version 5.2 \cite[authoryears][Clough2005] and a model
-    using gas absorption according to \cite[Rosenkranz1998] which was used
-    previously by \cite[Massaro2015]. The test dataset is made up of 1568
-    radiosonde profiles from Innsbruck. Because the data from
-    \cite[Massaro2015] use a slightly different cloud liquid water
-    parameterization than this thesis does (see section \in[ch:???]) and only
-    spectroscopic errors should be assessed here all profiles of the test data
-    set are clear sky cases.
+    The model should be compared to established radiative transfer models to
+    ensure its correctness. A model comparison also allows a quantification of
+    spectroscopy errors which are an important part of the forward model error
+    covariance (section \in[]) \cite[authoryears][Hewison2006]. Brightness
+    temperature simulations from two other models are available for the
+    evaluation: MonoRTM version 5.2 \cite[authoryears][Clough2005] and a model
+    using gas absorption according to \cite[Rosenkranz1998] previously used by
+    \cite[Massaro2015]. The test data set is made up of 1568 radiosonde
+    profiles from Innsbruck. Because the data from \cite[Massaro2015] use
+    a slightly different cloud liquid water parameterization than this thesis
+    does (see section \in[ch:???]) and only spectroscopic errors should be
+    assessed here all profiles of the test data set are clear sky cases.
 
     \placefigure[top][fig:model_comparison]
         {Mean difference (saturated) and covariance (pale) of brightness
@@ -784,7 +793,11 @@ performance or accuracy.
     \cite[Liebe1993] model. In the V band however agreement between absorption
     by \cite[Rosenkranz1998] and \cite[Liebe1993] is better than seen in Figure
     \in[fig:model_comparison] with a significantly smaller bias in the more
-    transparent channels. This discrepancy might require more investigation if
+    transparent channels.
+
+    Also compare with \cite[Lohnert2004], figure 2.
+
+    This discrepancy might require more investigation if
     the MWRTM is developed further but for the rest of this thesis it is still
     the model used for all retrievals. This is justified by the following
     arguments: Since there is no bias between the MWRTM and other models in
