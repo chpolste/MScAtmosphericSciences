@@ -235,7 +235,7 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title={Choice of State Vector Variables},reference={ch:statevector}]
+\startsection[title={State Vector Variables},reference={ch:statevector}]
 
     In order to determine atmospheric emission and absorption, the atmospheric
     state has to be represented somehow on the retrieval grid. Naively one
@@ -428,297 +428,29 @@ performance or accuracy.
     vertical resolution of temperature retrievals is generally better than for
     humidity retrievals \cite[authoryears][Cimini2011].
 
-\stopsection
-
-
-\startsection[title={Implementation of a Numerical Model Prototype},reference=ch:mwrtm]
-
-    A numerical microwave radiative transfer model has been implemented as
-    part of this thesis. It is based on the absorption models by
-    \cite[Liebe1993] for gaseous absorption and \cite[Turner2016] for cloud
-    liquid water absorption. The prototype's distinguishing features are its
-    accessible implementation in a high-level, dynamic programming language
-    (Python 3) and the calculation of temperature and humidity Jacobians by
-    forward-mode automatic differentiation. 
-
-    \startsubsection[title={Motivation}]
-
-        It is not obvious why another implementation of a numerical radiative
-        transfer model is attempted when established and freely available
-        software such as MonoRTM \cite[authoryears][Clough2005] and ARTS
-        \cite[authoryears][Buehler2005] exists. The development of a new model
-        prototype is motivated by three aspects:
-
-        Current RTMs either resort to expensive finite difference approaches
-        when calculating Jacobians or use hand-crafted routines mixing
-        analytically derived expressions and finite difference approximations
-        where analytical expressions are unavailable. As examples, MonoRTM
-        currently has no implementation of derivatives making finite
-        differencing necessary while ARTS has specially written modules for
-        calculating Jacobians. The rising interest in machine learning in
-        recent years has lead to the widespread use of automatic
-        differentiation, a method with which any numerical program can be
-        differentiated to machine precision without the need to explicitly
-        write code for the derivatives. This technique has proven its
-        usefulness in machine learning models and is used in the radiative
-        transfer model for the exact calculation of weighting functions.
-
-        Current radiative transfer models are written in statically typed,
-        compiled languages such as Fortran or C++. Data analysis however is
-        usually done in a high-level language such as Python. A question of
-        interest is if it is computationally feasible to implement a RTM
-        completely in a dynamic language. This would make the model code more
-        accessible to the user and simplify the setup procedure. Finally there
-        is a personal motivation of the author associated with the decision to
-        implement a radiative transfer model. It is assumed that detailed
-        knowledge of all implementation aspects and calculations will help with
-        the overall understanding of retrievals and their results.
-
-        The expected outcome is not a perfect model, surpassing existing RTMs in
-        terms of accuracy and performance, but a flexible, easy to understand,
-        reasonable fast and adequately accurate prototype. Implementation
-        details as well as a discussion of the fulfilment of these expectations
-        are given in the following sections.
-
-    \stopsubsection
-
-    \startsubsection[title=Discretization and Interpolation]
-
-        Smoothing: interpolation scheme is very important and might affect the
-        resulting brightness temperatures calculated by the model. Proposed
-        discretizations: add levels dynamically to keep all extrema, this is
-        good for inversion situations but only applicable if the regions with
-        problematic values are known beforehand, which is not the case for
-        real-time retrievals. When NWP model is used for a-priori, it is
-        convenient to use the model grid, but impossible for stations like
-        Innsbruck where model topography often ends much higher up than
-        actual location of instrument. Generally it is desirable to have higher
-        resolution in the lower atmosphere, where more stuff happens and
-        at which heights the model has high sensitivity, so numerical errors
-        should be kept as small as possible.
-
-        Compromise between resolution necessary for numerical model (as many
-        levels as possible) and actual information content (only few levels).
-        More levels are more expensive to calculate. Inclusion of upper
-        atmosphere or not.
-
-        Interpolation of absorption coefficients resulted in large errors,
-        must be calculated on finer grid.
-
-        Levels in input atmospheric state determine size of Jacobian and
-        therefore also computational cost. Higher resolution does not mean
-        that retrieval results in higher resolved features. Changes to the
-        profile in iterative approach are goverened by the weighting functions,
-        only features resolvable by this set of basis functions can effectively
-        be removed or introduced to a retrieved profile (is this what Hewison
-        talks about when he says the technique has problems with inversion
-        displacement?). Important! Fine structure of first guess is likely
-        preserved during retrieval. Smooth profiles likely better since they
-        do not allow for missinterpretation of small scale features which are
-        only an artefact of the initial value of the iterative scheme.
-
-        Numerical discretization very important for accurate results, high
-        vertical resolution especially in the lower troposphere is required to
-        obtain accurate numerical results.
-
-    \stopsubsection
-
-    \startsubsection[title=Fast Absorption Prediction]
-
-        A major part of the radiative transfer calculations is the determination of
-        the absorption coefficient of each layer of the discretization. Although
-        the models of \cite[Liebe1993] and \cite[Turner2016] are already fairly
-        simple, the forward model spends a large fraction of computing time in
-        these components. The purpose of a \infull{FAP} (\FAP) is to reduce this
-        time. It also simplifies the task of model linearization greatly
-        (section \in[ch:linearization]). The {\FAP} is chosen to be a polynomial of
-        the state vector variables $p$, $T$, $\LNQ$ (although with some prior
-        processing of the variables, as seen shortly). The polynomial coefficients
-        are determined by multiple linear regression.
-        
-        In a first implementation both gaseous and cloud absorption were modelled
-        together by a single polynomial of the state vector variables. Up to
-        polynomials of degree 5 yielded large errors in the approximated absorption
-        coefficients. The polynomial was not able to adequately represent the
-        strong nonlinearity at the cloud threshold. Higher order polynomials are
-        affected by combinatorial blowup of interaction terms and numerical
-        stability, therefore a more refined approach is taken.
-
-        Instead of fitting a polynomial to the combined gaseous and cloud
-        absorption, the components are approximated separately. Specific cloud
-        absorption according to the model by \cite[Turner2016] is only a function
-        of temperature. A 5th order polynomial in $T$ is sufficient to approximate
-        cloud absorption at a selected frequency with good accuracy. The gaseous
-        absorption is modelled by $p$, $T$ and $\QVAP$, with the latter obtained by
-        separating $\QTOT$ into its vapor and liquid components using ???).
-        \cite[Lohnert2004] and \cite[Hewison2006] used a third order polynomial of
-        these variables without interaction terms and claimed good accuracy. This
-        was not observed here, therefore a 5th order polynomial with all
-        interaction terms is used in this work. Additionally, instead of using the
-        absorption coefficient $\ABSCOEF$ as the target of the regression directly,
-        $\ln(\ABSCOEF)$ is used in order to guarantee positivity of the
-        approximated $\ABSCOEF$.
-
-        TODO: describe test data set. FAP scpecialized for each frequency.
-        Evaluate FAP performance for each line of the HATPRO. Training data:
-        synthetic gridded data representative for a wide variety of atmospheric
-        states. Climatology is test dataset. Climatology is not used for training
-        due to profiles being mostly at night and night, therefore temperatures are
-        not representative of whole range of realistic values. Climatology is
-        valuable as independent test set. Mention that FAP errors contribute to
-        covariance matrix.
-
-    \stopsubsection
-
-    \startsubsection[title=Linearization,reference=ch:linearization]
-
-        Necessary for iterative optimal estimation approach but also gives
-        information about the sensitivity of the measurement to different layers of
-        the atmosphere (weighting functions). Quality of linearization important
-        for convergence of iterative retrieval procedure. Literature review:
-        everyone seems to be working with finite differences, but often complaints
-        that these calculations take long. ARTS offers approximated Jacobians
-        but with a model reduced to the essentials it is possible to evaluate the
-        Jacobian exactly and this is done here.
-
-        Brute force: can be used with every model. Problems with selection of
-        perturbations, non-linearity (e.g. at liquid water boundary). One-sided
-        derivatives have bad accuracy (first order finite difference).
-        Possibility of truncating the Jacobian at upper levels to save
-        computing time.
-
-        Analytical alternatives to finite differences: symbolic and automatic
-        differentiation. Symbolic differentiation often requires significant
-        effort and has the problem of combinatorial blowup of expressions.
-        Automatic differentiation evaluates the derivatives at each node of
-        the computation graph directly. There are two ways of performing
-        automatic differentiation: the forward-mode type moves from the input
-        towards the output, computing the derivatives with respect to each
-        input along the way. The reverse-model type moves from the output
-        towards the input, computing the derivative of each output with respect
-        to each node of the computation graph along the way. Both techniques
-        yield the same results but might be very different in terms of
-        computational cost. Generally speaking reverse-mode is suitable for
-        problems with many inputs and only few outputs, while forward mode
-        differentiation is more efficient for problems with more outputs than
-        inputs.
-
-        A radiative transfer model, with many atmospheric layers and only
-        a few brightness temperatures as output seems well suited for
-        reverse-model differentiation. The model presented in the next section
-        uses forward mode despite that due to it being more easy to implement
-        and due to the merging of computational paths only happening at the end
-        of the model calculation and having little interaction in between
-        (absorption coefficients are only dependend on their own layer),
-        therefore the computational advantage of reverse-mode is likely to be
-        offset by the more complicated implementation.
-
-        TODO: mention that there are code generators for automatic
-        differentiation, tie in backprop if NNs are used and maybe make a
-        computational graph for the model, showing that most of the model
-        happens in parallel.
-
-    \stopsubsection
-
+    TODO: calculation of Jacobian.
+    Brute force: can be used with every model. Problems with selection of
+    perturbations, non-linearity (e.g. at liquid water boundary). One-sided
+    derivatives have bad accuracy (first order finite difference).  Possibility
+    of truncating the Jacobian at upper levels to save computing time.
 
 \stopsection
 
 
-\startsection[title={Characterization of Errors},reference={ch:rtm_errors}]
+\startsection[title={Retrieval Grid},reference={}]
+  
+    TODO: Compromise between resolution and model runtime. Take some stuff from
+    next section.
 
-    Instrument random noise and forward model errors important for retrieval
-    \cite[Caddedu2002]. Instrument noise of radiometers often assumed to be
-    0.5 K and Gaussian \cite[Chu1994,Frate1998,Lohnert2004]
-
-    Building part of the forward model covariance matrix.
-
-    Compare exact Jacobian with brute force Jacobian.
-
-    FAP errors: determine from climatology by comparison of exact
-    calculations with FAP predictions.
-
-    Discretization errors: deterine from climatology by comparing
-    interpolated profiles with full resolution profiles.
-
-    Bias correction important
-    \cite[Turner2007,Turner2013,Lohnert2012,Guldner2013,Martinet2015] but
-    \cite[Cimini2011] found this is not that beig an issue....
-
-    Calibration of radiometer can cause jumps in retrieval performance due to
-    bias changing \cite[Lohnert2012,Guldner2013].
-
-    Uncertainty of RT is major limit on retrieval especially water
-    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
-    terms of brightness temperatures.
-
-\stopsection
-
-
-\startsection[title={Model Comparison},reference={ch:model_comparison}]
-
-    The implemented model from section \in[ch:mwrtm] should be compared to
-    established radiative transfer models to ensure its correctness. A model
-    comparison also allows a quantification of spectroscopy errors which are
-    an important part of the forward model error covariance
-    \cite[authoryears][Hewison2006]. Two models are available for the
-    comparison: MonoRTM version 5.2 \cite[authoryears][Clough2005] and a model
-    using gas absorption according to \cite[Rosenkranz1998] which was used
-    previously by \cite[Massaro2015]. The test dataset is made up of 1568
-    radiosonde profiles from Innsbruck. Because the data from
-    \cite[Massaro2015] use a slightly different cloud liquid water
-    parameterization than this thesis does (see section \in[ch:???]) and only
-    spectroscopic errors should be assessed here all profiles of the test data
-    set are clear sky cases.
-
-    \placefigure[top][fig:model_comparison]
-        {Mean difference (saturated) and covariance (pale) of brightness
-        temperatures calculated by the model implemented in section
-        \in[ch:mwrtm] (MWRTM), MonoRTM 5.2 and a model based on absorption
-        as described by \cite[Rosenkranz1998] for over 1000 radiosonde ascents
-        and zenith view. The covariances are sampled from the full covariance
-        matrices.
-        }
-        {\externalfigure[model_comparison][width=\textwidth]}
-
-    Figure \in[fig:model_comparison] shows the results of the model comparison
-    in terms of mean and standard deviation of model differences. As noticed
-    before by \cite[Westwater2004] and \cite[Cimini2004], the absorption models
-    agree best in opaque spectral regions. Biases change sign between V and
-    K band and their magnitude in the more transparent V band channels is
-    generally higher than in the K band channels. Overall, MWRTM agrees better
-    with MonoRTM than with Rosenkranz and MonoRTM and Rosenkranz agree better
-    with each other than with MWRTM.
-
-    Magnitudes of the bias values can be compared to a study by
-    \cite[Cimini2004] who evaluated four absorption models including all of the
-    ones used here (although they used an older version of MonoRTM).  Overall
-    bias values on the order of 1 - 2 K are found in their comparison as well.
-    In the K band their implementation of a RTM using \cite[Rosenkranz1998]
-    absorption also showed better agreement with MonoRTM than with the
-    \cite[Liebe1993] model. In the V band however agreement between absorption
-    by \cite[Rosenkranz1998] and \cite[Liebe1993] is better than seen in Figure
-    \in[fig:model_comparison] with a significantly smaller bias in the more
-    transparent channels. This discrepancy might require more investigation if
-    the MWRTM is developed further but for the rest of this thesis it is still
-    the model used for all retrievals. This is justified by the following
-    arguments: Since there is no bias between the MWRTM and other models in
-    the more opaque channels of the V band and the standard deviation between
-    models is less than 1 K even for the transparent channels, it is unlikely
-    that the source of this discrepancy is a fundamental error in the
-    implementation of the \cite[Liebe1993] absorption model. A more likely
-    source are different discretization, interpolation and numerical quadrature
-    schemes between the model implementations or differences in the test data
-    sets (the test data set of \cite[Cimini2004] contained only 34 profiles).
-    In practice, when assessing the performance of synthetic retrievals,
-    a model bias is irrelevant as long as the entire retrieval is affected by
-    the same bias. In applications involving real radiometer measurements model
-    biases are determined by a comparison between matching observations and
-    model calculations and subsequently accounted for. The observed discrepancy
-    will therefore have no effect on the retrieval performance investigated
-    here.
-
-    The spectroscopic error covariance matrix is assembled from the comparison
-    with the model used by \cite[Massaro2015].
+    Higher resolution does not mean that retrieval results in higher resolved
+    features. Changes to the profile in iterative approach are goverened by the
+    weighting functions, only features resolvable by this set of basis
+    functions can effectively be removed or introduced to a retrieved profile
+    (is this what Hewison talks about when he says the technique has problems
+    with inversion displacement?). Important! Fine structure of first guess is
+    likely preserved during retrieval. Smooth profiles likely better since they
+    do not allow for missinterpretation of small scale features which are only
+    an artefact of the initial value of the iterative scheme.
 
 \stopsection
 
@@ -781,6 +513,7 @@ performance or accuracy.
     estimation, this is no issue since the weighting functions are explicitly
     included in the method.
 
+    TODO: rewrite parts of this to fit into new section ordering
     In order to avoid many of the mentioned complications, transparent channels
     may be excluded in retrievals using elevation scan data and only the most
     opaque channels in the V band used at off-zenith angles
@@ -800,6 +533,294 @@ performance or accuracy.
     of simulations with results from the reference model from section
     \in[ch:model_comparison] which shows differences considerably lower than
     the noise level of the radiometer.
+
+\stopsection
+
+
+\startsection[title={Characterization of Errors},reference={ch:rtm_errors}]
+
+    Instrument random noise and forward model errors important for retrieval
+    \cite[Caddedu2002]. Instrument noise of radiometers often assumed to be
+    0.5 K and Gaussian \cite[Chu1994,Frate1998,Lohnert2004]
+
+    Building part of the forward model covariance matrix.
+
+    Compare exact Jacobian with brute force Jacobian.
+
+    FAP errors: determine from climatology by comparison of exact
+    calculations with FAP predictions.
+
+    Discretization errors: deterine from climatology by comparing
+    interpolated profiles with full resolution profiles.
+
+    Bias correction important
+    \cite[Turner2007,Turner2013,Lohnert2012,Guldner2013,Martinet2015] but
+    \cite[Cimini2011] found this is not that beig an issue....
+
+    Calibration of radiometer can cause jumps in retrieval performance due to
+    bias changing \cite[Lohnert2012,Guldner2013].
+
+    Uncertainty of RT is major limit on retrieval especially water
+    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
+    terms of brightness temperatures.
+
+\stopsection
+
+
+\startsection[title={Implementation of a Radiative Transfer Model Prototype},reference=ch:mwrtm]
+
+    A numerical microwave radiative transfer model has been implemented as
+    part of this thesis. It is based on the absorption models by
+    \cite[Liebe1993] for gaseous absorption and \cite[Turner2016] for cloud
+    liquid water absorption. The prototype's distinguishing features are its
+    accessible implementation in a high-level, dynamic programming language
+    (Python 3) and the calculation of temperature and humidity Jacobians by
+    forward-mode automatic differentiation. 
+
+\startsubsection[title={Motivation}]
+
+    It is not obvious why another implementation of a numerical radiative
+    transfer model is attempted when established and freely available software
+    such as MonoRTM \cite[authoryears][Clough2005] or ARTS
+    \cite[authoryears][Buehler2005] exists. The development of a new model
+    prototype is motivated by three aspects:
+
+    Current RTMs either resort to expensive finite difference approaches when
+    calculating Jacobians or use hand-crafted routines mixing analytically
+    derived expressions and finite difference approximations where analytical
+    expressions are unavailable. As examples, MonoRTM currently has no
+    implementation of derivatives making finite differencing necessary while
+    ARTS has specially written modules for calculating Jacobians. The rising
+    interest in machine learning in recent years has lead to the widespread use
+    of automatic differentiation, a method with which any numerical program can
+    be differentiated to machine precision without the need to explicitly write
+    code for the derivatives. This technique has proven its usefulness in
+    machine learning models and is used in the radiative transfer model for the
+    exact calculation of weighting functions.  Current radiative transfer
+    models are written in statically typed, compiled languages such as Fortran
+    or C++. Data analysis however is usually done in a high-level language such
+    as Python. A question of interest is if it is computationally feasible to
+    implement a RTM completely in a dynamic language. This would make the model
+    code more accessible to the user and simplify the setup procedure. Finally
+    there is a personal motivation of the author associated with the decision
+    to implement a radiative transfer model. It is assumed that detailed
+    knowledge of all implementation aspects and calculations will help with the
+    overall understanding of retrievals and their results.
+
+    It is not expected that the implementation attempt directly results in
+    a perfect model. The expectation is rather to build a flexible, easy to
+    understand, reasonably fast and adequately accurate prototype. The next
+    sections discuss important aspects of development and evaluate the
+    overall model performance.
+
+\stopsubsection
+
+\startsubsection[title=Numerical Considerations]
+
+    In order to obtain numerically stable results the radiative transfer model
+    has to operate internally with a much finer discretization than that of
+    typical grids on which retrievals take place. Due to the generally greater
+    changes of absorption and temperature with height in the lower troposphere,
+    the internal model grid can be coarser at greater altitudes without losing
+    accuracy.
+
+    User has full control over internal model discretization, choice for
+    subsequent retrievals is a logarithmically spaced grid.
+
+    Input has to be interpolated to internal grid. First try was calculating
+    absorption coefficients first and linearly interpolating those but this
+    resulted in large errors. It was then decided to first interpolate
+    pressure, temperature and humidity to the model grid and to calculate
+    the absorption coefficients on the fine grid.
+
+    Quadrature scheme: second order trapezoidal rule.
+
+\stopsubsection
+
+\startsubsection[title=Automatic Differentiation,reference=ch:autodiff]
+
+    Interest in efficient and accurate computation of gradients has risen
+    immensely in recent years due to its need during the training of many
+    machine learning algorithms. The concept has been known at least since the
+    1960s and been rediscovered multiple times since then
+    \cite[authoryears][Griewank2012]. The need to efficiently calculate
+    Jacobians of numerical models (often called adjoint modelling) is also
+    a problem often encountered in atmospheric sciences. Data assimilation for
+    numerical weather prediction models was one of the first applications of
+    automatic differentiation \cite[authoryears][Griewank2012]. Despite that,
+    the technique was mentioned only in one short paragraph modelling by
+    \cite[Errico1997] in a review of adjoint models and even a modern radiative
+    transfer model such as ARTS still has hand-written code for the calculation
+    of Jacobians.
+
+    At its core, automatic differentiation is nothing more than the application
+    of the chain rule of differentiation to the computational graph of
+    a program. It is not the same as symbolic differentiation though, which
+    often requires significant effort and has the problem of combinatorial
+    blowup of expressions. Instead, implementations of automatic
+    differentiation are able to compute derivatives simultaneously with the
+    forward code or in a second pass and a decent implementation has to visit
+    each node of the computational graph only once resulting in equal
+    complexities of forward and Jacobian calculations. A short and good
+    (although not peer-reviewed) explanation of the idea behind automatic
+    differentiation is found at
+    \hyphenatedurl{http://colah.github.io/posts/2015-08-Backprop}
+    \footnote{last accessed 2016-07-25}.
+
+    There are two ways of performing automatic differentiation, differentiated
+    by the direction of traversal of the computational graph. The forward-mode
+    moves from the input nodes towards the output, computing the derivatives
+    with respect to each input variable along the way. Implementations of
+    forward-mode automatic differentation are easy in programming languages
+    supporting dispatch on types. Aside from replacing numeric variables with
+    instances of a custom type with additional fields for the derivatives and
+    overloading the usd operators and functions, only minor or no changes to
+    the program at all are necessary. The reverse-mode moves from the output
+    leafs toward the input nodes, computing the derivative of each output with
+    respect to each node of the computational graph. Both techniques yield the
+    same results but can be very different in terms of computational cost.
+    Generally speaking, reverse-mode is suitable for problems with many inputs
+    and only few outputs while the forward mode is more efficient for problems
+    with more outputs than inputs.
+
+    A radiative transfer model, with many atmospheric layers as input and only
+    a few brightness temperatures as output is well suited for reverse-mode
+    differentiation. The implementation uses a custom type and overloading,
+    requiring only minimal changes to the forward model code. The only
+    performance optimization made is a special consideration of derivatives
+    associated with the calculation of the absorption coefficients on the 
+    internal model grid.
+
+\stopsubsection
+
+\startsubsection[title=Fast Absorption Prediction]
+
+    A major part of the radiative transfer calculations is the determination of
+    the absorption coefficient of each layer of the discretization. Although
+    the models of \cite[Liebe1993] and \cite[Turner2016] are already fairly
+    simple, the forward model spends a large fraction of computing time in
+    these components. The purpose of a \infull{FAP} (\FAP) is to reduce this
+    time. It also simplifies the task of model linearization greatly (section
+    \in[ch:linearization]). The {\FAP} is chosen to be a polynomial of the
+    state vector variables $p$, $T$, $\LNQ$ (although with some prior
+    processing of the variables, as seen shortly). The polynomial coefficients
+    are determined by multiple linear regression.
+    
+    In a first implementation both gaseous and cloud absorption were modelled
+    together by a single polynomial of the state vector variables. Up to
+    polynomials of degree 5 yielded large errors in the approximated absorption
+    coefficients. The polynomial was not able to adequately represent the
+    strong nonlinearity at the cloud threshold. Higher order polynomials are
+    affected by combinatorial blowup of interaction terms and numerical
+    stability, therefore a more refined approach is taken.
+
+    Instead of fitting a polynomial to the combined gaseous and cloud
+    absorption, the components are approximated separately. Specific cloud
+    absorption according to the model by \cite[Turner2016] is only a function
+    of temperature. A 5th order polynomial in $T$ is sufficient to approximate
+    cloud absorption at a selected frequency with good accuracy. The gaseous
+    absorption is modelled by $p$, $T$ and $\QVAP$, with the latter obtained by
+    separating $\QTOT$ into its vapor and liquid components using ???).
+    \cite[Lohnert2004] and \cite[Hewison2006] used a third order polynomial of
+    these variables without interaction terms and claimed good accuracy. This
+    was not observed here, therefore a 5th order polynomial with all
+    interaction terms is used in this work. Additionally, instead of using the
+    absorption coefficient $\ABSCOEF$ as the target of the regression directly,
+    $\ln(\ABSCOEF)$ is used in order to guarantee positivity of the
+    approximated $\ABSCOEF$.
+
+    TODO: describe test data set. FAP scpecialized for each frequency.
+    Evaluate FAP performance for each line of the HATPRO. Training data:
+    synthetic gridded data representative for a wide variety of atmospheric
+    states. Climatology is test dataset. Climatology is not used for training
+    due to profiles being mostly at night and night, therefore temperatures are
+    not representative of whole range of realistic values. Climatology is
+    valuable as independent test set. Mention that FAP errors contribute to
+    covariance matrix.
+
+\stopsubsection
+
+\startsubsection[title={Model Comparison},reference={ch:model_comparison}]
+
+    The implemented model from section \in[ch:mwrtm] should be compared to
+    established radiative transfer models to ensure its correctness. A model
+    comparison also allows a quantification of spectroscopy errors which are an
+    important part of the forward model error covariance
+    \cite[authoryears][Hewison2006]. Two models are available for the
+    comparison: MonoRTM version 5.2 \cite[authoryears][Clough2005] and a model
+    using gas absorption according to \cite[Rosenkranz1998] which was used
+    previously by \cite[Massaro2015]. The test dataset is made up of 1568
+    radiosonde profiles from Innsbruck. Because the data from
+    \cite[Massaro2015] use a slightly different cloud liquid water
+    parameterization than this thesis does (see section \in[ch:???]) and only
+    spectroscopic errors should be assessed here all profiles of the test data
+    set are clear sky cases.
+
+    \placefigure[top][fig:model_comparison]
+        {Mean difference (saturated) and covariance (pale) of brightness
+        temperatures calculated by the model implemented in section
+        \in[ch:mwrtm] (MWRTM), MonoRTM 5.2 and a model based on absorption
+        as described by \cite[Rosenkranz1998] for over 1000 radiosonde ascents
+        and zenith view. The covariances are sampled from the full covariance
+        matrices.
+        }
+        {\externalfigure[model_comparison][width=\textwidth]}
+
+    Figure \in[fig:model_comparison] shows the results of the model comparison
+    in terms of mean and standard deviation of model differences. As noticed
+    before by \cite[Westwater2004] and \cite[Cimini2004], the absorption models
+    agree best in opaque spectral regions. Biases change sign between V and
+    K band and their magnitude in the more transparent V band channels is
+    generally higher than in the K band channels. Overall, MWRTM agrees better
+    with MonoRTM than with Rosenkranz and MonoRTM and Rosenkranz agree better
+    with each other than with MWRTM.
+
+    Magnitudes of the bias values can be compared to a study by
+    \cite[Cimini2004] who evaluated four absorption models including all of the
+    ones used here (although they used an older version of MonoRTM).  Overall
+    bias values on the order of 1 - 2 K are found in their comparison as well.
+    In the K band their implementation of a RTM using \cite[Rosenkranz1998]
+    absorption also showed better agreement with MonoRTM than with the
+    \cite[Liebe1993] model. In the V band however agreement between absorption
+    by \cite[Rosenkranz1998] and \cite[Liebe1993] is better than seen in Figure
+    \in[fig:model_comparison] with a significantly smaller bias in the more
+    transparent channels. This discrepancy might require more investigation if
+    the MWRTM is developed further but for the rest of this thesis it is still
+    the model used for all retrievals. This is justified by the following
+    arguments: Since there is no bias between the MWRTM and other models in
+    the more opaque channels of the V band and the standard deviation between
+    models is less than 1 K even for the transparent channels, it is unlikely
+    that the source of this discrepancy is a fundamental error in the
+    implementation of the \cite[Liebe1993] absorption model. A more likely
+    source are different discretization, interpolation and numerical quadrature
+    schemes between the model implementations or differences in the test data
+    sets (the test data set of \cite[Cimini2004] contained only 34 profiles).
+    In practice, when assessing the performance of synthetic retrievals,
+    a model bias is irrelevant as long as the entire retrieval is affected by
+    the same bias. In applications involving real radiometer measurements model
+    biases are determined by a comparison between matching observations and
+    model calculations and subsequently accounted for. The observed discrepancy
+    will therefore have no effect on the retrieval performance investigated
+    here.
+
+    The spectroscopic error covariance matrix is assembled from the comparison
+    with the model used by \cite[Massaro2015].
+
+\stopsubsection
+
+    
+\startsubsection[title={Achievements and Shortcomings}]
+
+    The implementation of MWRTM's automatic differentiation is rather crude and
+    not extremely efficient. Nevertheless it showcases that the method is
+    applicable to radiative transfer modelling and even though barely any
+    performance optimizations were done, calculation of Jacobians is
+    significantly faster than by finite differences. Future developments with
+    automatic differentiation should apply one of the many available code
+    generators, which make it easy to use backward-mode differentiation and
+    exploit compiler optimizations for high efficiency.
+
+\stopsubsection
 
 \stopsection
 
