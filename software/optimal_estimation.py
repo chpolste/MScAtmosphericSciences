@@ -1,7 +1,7 @@
 """Optimal estimation tools and configuration.
 
 Naming conventions:
-x - state vector
+x, μ - state vector
 y - radiometer observation
 """
 
@@ -10,6 +10,7 @@ from scipy.integrate import cumtrapz
 
 from mwrt import MWRTM, LinearInterpolation
 from faps_hatpro import *
+
 
 # Retrieval grid
 z_hatpro = 612.
@@ -26,7 +27,8 @@ class VirtualHATPRO:
 
     angles = [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8]
 
-    def __init__(self, z_retrieval, z_model, model_error):
+    def __init__(self, z_retrieval, z_model, model_error,
+            scanning=(10, 11, 12, 13)):
         """
 
         Use only zenith for K band and three most transparent channels of
@@ -34,13 +36,14 @@ class VirtualHATPRO:
         """
         self.z = z_retrieval
         itp = LinearInterpolation(source=z_retrieval, target=z_model)
+        state_dims = 0
         self.mod_ang = []
-        for a in self.absorp[:10]:
-            self.mod_ang.append([MWRTM(itp, a), self.angles[0:1]])
-        for a in self.absorp[10:]:
-            self.mod_ang.append([MWRTM(itp, a), self.angles])
+        for i, a in enumerate(self.absorp):
+            angles = self.angles if i in scanning else [0.]
+            self.mod_ang.append([MWRTM(itp, a), angles])
+            state_dims += len(angles)
         self.model_error = model_error
-        assert len([0 for _ in self.mod_ang for __ in _[1]]) == len(self.model_error)
+        assert state_dims == len(self.model_error)
 
     def separate(self, x, p0):
         """Take apart the state vector and calculate pressure.
