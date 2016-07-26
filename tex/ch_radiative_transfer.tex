@@ -310,18 +310,23 @@ performance or accuracy.
     Integration yields the desired expressions for liquid water content and
     specific humidity
 
+    \placeformula
     \startformula
-        \QLIQ(\RHL) = \startcases
+    \startalign[align={center,right}]
+        \NC
+        \QLIQ(\RHL) = \startcases[align={left,left,right}]
             \NC 0 \MC s \lt 0.95 \NR
             \NC \frac{\QSAT}{2} \left( \RHL - 0.95 - \frac{0.1}{\pi}
                 \cos \left( \frac{\pi \RHL}{0.1} \right) \right)
                 \MC 0.95 \le s \le 1.05 \NR
             \NC \QLIQ(1.05) + \QSAT (\RHL - 1.05) \MC 1.05 \lt s \NR
-        \stopcases
+        \stopcases \NC \NR[eq:qliq]
+    \stopalign
     \stopformula
 
     and
 
+    \placeformula[eq:qvap]
     \startformula
         \QVAP(\RHL) = \QTOT(\RHL) - \QLIQ(\RHL) \EQSTOP
     \stopformula
@@ -578,6 +583,8 @@ performance or accuracy.
     forward-mode automatic differentiation. Given an atmospheric profile of
     pressure, temperature and humidity, it first calculates absorption
     coefficients and then evaluates equation \ineq{rte_solution} numerically.
+    The model will subsequently be referred to as MWRTM (MicroWave Radiative
+    Transfer Model).
 
 \startsubsection[title={Motivation}]
 
@@ -636,6 +643,8 @@ performance or accuracy.
     the absorption coefficients on the fine grid.
 
     Quadrature scheme: second order trapezoidal rule.
+    
+    Error covariance.
 
 \stopsubsection
 
@@ -703,10 +712,10 @@ performance or accuracy.
     The radiative transfer model spends the majority of its time calculating
     absorption coefficients. Although the models of \cite[Liebe1993] and
     \cite[Turner2016] are already fairly simple, it is convenient to replace
-    them by a Fast Absorption Predictor (FAP) in order to reduce the overall
+    them by a fast absorption predictor (FAP) in order to reduce the overall
     model computation time. FAPs are regression models of the absorption
     coefficient as a funcion of the state vector, trained on data representing
-    typical atmospheric conditions. Fast Absorption Predictors have previously
+    typical atmospheric conditions. fast absorption predictors have previously
     been used by \cite[Lohnert2004], \cite[Hewison2006] and others.
 
     Following the choice of state vector variables from section
@@ -722,31 +731,27 @@ performance or accuracy.
     and numerical stability issues, therefore a more refined approach is taken.
 
     Instead of fitting a polynomial to the combined gaseous and cloud
-    absorption, the components are approximated separately. Specific cloud
-    absorption according to the model by \cite[Turner2016] is only a function
-    of temperature. A 5th order polynomial in $T$ is sufficient to approximate
-    cloud absorption at a selected frequency with good accuracy. The gaseous
-    absorption is modelled by $p$, $T$ and $\QVAP$, with the latter obtained by
-    separating $\QTOT$ into its vapor and liquid components using ???).
-    \cite[Lohnert2004] and \cite[Hewison2006] used a third order polynomial of
-    these variables without interaction terms and claimed good accuracy. This
-    was not observed here, therefore a 5th order polynomial with all
-    interaction terms is used in this work. Additionally, instead of using the
-    absorption coefficient $\ABSCOEF$ as the target of the regression directly,
-    $\ln(\ABSCOEF)$ is used in order to guarantee positivity of the
-    approximated $\ABSCOEF$.
+    absorption the components are approximated separately after the total
+    water content of the state vector has been separated into vapor and liquid
+    components according to \ineq{qliq} and \ineq{qvap}. Specific cloud
+    absorption following \cite[Turner2016] is only a function of temperature
+    modelled by the FAP as a 5th order polynomial of temperature. Gaseous
+    absorption depends on $p$, $T$ and $\QVAP$. \cite[Lohnert2004] and
+    \cite[Hewison2006] used third order polynomials without interaction terms
+    as FAPs and claimed good accuracy. Here it was found to be necessary to
+    approximate absorption coefficients by polynomials including all
+    interaction terms of third order for V band frequencies and fourth order
+    for K band frequencies. The higher order polynomial for K band frequencies
+    was found to be necessary to avoid negative absorption coefficients in the
+    more opaque channels. Before it was also tested to model the logarithm of
+    the absorption coefficient with an FAP to enforce positivity. Due to
+    a negative impact on accuray, likely due to the additional non-linearity
+    introduced by the transformation, this was not pursued further.
 
-    It also simplifies the task of model linearization greatly (section
-    \in[ch:linearization]).
-    
-    TODO: describe test data set. FAP scpecialized for each frequency.
-    Evaluate FAP performance for each line of the HATPRO. Training data:
-    synthetic gridded data representative for a wide variety of atmospheric
-    states. Climatology is test dataset. Climatology is not used for training
-    due to profiles being mostly at night and night, therefore temperatures are
-    not representative of whole range of realistic values. Climatology is
-    valuable as independent test set. Mention that FAP errors contribute to
-    covariance matrix.
+    Errors introduced by the FAPs are quantified in an error covariance matrix
+    and included in the total forward model error. The matrix is determined
+    from differences of simulations with and without fast absorption
+    predictors.
 
 \stopsubsection
 
@@ -795,7 +800,38 @@ performance or accuracy.
     \in[fig:model_comparison] with a significantly smaller bias in the more
     transparent channels.
 
+    TODO:
+    \cite[Liebe1993] absorption verified by comparison to routines from
+    \hyphenatedurl{http://reef.atmos.colostate.edu/~odell/at622/assignments/project1/codes/},
+    no difference if exact absorption of FAP is used, no difference if internal
+    model resolution is changed.
+    Bias does not appear to scale with transparency of channel and changes sign
+    between K and V band.
+    Since comparison results are from zenith refraction cannot be cause of
+    differences either.
+    Differences must come from implementation details of the radiative transfer
+    or differences in state representation.
+
     Also compare with \cite[Lohnert2004], figure 2.
+
+    Elevation scanning.
+
+    The spectroscopic error covariance matrix is assembled from the comparison
+    with the model used by \cite[Massaro2015].
+
+\stopsubsection
+
+    
+\startsubsection[title={Achievements and Shortcomings}]
+
+    The implementation of MWRTM's automatic differentiation is rather crude and
+    not extremely efficient. Nevertheless it showcases that the method is
+    applicable to radiative transfer modelling and even though barely any
+    performance optimizations were done, calculation of Jacobians is
+    significantly faster than by finite differences. Future developments with
+    automatic differentiation should apply one of the many available code
+    generators, which make it easy to use backward-mode differentiation and
+    exploit compiler optimizations for high efficiency.
 
     This discrepancy might require more investigation if
     the MWRTM is developed further but for the rest of this thesis it is still
@@ -815,23 +851,6 @@ performance or accuracy.
     model calculations and subsequently accounted for. The observed discrepancy
     will therefore have no effect on the retrieval performance investigated
     here.
-
-    The spectroscopic error covariance matrix is assembled from the comparison
-    with the model used by \cite[Massaro2015].
-
-\stopsubsection
-
-    
-\startsubsection[title={Achievements and Shortcomings}]
-
-    The implementation of MWRTM's automatic differentiation is rather crude and
-    not extremely efficient. Nevertheless it showcases that the method is
-    applicable to radiative transfer modelling and even though barely any
-    performance optimizations were done, calculation of Jacobians is
-    significantly faster than by finite differences. Future developments with
-    automatic differentiation should apply one of the many available code
-    generators, which make it easy to use backward-mode differentiation and
-    exploit compiler optimizations for high efficiency.
 
 \stopsubsection
 
