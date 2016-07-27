@@ -31,7 +31,7 @@ class MWRTM:
     - ...
     """
 
-    def __init__(self, interpolator, absorption):
+    def __init__(self, interpolator, absorption, background=2.75):
         """Initialize a radiative transfer model.
         
         The interpolator is used to transform quantities from the input to the
@@ -39,6 +39,7 @@ class MWRTM:
         """
         self.interpolator = interpolator
         self.absorption = absorption
+        self.background = background
 
     def _get_vars(self, data, p, T, lnq):
         """Extract and check data input."""
@@ -80,8 +81,8 @@ class MWRTM:
         for angle in angles:
             cosangle = np.cos(np.deg2rad(angle))
             τexp = np.exp(-spi.cumtrapz(α, zz, initial=0)/cosangle)
-            cosmic = 2.736 * τexp[-1]
-            bt.append(cosmic + np.trapz(α * TT * τexp, zz)/cosangle)
+            background = self.background * τexp[-1]
+            bt.append(background + np.trapz(α * TT * τexp, zz)/cosangle)
         return np.hstack(bt)
 
     @classmethod
@@ -161,6 +162,8 @@ class CachedMWRTM:
                 dT=parent.interpolator.matrix,
                 dlnq=np.zeros_like(parent.interpolator.matrix, dtype=float)
                 )
+        # Background
+        self.background = parent.background
 
     def evaluate(self, angle):
         """Perform a model simulation.
@@ -169,8 +172,8 @@ class CachedMWRTM:
         """
         cosangle = np.cos(np.deg2rad(angle))
         τexp = exp(self.τ/cosangle)
-        cosmic = 2.736 * τexp[-1]
-        return cosmic + trapz(self.α * self.T * τexp, self.z)/cosangle
+        background = self.background * τexp[-1]
+        return background + trapz(self.α * self.T * τexp, self.z)/cosangle
 
     def __call__(self, angles):
         """Perform a model simulation.
