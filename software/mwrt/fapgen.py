@@ -1,9 +1,9 @@
 """Training and code generation gaseous and cloud FAPs."""
 
 from functools import wraps
+from itertools import product
 
 import numpy as np
-from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import Ridge
 
 from mwrt.interpolation import atanspace
@@ -64,16 +64,36 @@ def generate_code(name, gasfap, cloudfap, with_import=True):
 class FAPGenerator:
     """Base class for fast absorption predictor generators."""
 
-    def __init__(self, degree=3, alpha=0.01):
+    def __init__(self, alpha=1., degree=3, interaction=True):
         """A new FAPGenerator instance.
 
         Emits a polynomial of given degree in the state vector variables p, T
         and lnq, trained with a Ridge-regression model (regularization
         parameter alpha).
         """
-        self.pf = PolynomialFeatures(degree=degree, include_bias=True)
-        # Intercept is modelled by column of 1s in PolyFeatures
+        self.degree = degree
+        self.interaction = interaction
+        # Intercept is modelled by column of 1s in predictors
         self.lm = Ridge(alpha=alpha, fit_intercept=False)
+
+    def _polify_predictors(self, predictors):
+        n = predictors.shape[1]
+        self.powers = [tuple([0]*n)] # Bias term
+        for pred in range(n):
+            for pwr in range(1, self.degree+1):
+                self.powers.append(tuple(pwr if i == pred else 0 for i in range(n)))
+        if self.interaction:
+            for tup in product([0, 1], repeat=n):
+                if tup not in self.powers:
+                    self.powers.append(tup)
+        out = []
+        for pwrs in self.powers:
+            s = tuple(i for i, j in enumerate(pwrs) for _ in range(j))
+            if not s:
+                out.append(np.ones([predictors.shape[0], 1]))
+                continue
+            out.append(np.sum(predictors[:,s], axis=1, keepdims=True))
+        return np.hstack(out)
 
     @staticmethod
     def _generate_terms(coeffs, powers, names):
@@ -115,8 +135,8 @@ class CloudFAPGenerator(FAPGenerator):
         # Absorption/Refractivity models take inverse temperature as input
         target = model(θ=300./predictors).flatten()
         # The FAP is trained against "normal" temperature though
-        self.pf.fit(predictors)
-        self.lm.fit(self.pf.transform(predictors), target)
+        predictors = self._polify_predictors(predictors)
+        self.lm.fit(predictors, target)
 
     def generate_method(self):
         out = []
@@ -124,7 +144,7 @@ class CloudFAPGenerator(FAPGenerator):
         out.append("    def cloud_absorption(T):\n")
         out.append("        return (")
         out.append("\n                ".join(self._generate_terms(
-                self.lm.coef_, self.pf.powers_, ["T"])))
+                self.lm.coef_, self.powers, ["T"])))
         out.append("\n                )\n")
         return "".join(out)
 
@@ -149,12 +169,12 @@ class GasFAPGenerator(FAPGenerator):
         if predictors is None:
             predictors = self.generate_predictor_data()
         assert predictors.shape[1] == 3
-        self.pf.fit(predictors)
         θ = 300/predictors[:,1]
         e = (predictors[:,2]/qsat(p=predictors[:,0], T=predictors[:,1])
                 * esat(T=predictors[:,1]))
         target = model(θ=θ, pd=predictors[:,0]-e, e=e).flatten()
-        self.lm.fit(self.pf.transform(predictors), target)
+        predictors = self._polify_predictors(predictors)
+        self.lm.fit(predictors, target)
 
     def generate_predictor_data(self):
         from sklearn.utils.extmath import cartesian
@@ -183,7 +203,7 @@ class GasFAPGenerator(FAPGenerator):
         out.append("    def gas_absorption(p, T, qvap):\n")
         out.append("        return (")
         out.append("\n                ".join(self._generate_terms(
-                self.lm.coef_, self.pf.powers_, ["p", "T", "qvap"])))
+                self.lm.coef_, self.powers, ["p", "T", "qvap"])))
         out.append("\n                )\n")
         return "".join(out)
 
