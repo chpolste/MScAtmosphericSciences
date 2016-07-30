@@ -9,21 +9,23 @@ import numpy as np
 from scipy.integrate import cumtrapz
 
 from mwrt import MWRTM, LinearInterpolation
-from faps_hatpro import *
+from faps_hatpro import faps, bgs
 
 
 # Retrieval grid
 z_hatpro = 612.
-zgrid = np.logspace(np.log10(z_hatpro), np.log10(15000.), 50).astype(int).astype(float)
+z_top = 12612.
+# Retrieval grid
+rgrid = np.round(np.logspace(np.log10(z_hatpro), np.log10(z_top), 50)).astype(float)
+# Internal model grid
+mgrid = np.logspace(np.log10(z_hatpro), np.log10(z_top), 2500)
 
 
 class VirtualHATPRO:
 
-    absorp = [
-            FAP22240MHz, FAP23040MHz, FAP23840MHz, FAP25440MHz, FAP26240MHz,
-            FAP27840MHz, FAP31400MHz, FAP51260MHz, FAP52280MHz, FAP53860MHz,
-            FAP54940MHz, FAP56660MHz, FAP57300MHz, FAP58000MHz
-            ]
+    absorptions = faps
+
+    backgrounds = bgs
 
     angles = [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8]
 
@@ -38,9 +40,9 @@ class VirtualHATPRO:
         itp = LinearInterpolation(source=z_retrieval, target=z_model)
         state_dims = 0
         self.mod_ang = []
-        for i, a in enumerate(self.absorp):
+        for i, (a, bg) in enumerate(self.absorptions, self.backgrounds):
             angles = self.angles if i in scanning else [0.]
-            self.mod_ang.append([MWRTM(itp, a), angles])
+            self.mod_ang.append([MWRTM(itp, a, background=bg), angles])
             state_dims += len(angles)
         self.model_error = model_error
         assert state_dims == len(self.model_error)

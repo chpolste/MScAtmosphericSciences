@@ -6,19 +6,19 @@ echo "Database export"
 python data_unifier.py nordkette
 python data_unifier.py cosmo7
 python data_unifier.py raso
-python data_unifier.py bt_igmk
+python data_unifier.py tb_igmk
 python data_unifier.py cloudy_igmk
 
 echo "MonoRTM raso"
-python data_unifier.py --levels 130 bt_monortm > /dev/null
+python data_unifier.py --levels 130 tb_monortm > /dev/null
 echo "MonoRTM grid"
-python data_unifier.py --levels 50 --source "../data/unified/<VAR>_raso.csv" bt_monortm > /dev/null
+python data_unifier.py --levels 50 --source "../data/unified/<VAR>_raso.csv" tb_monortm > /dev/null
 
-echo "MWRTM"
-python data_unifier.py --levels 3000 --source "../data/unified/<VAR>_raso.csv" bt_mwrtm_full &
-python data_unifier.py --levels 3000 --source "../data/unified/<VAR>_raso.csv" bt_mwrtm_fap &
-python data_unifier.py --levels 6000 --source "../data/unified/<VAR>_raso.csv" bt_mwrtm_fap &
-python data_unifier.py --levels 3000 bt_mwrtm_fap &
+echo "MWRTM1"
+python data_unifier.py --levels 2500 tb_mwrtm_fap &
+python data_unifier.py --levels 2500 --source "../data/unified/<VAR>_raso.csv" tb_mwrtm_fap &
+python data_unifier.py --levels 5000 --source "../data/unified/<VAR>_raso.csv" tb_mwrtm_fap &
+python data_unifier.py --levels 2500 --source "../data/unified/<VAR>_raso.csv" tb_mwrtm_full &
 wait
 
 echo "done!"

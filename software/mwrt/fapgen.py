@@ -64,7 +64,7 @@ def generate_code(name, gasfap, cloudfap, with_import=True):
 class FAPGenerator:
     """Base class for fast absorption predictor generators."""
 
-    def __init__(self, alpha=1., degree=3, interaction=True):
+    def __init__(self, alpha=1., degree=3, interaction_degree=0):
         """A new FAPGenerator instance.
 
         Emits a polynomial of given degree in the state vector variables p, T
@@ -72,7 +72,7 @@ class FAPGenerator:
         parameter alpha).
         """
         self.degree = degree
-        self.interaction = interaction
+        self.interaction_degree = interaction_degree
         # Intercept is modelled by column of 1s in predictors
         self.lm = Ridge(alpha=alpha, fit_intercept=False)
 
@@ -82,17 +82,16 @@ class FAPGenerator:
         for pred in range(n):
             for pwr in range(1, self.degree+1):
                 self.powers.append(tuple(pwr if i == pred else 0 for i in range(n)))
-        if self.interaction:
-            for tup in product([0, 1], repeat=n):
-                if tup not in self.powers:
-                    self.powers.append(tup)
+        for tup in product(range(self.interaction_degree+1), repeat=n):
+            if tup not in self.powers and sum(tup) <= self.interaction_degree:
+                self.powers.append(tup)
         out = []
         for pwrs in self.powers:
             s = tuple(i for i, j in enumerate(pwrs) for _ in range(j))
             if not s:
                 out.append(np.ones([predictors.shape[0], 1]))
                 continue
-            out.append(np.sum(predictors[:,s], axis=1, keepdims=True))
+            out.append(np.prod(predictors[:,s], axis=1, keepdims=True))
         return np.hstack(out)
 
     @staticmethod

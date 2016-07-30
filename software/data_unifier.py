@@ -11,23 +11,23 @@ cosmo7
 raso
     Radiosonde profiles interpolated to the retrieval grid.
 
-bt_igmk
+tb_igmk
     Dumps simulated brightness temperatures from IGMK (only the ones used in
     retrieval algorithms).
 
 cloudy_igmk
 
-bt_monortm
+tb_monortm
     Simulates zenith BT with MonoRTM. source controls from where to get the
     profiles (None is database, else give a pattern for csv files). levels
     controls the number of layers that the profile is interpolated on (MonoRTM
     can only take 200 max, most sondes have more).
 
-bt_mwrtm_fap
-bt_mwrtm_full
+tb_mwrtm_fap
+tb_mwrtm_full
     Simulates BT with MWRTM using either FAPs or the full absorption models.
     Calculates all angles contained in retrieval algorithms. levels controls
-    the number of internal model levels, source is the same as for bt_monortm.
+    the number of internal model levels, source is the same as for tb_monortm.
 """
 
 import argparse
@@ -39,7 +39,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 
-from optimal_estimation import VirtualHATPRO, zgrid, z_hatpro
+from optimal_estimation import VirtualHATPRO, rgrid, mgrid, z_hatpro, z_top
 from db_tools import Database
 import formulas as fml
 
@@ -55,7 +55,7 @@ def stretch(xs, lower=None, upper=None, power=1):
     return out
 
 
-def bt_dataset(data):
+def tb_dataset(data):
     """Unstacks elevation angles from hatpro database table."""
     angles = list(sorted(set(data.angle)))
     out = []
@@ -94,7 +94,7 @@ def get_raso_profiles(db):
                 .drop_duplicates("z", keep="first")
                 )
         zs = df["z"].values
-        if len(zs) < 50 or zs[0] > 612 or zs[-1] < 15000: continue
+        if len(zs) < 50 or zs[0] > z_hatpro or zs[-1] < z_top: continue
         # Interpolate to 612 m level at the bottom
         zs = df["z"].values
         surface = OrderedDict()
@@ -116,7 +116,7 @@ def get_csv_profiles(filename):
     Tdf = reader("T").reindex(pdf.index)
     qvapdf = reader("qvap").reindex(pdf.index)
     qliqdf = reader("qliq").reindex(pdf.index)
-    z = pd.Series(zgrid, name="z")
+    z = pd.Series(rgrid, name="z")
     for (vp, ps), (vT, Ts), (vv, qvaps), (vl, qliqs) in zip(pdf.iterrows(),
             Tdf.iterrows(), qvapdf.iterrows(), qliqdf.iterrows()):
         assert vp == vT == vv == vl
@@ -183,11 +183,11 @@ if __name__ == "__main__":
                 # Stretch, then interpolate
                 zs = stretch(profile["z"].values, lower=z_hatpro, power=1)
                 for var in out:
-                    out[var].append(interp1d(zs, profile[var].values)(zgrid))
+                    out[var].append(interp1d(zs, profile[var].values)(rgrid))
             valid = pd.Series(valid, name="valid")
             for var, values in out.items():
                 (pd.DataFrame(np.vstack(values), index=valid,
-                        columns=["z={}m".format(int(z)) for z in zgrid])
+                        columns=["z={}m".format(int(z)) for z in rgrid])
                         .sort_index()
                         .round(10)
                         .to_csv("../data/unified/{}_cosmo7+{:0>2}.csv".format(var, lead//3600))
@@ -210,21 +210,21 @@ if __name__ == "__main__":
         for gvalid in gvalids.groups:
             profile = gvalids.get_group(gvalid).dropna(axis=0).drop_duplicates("z", keep="first")
             zs = profile["z"].values
-            if len(zs) < 50 or zs[0] > 612 or zs[-1] < 15000: continue
+            if len(zs) < 50 or zs[0] > z_hatpro or zs[-1] < z_top: continue
             valid.append(dt.datetime.utcfromtimestamp(set(profile["valid"]).pop()))
             for var in out:
-                out[var].append(interp1d(zs, profile[var].values)(zgrid))
+                out[var].append(interp1d(zs, profile[var].values)(rgrid))
         valid = pd.Series(valid, name="valid")
         for var, values in out.items():
             (pd.DataFrame(np.vstack(values), index=valid,
-                    columns=["z={}m".format(int(z)) for z in zgrid])
+                    columns=["z={}m".format(int(z)) for z in rgrid])
                     .sort_index()
                     .round(10)
                     .to_csv("../data/unified/{}_raso.csv".format(var))
                     )
 
 
-    if args.data == "bt_igmk":
+    if args.data == "tb_igmk":
         # IGMK processed brightness temperatures
         igmk = db.as_dataframe("""
                 SELECT * FROM hatpro
@@ -249,7 +249,7 @@ if __name__ == "__main__":
                 "TB_58000MHz_78.6", "TB_58000MHz_81.6", "TB_58000MHz_83.4",
                 "TB_58000MHz_84.6", "TB_58000MHz_85.2", "TB_58000MHz_85.8",
                 "p", "T", "qvap"]
-        bt_dataset(igmk)[columns].sort_index().to_csv("../data/unified/bt_igmk.csv")
+        tb_dataset(igmk)[columns].sort_index().to_csv("../data/unified/TB_igmk.csv")
 
 
     if args.data == "cloudy_igmk":
@@ -275,7 +275,7 @@ if __name__ == "__main__":
                 axis=0).sort_index().to_csv("../data/unified/cloudy_igmk.csv")
 
 
-    if args.data == "bt_monortm":
+    if args.data == "tb_monortm":
         # MonoRTM brightness temperatures (zenith only)
         from monortm import MonoRTM
         from monortm.hatpro import config
@@ -293,7 +293,7 @@ if __name__ == "__main__":
         ps, Ts, qs = [], [], []
         for valid, df in data:
             if len(df) > levels:
-                z = np.logspace(np.log10(z_hatpro), np.log10(15000.), levels)
+                z = np.logspace(np.log10(z_hatpro), np.log10(z_top), levels)
                 p = interp1d(df["z"].values, df["p"].values)(z)
                 T = interp1d(df["z"].values, df["T"].values)(z)
                 qvap = interp1d(df["z"].values, df["qvap"].values)(z)
@@ -310,7 +310,7 @@ if __name__ == "__main__":
             ps.append(p[0])
             Ts.append(T[0])
             qs.append(qvap[0])
-        bts = MonoRTM.run_distributed(config, profiles, get="brightness_temperatures")
+        tbs = MonoRTM.run_distributed(config, profiles, get="brightness_temperatures")
         valids = pd.Series(valids, name="valid")
         columns = [
                 "TB_22240MHz_00.0", "TB_23040MHz_00.0", "TB_23840MHz_00.0",
@@ -319,28 +319,23 @@ if __name__ == "__main__":
                 "TB_53860MHz_00.0", "TB_54940MHz_00.0", "TB_56660MHz_00.0",
                 "TB_57300MHz_00.0", "TB_58000MHz_00.0"
                 ]
-        df = pd.DataFrame(np.vstack(bts), columns=columns, index=valids)
+        df = pd.DataFrame(np.vstack(tbs), columns=columns, index=valids)
         ps = pd.Series(ps, name="p", index=valids)
         Ts = pd.Series(Ts, name="T", index=valids)
         qs = pd.Series(qs, name="qvap", index=valids)
         (pd.concat([df, ps, Ts, qs], axis=1)
                 .sort_index()
-                .to_csv("../data/unified/bt_monortm{}.csv".format(srcname))
+                .to_csv("../data/unified/TB_monortm{}.csv".format(srcname))
                 )
 
 
-    if args.data.startswith("bt_mwrtm"):
+    if args.data.startswith("tb_mwrtm"):
         # MWRTM brightness temperatures
         from mwrt import MWRTM, LinearInterpolation
+        from faps_hatpro import faps, tbs, bgs
         if args.data.endswith("_fap"):
-            from faps_hatpro import *
             absname = "fap"
-            absorp = [
-                    FAP22240MHz, FAP23040MHz, FAP23840MHz, FAP25440MHz,
-                    FAP26240MHz, FAP27840MHz, FAP31400MHz, FAP51260MHz,
-                    FAP52280MHz, FAP53860MHz, FAP54940MHz, FAP56660MHz,
-                    FAP57300MHz, FAP58000MHz
-                    ]
+            absorp = faps
         elif args.data.endswith("_full"):
             from mwrt.fapgen import absorption_model
             from mwrt import tkc, liebe93
@@ -356,17 +351,13 @@ if __name__ == "__main__":
                     partial(absmod, 57.300), partial(absmod, 58.000)
                     ]
         else: raise ValueError("unknown absorption model")
-        tb_names = ["TB_22240MHz", "TB_23040MHz", "TB_23840MHz", "TB_25440MHz",
-                    "TB_26240MHz", "TB_27840MHz", "TB_31400MHz", "TB_51260MHz",
-                    "TB_52280MHz", "TB_53860MHz", "TB_54940MHz", "TB_56660MHz",
-                    "TB_57300MHz", "TB_58000MHz"]
         angles = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.],
                 [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8],
                 [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8],
                 [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8],
                 [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8]]
         columns = ["{}_{:0>4.1f}".format(f, a)
-                for f, angs in zip(tb_names, angles)
+                for f, angs in zip(tbs, angles)
                 for a in angs] + ["p", "T", "qvap"]
 
         if args.source is None:
@@ -376,18 +367,18 @@ if __name__ == "__main__":
             data = get_csv_profiles(args.source)
             srcname = ""
 
-        zmodel = np.logspace(np.log10(z_hatpro), np.log10(15000.), args.levels)
+        zmodel = np.logspace(np.log10(z_hatpro), np.log10(z_top), args.levels)
         valids, rows = [], []
         for valid, df in data:
-            bts = []
+            tbs = []
             itp = LinearInterpolation(source=df["z"].values, target=zmodel)
-            for ap, ang in zip(absorp, angles):
-                model = MWRTM(itp, ap)
-                bts.extend(model.forward(angles=ang, data=df, lnq=make_lnq(data=df)))
-            row = bts + [df["p"].values[0], df["T"].values[0], df["qvap"].values[0]]
+            for ap, ang, bg in zip(absorp, angles, bgs):
+                model = MWRTM(itp, ap, background=bg)
+                tbs.extend(model.forward(angles=ang, data=df, lnq=make_lnq(data=df)))
+            row = tbs + [df["p"].values[0], df["T"].values[0], df["qvap"].values[0]]
             rows.append(row)
             valids.append(valid)
-        outname = "../data/unified/bt_mwrtm_{}_{}{}.csv".format(args.levels, absname, srcname)
+        outname = "../data/unified/TB_mwrtm_{}_{}{}.csv".format(args.levels, absname, srcname)
         valids = pd.Series(valids, name="valid")
         pd.DataFrame(rows, index=valids, columns=columns).sort_index().to_csv(outname)
 
