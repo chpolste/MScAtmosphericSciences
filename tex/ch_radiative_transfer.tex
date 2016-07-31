@@ -457,6 +457,11 @@ performance or accuracy.
     do not allow for missinterpretation of small scale features which are only
     an artefact of the initial value of the iterative scheme.
 
+    Additional consideration: to which height is profile retrieved? For
+    transparent oxygen channels this may have significant effect on brightness
+    temperature calculation as tropopause/lower stratosphere have significant
+    contributions to radiometer observations.
+
 \stopsection
 
 
@@ -739,19 +744,41 @@ performance or accuracy.
     absorption depends on $p$, $T$ and $\QVAP$. \cite[Lohnert2004] and
     \cite[Hewison2006] used third order polynomials without interaction terms
     as FAPs and claimed good accuracy. Here it was found to be necessary to
-    approximate absorption coefficients by polynomials including all
-    interaction terms of third order for V band frequencies and fourth order
-    for K band frequencies. The higher order polynomial for K band frequencies
-    was found to be necessary to avoid negative absorption coefficients in the
-    more opaque channels. Before it was also tested to model the logarithm of
-    the absorption coefficient with an FAP to enforce positivity. Due to
-    a negative impact on accuray, likely due to the additional non-linearity
-    introduced by the transformation, this was not pursued further.
+    approximate absorption coefficients by third order polynomials including
+    all interaction terms for V band frequencies and third order polynomials
+    including interactions terms up to second order for K band frequencies. The
+    higher order polynomial for K band frequencies was found to be necessary to
+    avoid negative absorption coefficients in the more opaque channels. Before
+    it was also tested to model the logarithm of the absorption coefficient
+    with an FAP to enforce positivity. Due to a negative impact on accuray,
+    likely due to the additional non-linearity introduced by the
+    transformation, this was not pursued further.
 
     Errors introduced by the FAPs are quantified in an error covariance matrix
     and included in the total forward model error. The matrix is determined
     from differences of simulations with and without fast absorption
     predictors.
+
+\stopsubsection
+
+\startsubsection[title={Correcting for Missing Parts of the Profile}]
+
+    Mentioned before in retrieval grid section. Multiple things to consider:
+    information content of radiometer mostly limited to lower atmosphere (see
+    weighting functions). Absorption becomes increasingy non-linear at pressure
+    lower than 150 hPa, therefore FAPs perform badly or have to use
+    higher-order polynomials which are more expensive, defeating the purpose of
+    the FAP.
+
+    Choice here: 12 km above ground is end of profile. Transparent channels
+    have contributions from above. K band is irrelevant since water vapor
+    content at these height is negligible. V band significantly affected by
+    emission from tropopause and lower stratosphere. If not accounted for,
+    modelled BTs are biased. MWRTM provides the possiblility to account for
+    the missing emission from above the profile end by adjusting the cosmic
+    background temperature to a value that includes the emission and opacity
+    of the upper atmosphere. The assumed values of temperature and pressure
+    come from the US standard atmosphere. Humidity is set to zero.
 
 \stopsubsection
 
@@ -801,6 +828,12 @@ performance or accuracy.
     transparent channels.
 
     TODO:
+    Bias in transparent oxygen channels very sensitive to choice of highest
+    level of retrieval grid and method of accounting for missing parts of
+    atmosphere. This kind of error is mostly a bias which has no influcence
+    when evaluating synthetic retrieval performance and will be corrected for
+    when using actual radiometer observations.
+
     \cite[Liebe1993] absorption verified by comparison to routines from
     \hyphenatedurl{http://reef.atmos.colostate.edu/~odell/at622/assignments/project1/codes/},
     no difference if exact absorption of FAP is used, no difference if internal
@@ -809,8 +842,8 @@ performance or accuracy.
     between K and V band.
     Since comparison results are from zenith refraction cannot be cause of
     differences either.
-    Differences must come from implementation details of the radiative transfer
-    or differences in state representation.
+
+    Standard deviation higher for more transparent channels.
 
     Also compare with \cite[Lohnert2004], figure 2.
 
