@@ -864,7 +864,7 @@ by \cite[Downey2013].
 
 \stopsubsection
 
-\startsubsection[title={1D-VAR, Cost Functions and Regularization}]
+\startsubsection[title={1D-VAR, Cost Functions and Regularization},reference=ch:costfunction]
 
     There is another way to derive the optimal estimation retrieval scheme.
     Instead of working directly with probability distributions the retrieval
@@ -1215,39 +1215,47 @@ by \cite[Downey2013].
 
 \startsection[title={Other Retrieval Techniques},reference=ch:otherretrievals]
 
-    Another popular regression model used for the retrieval of thermodynamic
-    atmospheric profiles from radiometer measurements is the neural network.
-    This is a non-linear model able to approximate even complex functions.
-    Due to the non-linearity in its parameters, training the model is
-    computationally more expensive than finding the weights in linear
-    regression but both are cheap to evaluate once trained. Backpropagation,
-    a variant of automatic differentiation, has estabilshed itself as the
-    standard technique for efficient, automated training. Studies indicate that
-    even a simple network with a single type of activation function and one
-    hidden layer of neurons results in better retrieval performance for
-    inversion cases than linear regression FIND REFS FOR THIS. There are many
-    more regression models aside from linear regression and neural networks
-    that have not been tested as retrieval methods yet. The popularity of the
-    field of machine learning in the last years has caused a massive increase
-    in available regression models.
+    Physical retrievals: optimal estimation standard but also experiments with
+    2D-VAR (REF) and efforts to directly assimilate measured brightness
+    temperatures into NWP models.
+
+    Aside from linear regression models, neural network have a history of use
+    in retrieval. Non-linear in its parameters, theoretically able to
+    approximate any complex function. Training phase is computationally
+    more expensive than that of linear regression but evaluation is again cheap
+    once the model parameters have been found. Most neural networks for the
+    retrieval of thermodynamic profiles are rather simple, typically with one
+    hidden layer and only a single type of activation function. Even though the
+    overall performance of neural networks in terms of rmse has not been found
+    to be significantly better than that of linear regression, there are
+    indications that retrieval performance is better in inversion cases.
+    Many other regression models exists but research has been focused on
+    linear regression and neural networks so far. Regression models share
+    many properties. They are generally easy to use but measures have to be
+    taken to avoid overfitting. They often lack methods to estimate uncertainty
+    and, as seen for the case of linear regression, even if an uncertainty
+    estimate can be derived it might have very limited information content.
+    In contrast to optimal estimation retrievals which explicitly use a forward
+    model, profiles determined by regression methods need not be consistent
+    with the observed brightness temperatures they are retrieved from.
 
     Aside from the method itself there are additional components of the
     retrieval that can be tweaked. \cite[Frate1998,Tan2011] have used principal
-    component analysis/empirical orthogonal functions to reduce the
+    component analysis (PCA)/empirical orthogonal functions (EOF) to reduce the
     dimensionality of the retrieval problem. This is possible because
     simultaneous measurements from different radiometer channels are generally
-    correlated and contain less independent pieces of
-    information than the number of channels REF.
+    correlated and contain less independent pieces of information than the
+    number of channels REF. It is also possible to use dimension reduction
+    techniques on the atmospheric state or to apply variable transformations.
+    The latter will be done in section \in[ch:statevector] in order to enforce
+    positivity of retrieved humidity.
 
-    Variable transformations as used also here for humidity, e.g. to enforce
-    positivity.
-
-    TODO: disadvantages of regression
-    Bayesian linear regression can provide error estimate but its
-    interpretation is limited as will be seen shortly. Resulting state is not
-    necessarily consistent with brightness temperature measurement (contrast to
-    optimal estimation).
-
+    The choice of variables that quantify the atmospheric state is
+    also of importance. While regression techniques are able to retrieve
+    temperature, humidity or liquid water alone, optimal estimation techniques
+    only work with a complete description of the atmospheric state (not true!)
+    to ensure accurate radiative transfer calculations. These aspects are one
+    of the topics discussed in the following chapter.
 
 \stopsection
 
@@ -1279,38 +1287,41 @@ by \cite[Downey2013].
 
 \startsection[title={Inclusion of Additional Information}]
 
-    The inclusion of additional
-    information is a current topic of research. LÖHNERT ET AL have designed
-    a retrieval system that combines cloud radar, cloud base radiometer (and
-    more?). It is common practice to include surface measurements of
-    temperature, humidity and pressure into regression retrievals. These
-    measurements as well as measurements of cloud base height and -temperature
-    have also been included as fixed points in optimal estimation retrievals (I
-    SHOULD HAVE A REF FOR THAT). As mentioned in the introduction
-    \cite[Massaro2013] and \cite[Meyer2016] have studied the inclusion of
-    measurements from different altitudes as they are available in mountainous
-    locations. The choice of variables that quantify the atmospheric state is
-    also of importance. While regression techniques are able to retrieve
-    temperature, humidity or liquid water alone, optimal estimation techniques
-    only work with a complete description of the atmospheric state (not true!)
-    to ensure accurate radiative transfer calculations. These aspects are one
-    of the topics discussed in the following chapter.
+    Current and important topic of research. Many sites that operate
+    a radiometer also operate other instruments such as infrared
+    spectrometers, ceilometers, cloud radars or surface in-situ sensors. Most
+    radiometers hav built in pressure, humidity and temperature sensors.
+    Naturally there is a desire to use information from other instruments to
+    improve the retrieval based on radiometer observations.
 
-    Easier for regression techniques.
+    Regression methods make it easy to include such measurements as additional
+    regressors but the retrieved atmospheric state is not necessarily
+    constrained to conform to additional information. While additional
+    information have an obvious place in the prior of optimal estimation
+    retrievals it generally not that obvious how the prior should be set up
+    to accomodate various kinds of additional information. A NWP forecast
+    directly provides a complete profile as needed for the prior but a cloud
+    base height or surface measurement does not directly lead to an entire
+    profile from which a prior can be determined. Such isolated measurements
+    are often included as fixed points into the prior by modifying its
+    mean and covariance matrix explicitly (REFS). In-situ measurements of the
+    atmospheric state can be directly used to set a value of the prior while
+    cloud base heights may be translated to a saturated layer and cloud radar
+    observations can be used to explicity prescribe the vertical distribution
+    of liquid water. Modification of the prior is generally not trivial and
+    care has to be taken not to make the covariance matrix singular. If there
+    is no easy way to include additional information into the prior it might be
+    sufficient to use them for the first guess of the optimal estimation
+    iterative procedure in order to encourage convergence to a profile that is
+    consistent with the additional knowledge. A similar effect has the
+    use of regularization terms as discussed in section \in[ch:costfunction].
+    E.g. profiles known to be cloud-free may be retrieved with a high penalty
+    on cloud liquid water (REF?).
 
-    TODO: talk about inclusion of surface measurements and that some authors
-    think they don't do anything. Mention specialized climatologies combined
-    with tries to preclassify profiles.
-
-    TODO: Refer to regularization from before.
-
-    Generalization of optimal estimation to Multiple Measurements
-
-    Bayesian approach has natural place for all additional information: prior.
-    Multidimensional distributions not that easy to edit directly. Better
-    approach: subsequent Bayesian updates. Start with most general prior (e.g.
-    climatology) then add additional information using pseudo-forward models.
-    As shown by \cite[Rodgers2000] in chapter 4.1.1, there is a more
+    For instruments from which entire atmospheric profiles can be retrieved
+    and for which numerical forward models exists, subsequent Bayesian updates
+    in the optimal estimation framework are the way to go.
+    TODO: As shown by \cite[Rodgers2000] in chapter 4.1.1, there is a more
     general way to construct the posterior {\PDF} $\POSTERIOR$. If $n$
     measurements $\VECY_i$ are available that can be related to the state
     vector by forward models $\FWD_i$ and the forward model errors are
@@ -1336,6 +1347,19 @@ by \cite[Downey2013].
     is explicitly included in the model, i.e. $\PRIOR$ is constant, and the
     maximum a-posteriori solution is equivalent to a maximum likelihood
     solution.
+
+    LÖHNERT ET AL have designed a retrieval system that combines cloud radar,
+    cloud base radiometer (and more?). Based on subsequent Bayesian updates?
+
+    In Innsbruck research has been focused on the inclusion of in-situ
+    measurements from different altitudes as they are available in mountainous
+    locations \cite[authoryears][Massaro2013,Meyer2016].
+
+    There is controversy regarding the usefulness of surface observations as
+    they are suspected to be influenced to much by inhomogeneous surface layer
+    processes and are not representative of the air volume that is responsible
+    for the radiometer observations. For humidity retrievals it is common to
+    include cloud base height and temperature. Cloud radar my be used to 
 
 \stopsection
 
