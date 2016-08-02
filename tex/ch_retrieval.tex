@@ -1270,29 +1270,69 @@ by \cite[Downey2013].
 \stopsection
 
 
-\startsection[title={Priors and Training Data Sets}]
+\startsection[title={Training Data Sets and Priors}]
 
-    Choosing the prior (=background) state. Constructing the covariance
-    matrix.
+    Representativity of training data set for regression techniques important
+    to avoid extrapolation.
+    
+    Relationship between brightness temperatures and atmospheric state not
+    unique. If training data set covers much of state space it is possible
+    that the regression model cannot reproduce the relationship appropriately.
+    Idea of specialized training data sets for seasons, months, day/night,
+    clear/cloudy/rainy, inversion cases, ... Specialization only possible if
+    case can be determined before the retrieval (trivial for season, not that
+    simple for inversion cases). Disadvantage also that time evolution might
+    not be continuous when the case changes.
 
-    Choosing prior faces same challenges as chossing a training data set
-    for regression.
+    Training data usually climatology of radiosonde ascents and brightness
+    temperature measurements simulated by a RTM. Completely synthetic training
+    data by \cite[Frate1998]. Few sites have radiometer measurements over
+    a long enough time period to allow measurement-based regression, i.e.
+    training with collocated and simultaneous measurements by ballon and
+    radiometer. For these sites it is often found that retrievals have less
+    bias due to the bias of the radiative transfer model being absent.
 
-    Important since radiometer information mainly limited to lower
-    atmosphere \cite[Caddedu2013,Cimini006,Lohnert2012].
+    For locations without radiosonde ascents NWP forecasts and analyses have
+    been used (REF). NWP has the problem though that model have deviating
+    topography and simulated soundings may not end at the actual surface.
+    Extrapolation to ground is not trivial as model does resolve boundary layer
+    processes and a simple connection between model surface value and surface
+    value of station ignores these information.
 
-    Fixed points ....
+    Location specificness of regression models.
 
-    Completely synthetic training data by \cite[Frate1998].
+    For optimal estimation retrievals prior is also very important as it limits
+    the region of state space explored during iteration, influences the
+    a-posteriori uncertainty estimate and often also provides the first guess.
+    Radiometer information content mainly limited to lower atmosphere
+    \cite[Caddedu2013,Cimini006,Lohnert2012], therefore the prior governs the
+    retrieval performance at upper atmospheric levels. NWP model generally do
+    well at higher levels as scales are larger than at the surface. This
+    makes NWP model and radiometer a good combination as both provide
+    complementary information. Assimilation systems generally also provide
+    distributions than can be used directly as a prior for a specific time.
+    If only the direct model output is available a comparison of radiosondes
+    and previous forecasts can be used to determine the covariance of the
+    prior. Priors may also be determined directly from a radiosonde
+    climatology. Same issues of selection of a training data set apply,
+    specialization is possible. Climatology priors generally have larger
+    uncertainties than NWP model forecasts. Then choice of first guess very
+    important as much state space is allowed by prior. A possible choice might
+    be a profile retrieved by a regression model in a first step. Then it might
+    be worthwhile to consider using the regression retrievals to construct the
+    prior as well as this likely yields a smaller uncertainty. To estimate
+    regression model parameters and covariance independently a large training
+    set is needed.
 
-    A-priori knowledge may produce bias, pulling retrievals towards statistical
-    mean \cite[Caddedu2002]. Possible solution for optimal estmation not based
-    on model output and regression techniques: specialization into seasons
-    (e.g. \cite[Chan2010,Tan2011,Massaro2015,Peckam2000]) or even monthly
+    TODO: A-priori knowledge may produce bias, pulling retrievals towards
+    statistical mean \cite[Caddedu2002]. Possible solution for optimal
+    estmation not based on model output and regression techniques:
+    specialization into seasons (e.g.
+    \cite[Chan2010,Tan2011,Massaro2015,Peckam2000]) or even monthly
     \cite[Turner2007]. Cloud-free sky can often be classified befor retrieval
     (ceilometer, possibly camera) and incorporated into prior/training dataset,
-    e.g. \cite[Solheim1998,Lohnert2012,Martinet2015,Xu2015]. Transition
-    between different priors may not be smooth and has to be managed
+    e.g. \cite[Solheim1998,Lohnert2012,Martinet2015,Xu2015]. Transition between
+    different priors may not be smooth and has to be managed
     \cite[Massaro2015].
 
 \stopsection
