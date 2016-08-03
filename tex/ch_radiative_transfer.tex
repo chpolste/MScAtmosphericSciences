@@ -1,13 +1,15 @@
-The only retrieval technique that does not depend on a numerical radiative
-transfer model is regression based on a training data set of simultaneous
-radiometer observations and radiosonde ascents. This requires long time series
-of observations available only in very few locations. Instead retrieval schemes
-use simulations of radiometer measurements in order to generate training data
-sets or determine the likelihood of a brightness temperature measurement given
-a vertical atmospheric profile.
+The only common retrieval technique that does not depend on a numerical
+radiative transfer model is measurement based regression using simultaneous
+radiometer observations and radiosonde ascents as training data, but time
+series of such data pairs are rare.  The ability to simulate radiometer
+measurements provides a way to generate data pairs from radiosonde
+climatologies or NWP forecasts. The optimal estimation approach directly
+incorporates a numerical radiative transfer model into the retrieval and
+additionally makes of of its linearization. The development of microwave
+radiative transfer models has therefore been intimately linked to the
+development of retrieval techniques.
 
-A few common model are used: MONORTM (which is the basis of the previous
-retrieval studies from Innsbruck), MPM, ARTS, .... TODO: refer to comparison
+A few common model are used: MONORTM, MPM, ARTS, .... TODO: refer to comparison
 study. Currently developed: RTTOV-gb, which appears to be very promising.
 Older models such as MONORTM appear to be slowly left behind as more and more
 authors start to use optimal estimation techniques. Instead mature and more
@@ -442,7 +444,7 @@ performance or accuracy.
 \stopsection
 
 
-\startsection[title={Retrieval Grid},reference={}]
+\startsection[title={Retrieval Grid},reference={ch:retrievalgrid}]
   
     TODO: Compromise between resolution and model runtime. Take some stuff from
     next section.
@@ -549,6 +551,28 @@ performance or accuracy.
 
 \startsection[title={Characterization of Errors},reference={ch:rtm_errors}]
 
+    Error sources:
+    FAP
+    finite bandwith of radiometer channels while model usually assume
+    monochromatic frequency
+    profile discretization/representation
+    choice of profile extension to account for stratospheric emission
+    uncertainties in angular position when elevation scanning
+    radiometric noise
+    calibration issues
+    radio frequency interference (other sources of microwave radiation than
+    atmosphere, especially relevant in highly populated areas), these are
+    hard to assess and likely very variable, therefore usually not accounted
+    for
+    representativeness (temporal averaging of measurement, horizontal
+    inhomogeneity)
+
+    bias vs. variation (assessed via root mean square error)
+
+    problems of verification and determination: no perfect RTM, complications
+    with reference instruments, mainly radiosondes as these are affected by
+    errors as well (drift, representativity).
+
     Instrument random noise and forward model errors important for retrieval
     \cite[Caddedu2002]. Instrument noise of radiometers often assumed to be
     0.5 K and Gaussian \cite[Chu1994,Frate1998,Lohnert2004]
@@ -565,7 +589,7 @@ performance or accuracy.
 
     Bias correction important
     \cite[Turner2007,Turner2013,Lohnert2012,Guldner2013,Martinet2015] but
-    \cite[Cimini2011] found this is not that beig an issue....
+    \cite[Cimini2011] found this is not that big of an issue....
 
     Calibration of radiometer can cause jumps in retrieval performance due to
     bias changing \cite[Lohnert2012,Guldner2013].

@@ -170,75 +170,75 @@ by \cite[Downey2013].
 
 \startsection[title=The Multivariate Gaussian Distribution]
 
-    Bayesian view relies heavily on probablility density functions. In
-    a theoretical framework it is desireable to work with pdfs that allow
-    analytic solutions for a given problem. The most commonly used pdf is the
-    Gaussian distribution:
+    The Bayesian framework is based on operations on probability distributions.
+    For theoretical derivations it is desireable to work with PDFs for which
+    analytic solutions to the necessary Bayesian operations exist. The most
+    prominent example of such a distribution is the Gaussian distribution
 
     \placeformula[eq:gaussian]
     \startformula
         \GAUSS{\VECX}{\MEANVEC}{\COVMAT}
         = \frac{1}{(2 \pi)^{d / 2} \det(\COVMAT)^{1/2}}
-          \exp \left( -\frac{1}{2}(\VECX - \MEANVEC)^\top \COVMAT^{-1} (\VECX - \MEANVEC) \right)
+            \exp \left( -\frac{1}{2}(\VECX - \MEANVEC)^\top \COVMAT^{-1}
+            (\VECX - \MEANVEC) \right)
+        \EQSTOP
     \stopformula
 
-    where $\VECX, \MEANVEC \in \REALS^d$ and $\COVMAT \in \REALS^{d \times d}$
-    and the exponential function is applied component-wise.
+    $\VECX, \, \MEANVEC \in \REALS^d$ and $\COVMAT \in \REALS^{d \times d}$
+    and the exponential function is applied component-wise. The mean of
+    this distribution is $\MEANVEC$ and the mean is also the location of the
+    only extremum. This is particularly useful for determination of the mean
+    as a simple extremum search directly yields the unique maximum. The
+    covariance matrix $\COVMAT$ determines the shape of the distribution. For
+    a proper Gaussian distribution, it is always a symmetric positive definite
+    matrix. When all off-diagonal elements of $\COVMAT$ are zero, each
+    component of the multidimensional distribution is independent from the
+    others. If nonzero off-diagonal elements exist, some or all componentes are
+    correlated. The two-dimensional example distributions shown in Figure
+    \in[fig:bayes_theorem] are all Gaussian distributions. The prior has
+    a diagonal covariance matrix and is therefore circular while the likelihood
+    function has non-zero off-diagonal elements resulting in tilted,
+    ellipsoidal isolines.
 
-    The mean vector $\MEANVEC$ of the Gaussian distribution is the location of
-    its maximum. The covariance matrix $\COVMAT$ determines the shape of the
-    distribution. For a proper Gaussian distribution, it is always a symmetric
-    positive definite matrix. When all off-diagonal elements of $\COVMAT$ are
-    zero, each component of the multidimensional distribution is independent
-    from the others. If nonzero off-diagonal elements exist, some or all
-    componentes are correlated.
-
-    TODO: Discuss possibility of determining mean of Gauss by search for extrema.
-
-    Refer to default Bayes/Gaussian plot.
-
-    Because the normalization $((2 \pi)^{d/2} \det(\COVMAT)^{1/2})^{-1}$ can be
-    determined from the content of the quadratic form in the exponent, i.e. the
-    size of the input $N$ and the covariance matrix $\COVMAT$, a Gaussian
-    distribution can be described completely in terms of the exponent.
-    A common representation of a Gaussian distribution, that will also be used
-    in the following, is
+    The Gaussian distribution is completely characterized by its mean and
+    covariance matrix. In particular, the normalization $((2 \pi)^{d/2}
+    \det(\COVMAT)^{1/2})^{-1}$ can be determined solely as a function of
+    $\COVMAT$. This is especially convenient in derivations where it is known
+    that the result is a Gaussian distribution because the normalization can be
+    inferred independently afterwards. This simplification benefits Bayesian
+    operations greatly since the marginalization of a Gaussian yields
+    a Gaussian and a conditional distribution of two Gaussian variables is
+    again Gaussian if the conditioning is linear
+    \cite[authoryears][Bishop2006]. With the normalization out of the way it is
+    furthermore practical to operate with Gaussian distributions in logarithmic
+    space There, the Gaussian distribution is given by the quadratic form
 
     \startformula
         -2 \ln(\GAUSS{\VECX}{\MEANVEC}{\COVMAT})
-        = (\VECX - \MEANVEC)^\top \COVMAT^{-1} (\VECX - \MEANVEC) + c \EQCOMMA % TODO: use \GAUSSEXP
+        = \GAUSSEXP{\VECX}{\MEANVEC}{\COVMAT} + c
     \stopformula
 
-    where $c$ is a constant that contains the normalization. The right hand
-    side of this representation is easier to deal with in analytical
-    derivations but contains all the information of the distribution.
+    where $c \in \REALS$ is a constant that contains the normalization. This
+    form still contains all information from the original distribution.
 
-    Throughout this thesis it will be assumed again and again that continuous
-    variables follow a Gaussian distribution. A major reason for choosing this
-    assumption is that Gaussian distributions have very convenient analytic
-    properties.  Particularly useful is that the marginalization of a Gaussian
-    yields a Gaussian and that a conditional distribution of two Gaussian
-    variables is again Gaussian if the conditioning is linear
-    \cite[authoryears][Bishop2006].
-    
+    Throughout this thesis it will be assumed again and again a continuous
+    variable follows a Gaussian distribution. Its convenient analytic
+    properties are a major reason for this choice.
+
     TODO The assumption that a continuous variable follows a Gaussian
     distribution is not only popular due to its well understood analytic
     behavior. central limit theorem, maximum entropy.
 
-    Because the assumption of Gaussian {\PDF}s is persistent throughout this
-    text, some general results are derived in the following sections. These
-    will be used in subsequent sections.
-
 \startsubsection[title=Parameter Estimation]
     
     For the description of a dataset in the form of a Gaussian distribution the
-    mean and covariance parameters have to be estimated from the data.  This is
+    mean and covariance parameters have to be estimated from the data. This is
     done by finding the maximum likelihood solutions for $\MEANVEC$ and
     $\COVMAT$ given a dataset $\{\VECX_1, \dots, \VECX_N\}$, whose elements are
-    assumed to be independent and identically distributed.  The results are
+    assumed to be independent and identically distributed. The results are
     found in most textbooks dealing with statistics
-    \cite[alternative=authoryears,left={(e.g. }][Bishop2006]. Results are shown
-    here for completeness but no derivations.
+    \cite[alternative=authoryears,left={(e.g. }][Bishop2006]. and are shown
+    here without derivations.
 
     The likelihood of a single datapoint $\VECX_i$ is
     $\GAUSS{\VECX_i}{\MEANVEC}{\COVMAT}$ and because of the assumption of
@@ -267,7 +267,7 @@ by \cite[Downey2013].
             (\VECX_i - \MEANVEC_{ML})
     \stopformula
 
-    Notably the mean can be calculated independently from the covariance.  The
+    Notably the mean can be calculated independently from the covariance. The
     ML estimator of the covariance systematically underestimates the true
     covariance but can be corrected by using
 
@@ -565,32 +565,40 @@ by \cite[Downey2013].
 
     This retrieval technique uses a Bayesian update to incorporate radiometer
     observations $\VECY$ into prior knowledge of the atmospheric state vector
-    $\VECX$. The resulting state vector is consistent with the forward model
-    (usually a numerical radiative transfer model) necessary for the technique
-    and uses the a-priori information to solve the uniqueness problem
-    associated with retrievals. Because the method employs a numerical forward
-    model simulating the physical processes of measurement, it is often called
-    a physical retrieval.
+    $\VECX$. The prior knowledge comes most often from a weather prediction
+    model as these are more accurate at higher levels than in the boundary
+    layer while the radiometer observations mainly contain information about
+    the lower atmospheric levels. The resulting retrievals have good accuracy
+    throughout the entire troposphere. The Bayesian update incorporates
+    a forward model, optimal estimation is therefore often called a physical
+    retrieval technique as it explicitly makes use of the physics behind
+    radiative transfer. The forward model allows the retrieval of atmoshperic
+    states that are consistent with simulations of the radiative transfer while
+    also considering the prior information (which is essential to solve the
+    non-uniqueness problem of retrieval) and uncertainties associated with
+    the components of the method. An estimate of the error of the retrieved
+    state can also be derived since the Bayesian approach propagates the
+    uncertainty estimates of the components. Because of the need for error
+    estimates and a forward model  the optimal estimation method is more
+    complex than regression techniques and makes higher demands on the data
+    used in the retrieval. The computational cost has easily been offset by
+    the hardware development in recent years and retrievals in a frequency
+    necessary for operational use are possible with any modern desktop
+    computer. Software such as QPACK (REF) aims to simplify the setup
+    procedure for end users by providing not only a forward model (ARTS) but
+    also the routines necessary for the optimal estimation procedure.
 
-    Advantages: instruments, forward model and knowledge are included with
-    their uncertainties and an uncertainty estimate comes out too. NWP models
-    generally provide good priors for upper atmosphere but predict boundary
-    layer processes less good, radiometer gets most information from lower
-    atmosphere the upper atmosphere → ideal combination of information. No
-    climatology needed if prior and likelihood distributions are characterized.
-    Disadvantages: forward model generally requires full description of
-    atmospheric state although \cite[Cimini2011] separated the retrieval
-    of temperature and humidity with success. Computational costs of forward
-    model and its necessary linearization are often mentioned but some
-    forward models can calculate linearizations effectively and computers are
-    increasingly fast making this less of a problem than years ago. Barrier
-    of entry higher as method is more complicated to set up than a regression.
-    Software such as QPACK aims to solve this issue by providing routines
-    for optimal estimation and a forward model (REF).
+    Recent research using optimal estimation methods is often connected to
+    the desire of assimilating radiometer-retrieved profiles into numerical
+    weather prediction models. So far experiments have employed a two step
+    assimilation procedure: first vertical atmospheric profiles are retrieved
+    from radiometer observations and those are then assimiliated in a second
+    step into the model analysis (REFS). Current model developments aim to
+    assimilate radiometer observations directly (RTTOV REF).
 
     The most often cited reference for the theory behind optimal estimation
     schemes is the book by \cite[Rodgers2000]. The derivation here also follows
-    this book but only shows the purely Bayesian parts.  The usual assumption
+    this book but only shows the purely Bayesian parts. The usual assumption
     for all probability distributions involved in optimal estimation is that
     they are Gaussian. The reasons for this are mainly of mathematical nature
     as Gaussians can be dealt with analytically even for problems of high
