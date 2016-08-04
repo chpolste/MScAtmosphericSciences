@@ -20,15 +20,16 @@ gas_absorp = as_absorption(mwrt.liebe93.refractivity_gaseous)
 
 if __name__ == "__main__":
 
-    usatm = USStandardBackground(lower=12612, upper=30000)
+    usatm = USStandardBackground(lower=12612, upper=40000)
 
     first = True
     out = []
-    bgs = []
+    bgs, freqs = [], []
     fapnames, tbnames = [], []
     for ν, deg, ideg in zip(νs, degrees, idegrees):
         print("FAP for " + ν + " MHz")
         νi = int(ν)/1000
+        freqs.append("{:5.2f}".format(νi))
         # Fit a Cloud FAP for the selected frequency
         cfap = CloudFAPGenerator(degree=5, alpha=1.)
         cfap.train_T_range = 233., 303., 500000
@@ -49,6 +50,7 @@ if __name__ == "__main__":
         print("    background TB...")
         bgs.append(usatm.evaluate(absorp, angle=0., cosmic=2.75))
         first = False
+    out.append("freqs = [" + ", ".join(freqs) + "]\n")
     out.append("bgs = [" + ", ".join(str(round(x, 5)) for x in bgs) + "]\n")
     out.append("faps = [" + ", ".join(fapnames) + "]\n")
     out.append("tbs = [\"" + "\", \"".join(tbnames) + "\"]\n")

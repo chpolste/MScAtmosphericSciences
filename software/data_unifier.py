@@ -293,11 +293,12 @@ if __name__ == "__main__":
         ps, Ts, qs = [], [], []
         for valid, df in data:
             if len(df) > levels:
-                z = np.logspace(np.log10(z_hatpro), np.log10(z_top), levels)
-                p = interp1d(df["z"].values, df["p"].values)(z)
-                T = interp1d(df["z"].values, df["T"].values)(z)
-                qvap = interp1d(df["z"].values, df["qvap"].values)(z)
-                qliq = interp1d(df["z"].values, df["qliq"].values)(z)
+                zs = df["z"].values
+                z = np.logspace(np.log10(z_hatpro), np.log10(zs[-1]-0.001), levels)
+                p = interp1d(zs, df["p"].values)(z)
+                T = interp1d(zs, df["T"].values)(z)
+                qvap = interp1d(zs, df["qvap"].values)(z)
+                qliq = interp1d(zs, df["qliq"].values)(z)
             else:
                 z = df["z"].values
                 p = df["p"].values
@@ -331,25 +332,18 @@ if __name__ == "__main__":
 
     if args.data.startswith("tb_mwrtm"):
         # MWRTM brightness temperatures
-        from mwrt import MWRTM, LinearInterpolation
-        from faps_hatpro import faps, tbs, bgs
+        from mwrt import MWRTM, LinearInterpolation, tkc, liebe93
+        from faps_hatpro import faps, tbs, bgs as bgs_fap, freqs
+        from mwrt.fapgen import absorption_model, as_absorption
+        from mwrt.background import USStandardBackground
+        absmod = absorption_model(liebe93.refractivity_gaseous, tkc.refractivity_lwc)
+        absorp_l93 = [partial(absmod, f) for f in freqs]
         if args.data.endswith("_fap"):
             absname = "fap"
             absorp = faps
         elif args.data.endswith("_full"):
-            from mwrt.fapgen import absorption_model
-            from mwrt import tkc, liebe93
             absname = "full"
-            absmod = absorption_model(liebe93.refractivity_gaseous, tkc.refractivity_lwc)
-            absorp = [
-                    partial(absmod, 22.240), partial(absmod, 23.040),
-                    partial(absmod, 23.840), partial(absmod, 25.440),
-                    partial(absmod, 26.240), partial(absmod, 27.840),
-                    partial(absmod, 31.400), partial(absmod, 51.260),
-                    partial(absmod, 52.280), partial(absmod, 53.860),
-                    partial(absmod, 54.940), partial(absmod, 56.660),
-                    partial(absmod, 57.300), partial(absmod, 58.000)
-                    ]
+            absorp = absorp_l93
         else: raise ValueError("unknown absorption model")
         angles = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.],
                 [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8],
@@ -361,17 +355,30 @@ if __name__ == "__main__":
                 for a in angs] + ["p", "T", "qvap"]
 
         if args.source is None:
+            # Full resolution profiles to max height
             data = get_raso_profiles(db)
             srcname = "_hr"
+            def get_itp_and_bg(z):
+                zmodel = np.logspace(np.log10(z_hatpro), np.log10(z[-1]), args.levels)
+                itp = LinearInterpolation(z, zmodel)
+                usatm = USStandardBackground(lower=z[-1], upper=40000, n=1000)
+                bgs = [usatm.evaluate(
+                        partial(as_absorption(liebe93.refractivity_gaseous), f),
+                        angle=0., cosmic=2.75) for f in freqs]
+                return itp, bgs
         else:
+            # Low resolution profiles, cut off at z_top
             data = get_csv_profiles(args.source)
             srcname = ""
+            zmodel = np.logspace(np.log10(z_hatpro), np.log10(z_top), args.levels)
+            def get_itp_and_bg(z):
+                itp = LinearInterpolation(source=z, target=zmodel)
+                return itp, bgs_fap
 
-        zmodel = np.logspace(np.log10(z_hatpro), np.log10(z_top), args.levels)
         valids, rows = [], []
         for valid, df in data:
             tbs = []
-            itp = LinearInterpolation(source=df["z"].values, target=zmodel)
+            itp, bgs = get_itp_and_bg(df["z"].values)
             for ap, ang, bg in zip(absorp, angles, bgs):
                 model = MWRTM(itp, ap, background=bg)
                 tbs.extend(model.forward(angles=ang, data=df, lnq=make_lnq(data=df)))
