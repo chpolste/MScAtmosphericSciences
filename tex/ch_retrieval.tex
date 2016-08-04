@@ -211,7 +211,7 @@ by \cite[Downey2013].
     again Gaussian if the conditioning is linear
     \cite[authoryears][Bishop2006]. With the normalization out of the way it is
     furthermore practical to operate with Gaussian distributions in logarithmic
-    space There, the Gaussian distribution is given by the quadratic form
+    space. There, the Gaussian distribution is given by the quadratic form
 
     \startformula
         -2 \ln(\GAUSS{\VECX}{\MEANVEC}{\COVMAT})
@@ -223,11 +223,17 @@ by \cite[Downey2013].
 
     Throughout this thesis it will be assumed again and again a continuous
     variable follows a Gaussian distribution. Its convenient analytic
-    properties are a major reason for this choice.
-
-    TODO The assumption that a continuous variable follows a Gaussian
-    distribution is not only popular due to its well understood analytic
-    behavior. central limit theorem, maximum entropy.
+    properties are a major reason for this choice and it will be tested
+    in section \in[ch:statevector] for temperature and humidity. From
+    theoretical considerations it is known that the Gaussian distribution is
+    the best distribution in terms of information content when only the mean
+    and variance of the distribution is known \cite[authoryears][Rodgers2000].
+    With the central limit theorem it can be shown that the sum of many sets
+    of random variables has a distribution that approaches a Gaussian when
+    the number of terms in the sum increases \cite[authoryears][Bishop2006]. In
+    practice, measurements are often time averages of observations of
+    higher-frequency. The central limit theorem causes such averages to have
+    error distributions that are to good approximation Gaussian.
 
 \startsubsection[title=Parameter Estimation]
     
@@ -565,54 +571,53 @@ by \cite[Downey2013].
 
     This retrieval technique uses a Bayesian update to incorporate radiometer
     observations $\VECY$ into prior knowledge of the atmospheric state vector
-    $\VECX$. The prior knowledge comes most often from a weather prediction
-    model as these are more accurate at higher levels than in the boundary
-    layer while the radiometer observations mainly contain information about
-    the lower atmospheric levels. The resulting retrievals have good accuracy
-    throughout the entire troposphere. The Bayesian update incorporates
-    a forward model, optimal estimation is therefore often called a physical
-    retrieval technique as it explicitly makes use of the physics behind
-    radiative transfer. The forward model allows the retrieval of atmoshperic
-    states that are consistent with simulations of the radiative transfer while
-    also considering the prior information (which is essential to solve the
-    non-uniqueness problem of retrieval) and uncertainties associated with
-    the components of the method. An estimate of the error of the retrieved
-    state can also be derived since the Bayesian approach propagates the
-    uncertainty estimates of the components. Because of the need for error
-    estimates and a forward model  the optimal estimation method is more
-    complex than regression techniques and makes higher demands on the data
-    used in the retrieval. The computational cost has easily been offset by
-    the hardware development in recent years and retrievals in a frequency
-    necessary for operational use are possible with any modern desktop
-    computer. Software such as QPACK (REF) aims to simplify the setup
-    procedure for end users by providing not only a forward model (ARTS) but
-    also the routines necessary for the optimal estimation procedure.
+    $\VECX$. The Bayesian update incorporates a forward model, optimal
+    estimation is therefore often called a physical retrieval technique as it
+    explicitly makes use of the physics behind radiative transfer
+    \cite[alternative=authoryears,left={(e.g. }][Guldner2001,Turner2007].  The
+    forward model allows the retrieval of atmoshperic states that are
+    consistent with simulations of the radiative transfer while also
+    considering the prior information (which is essential to solve the
+    non-uniqueness problem of retrieval) and uncertainties associated with the
+    components of the method \cite[authoryears][Lohnert2004]. An estimate of
+    the error of the retrieved state can also be derived since the Bayesian
+    approach propagates the uncertainty estimates of the components. Because of
+    the need for error estimates and a forward model, the optimal estimation
+    method is more complex than regression techniques and makes higher demands
+    on the data used in the retrieval. While being significantly more expensive
+    in terms of computational time than regression methods, the computational
+    cost has been offset by the hardware development in recent years and
+    retrievals in a frequency necessary for operational use are possible with
+    a modern desktop computer. Software such as Qpack aims to simplify the
+    setup procedure for end users by providing not only a forward model (ARTS)
+    but also the routines necessary for the optimal estimation procedure
+    \cite[authoryears][Eriksson2005].
 
     Recent research using optimal estimation methods is often connected to
     the desire of assimilating radiometer-retrieved profiles into numerical
-    weather prediction models. So far experiments have employed a two step
+    weather prediction models \cite[alternative=authoryears,right={ and
+    references therein)}][Cimini2014]. \cite[Martinet2015] employed a two step
     assimilation procedure: first vertical atmospheric profiles are retrieved
     from radiometer observations and those are then assimiliated in a second
-    step into the model analysis (REFS). Current model developments aim to
-    assimilate radiometer observations directly (RTTOV REF).
+    step into the model analysis. Recently \cite[DeAngelis2016] presented a new
+    radiative transfer model providing the capability to assimilate radiometer
+    observations directly into an NWP model analysis.
 
     The most often cited reference for the theory behind optimal estimation
     schemes is the book by \cite[Rodgers2000]. The derivation here also follows
-    this book but only shows the purely Bayesian parts. The usual assumption
-    for all probability distributions involved in optimal estimation is that
-    they are Gaussian. The reasons for this are mainly of mathematical nature
-    as Gaussians can be dealt with analytically even for problems of high
-    dimensionality where dicrete approaches are to costly.  While is assumption
-    is good for variables like temperature (REF) some additional work will be
-    neccesary for humidity and cloud liquid water.  These issues are discussed
-    in section \in[ch:statevector]. For now the Gaussian assumption is taken as
-    is and the involved {\PDF}s are derived.  The prior $\PRIOR$ should contain
-    all knowledge about the state vector before the measurement is evaluated.
-    This knowledge might come from a climatology, output from a NWP model,
-    information from other instruments and any combination of these sources.
-    The construction of an optimal prior is not an easy task and will be
-    discussed in section \in[ch:construct_prior]. In any case, due to the
-    assumption that the {\PDF} is Gaussian it is of the form:
+    this book but only shows the purely Bayesian parts. All distributions
+    involved in the optimal estimation procedure are assumed to be Gaussian.
+    This allows an analytical derivation and results in a relatively efficient
+    retrieval scheme even for atmospheric state vectors of high dimensionality
+    where discrete approaches are very costly.
+
+    The prior $\PRIOR$ should contain all knowledge about the state vector
+    before the measurement is evaluated. This knowledge might come from
+    a climatology, output from a NWP model, information from other instruments
+    and any combination of these sources. The construction of an optimal prior
+    is not an easy task and will be discussed in section
+    \in[ch:construct_prior]. In any case, due to the assumption that the {\PDF}
+    is Gaussian it is of the form:
 
     \placeformula[eq:optimalest_prior]
     \startformula
@@ -631,9 +636,9 @@ by \cite[Downey2013].
 
     where $\FWD$ is the forward model operator and $\ERR$ is an error term,
     arising from measurement noise, inaccuracies of the forward model,
-    discretization errors and possibly other terms. Again, the assumption is
-    that the error term follows a Gaussian distribution, centered around
-    a systematic bias $\MEANVECERR$ with a convariance matrix $\COVMATERR$
+    discretization errors and possibly other terms. The distribution of the
+    error term is assumed to be Gaussian, centered around a systematic bias
+    $\MEANVECERR$ with a convariance matrix $\COVMATERR$
 
     \placeformula[eq:optimalest_errpdf]
     \startformula
@@ -815,60 +820,61 @@ by \cite[Downey2013].
 
     It is unnecessary to iterate until the atmospheric state vector has beed
     determined to machine precision and depending on the quality of the
-    linearization of the forward model this might never happen. Therefore some
+    linearization of the forward model this might never happen. Therefore a
     criterion is needed that determines when the state vector has been
-    determined with sufficient accuracy.
+    determined with sufficient accuracy. \cite[Rodgers2000] presents multiple
+    possibilities which are repeated here.
 
-    Directly use value of cost function. Additionally use gradient of cost
-    function. PROBLEM: cost function approach introduced in next section...
+    One possibility is to determine convergence directly from the value of
+    the posterior distribution $-ln(\POSTERIOR)$ whose extemum is determined
+    by iterative procedure. The gradient \ineq{gaussminimization} can be
+    incorporated in such criteria too \cite[authoryears][Hewison2006]. More
+    common are criteria based on the change between to iterations measured in
+    observation or atmospheric state space. It is important to scale such
+    measures to account for the different magnitudes of the elements of the
+    observation or state vector. The error covariance matrices of measured vs.
+    simulated brightness temperatures
 
-    Measure change in observation space.
+    \startformula
+        \COVMATI_{\delta y} = \COVMATERR (\ITER{\FWDJAC}{i}
+            \COVMATA \ITER{\FWDJAC}{i}^\top)^{-1} \COVMATERR
+    \stopformula
 
+    \cite[authoryears][Rodgers2000] and of the state vector
+    $\ITER{\COVMAT}{i+1}$ given by \ineq{gausspostcoviter} provide appropriate
+    scalings. Because covariance matrices are positive definite the resulting
+    measures are always positive. They are
+
+    \placeformula[eq:convergenceobs]
     \startformula
         (\FWD(\ITER{\VECX}{i}) - \FWD(\ITER{\VECX}{i+1}))^\top
         \COVMATI_{\delta y}
         (\FWD(\ITER{\VECX}{i}) - \FWD(\ITER{\VECX}{i+1}))
     \stopformula
 
-    where
-    
-    \startformula
-        \COVMATI_{\delta y} = \COVMATERR (\ITER{\FWDJAC}{i}
-            \COVMATA \ITER{\FWDJAC}{i}^\top)^{-1} \COVMATERR
-    \stopformula
+    in observation space and
 
-    Measure change in state vector space.
-
+    \placeformula[eq:convergencestate]
     \startformula
         (\ITER{\VECX}{i} - \ITER{\VECX}{i+1})^\top
         \ITER{\COVMATI}{i+1}
         (\ITER{\VECX}{i} - \ITER{\VECX}{i+1})
     \stopformula
 
-    In both cases the squared distance is scaled by estimated error covariance
-    which gives a sort of relative error.
+    in state space. When these measures are sufficiently small iteration can be
+    stopped.
 
-    Covariance is positive definite therefore are these quadratic forms always
-    positive.
-
-    \cite[Rodgers2000] discusses the latter two convergence criteria in his
-    chapter 5.6.3 and these appear to be the most popular.
-
-    REF first converged on temperature with fixed humidity and V band channels
-    only. Then humidity retrieval.
-
-    Save computation cost by evaluation Jacobian every other step. Weakens
-    convergence somewhat.
-
-    Give some examples of iteration counts from the literature.
-
-    The chosen convergence criterion, the included radiometer channels and
-    angles, the minimization technique and the method of forward model
-    linearization are likely to be major influences on convergence.
-
-    Generally cloudy cases converge less often than clear-sky cases due to the
-    stronger non-linearity of absorption at the cloud threshold
-    \cite[authoryears][Hewison2006].
+    In practice the issue of convergence is more complicated as not only
+    the choice of criterion affects convergence but the minimization technique,
+    method of forward model linearization and included radiometer channels
+    are all relevant components. The first guess of the iteration procedure
+    also influences the convergence properties. Different strategies are
+    applied to increase the rate and likelihood of convergence.
+    \cite[Cimini2011] found that retrieving temperature first and then humidity
+    in a second step improved convergence efficency. \cite[Hewison2006] relaxed
+    the chosen criterion after the first 10 iterations to encourage
+    convergence. \cite[Turner2014] coupled convergence to a fixed sequence of
+    parameters that control the minimization algorithm.
 
 \stopsubsection
 
@@ -885,16 +891,15 @@ by \cite[Downey2013].
     A derivation from the variational perspective is found in chapter 4.2 in
     the book by \cite[Rodgers2000].
 
-    The quadratic form minimized in the MAP solution \ineq{gaussminimization}
+    The quadratic form minimized in the MAP solution $-ln(\POSTERIOR)$
     is often referred to as a cost function, terminology that is common in
     regression problems. It is popular to add so-called regularization or
     penalty terms to this cost function in order to make the retrieval favor
     physically realistic solutions. In atmospheric profile retrieval such
-    a penalty might be a term involving the lapse rate, raising the
-    \quote{cost} of having superadiabatic layers in the atmosphere as these
-    only occur near the surface (CITE).  REF and \cite[Hewison2006] added
-    a term regulating the amount of LWC, with a higher penalty for higher cloud
-    water content.
+    a penalty might be a term involving the lapse rate
+    \cite[authoryears][Peckham2000]. \cite[Hewison2006] discussed penalizing
+    superadiabatic layers and considered a regularization of excessively high
+    liquid water content in clouds.
     
     There is a problem with including information in the retrieval by adding
     regularization terms: while the information is included in the retrieved
@@ -967,9 +972,8 @@ by \cite[Downey2013].
     \cite[authoryears][Cimini2006,Turner2007,Chan2010]. This behavior is one
     of the factors that limit the transferability of a trained regression model
     between different radiometer sites others being different altitudes of the
-    measurement site or different channels used by the radiometers
-    \cite[authoryears][Turner2007]. (TODO: there have been authors that used
-    data from multiple sites, find and cite as exceptions)
+    measurement site or different channels used by different radiometers
+    \cite[authoryears][Turner2007].
 
     The set of basis functions and the number of training data pairs both
     affect if a model is in danger of overfitting. A model is overfitted if it
@@ -1229,11 +1233,18 @@ by \cite[Downey2013].
 
 \startsection[title={Other Retrieval Techniques},reference=ch:otherretrievals]
 
-    Physical retrievals: optimal estimation standard but also experiments with
-    2D-VAR (REF) and efforts to directly assimilate measured brightness
-    temperatures into NWP models.
+    The optimal estimation method is the apparent standard of physical
+    retrievals. It has proven to be very flexible and extensible. For example,
+    the integrated profiling technique by \cite[Lohnert2004] combines data from
+    a microwave radiometer, a cloud radar, a lidar-ceilometer, radiosonde
+    ascents and results from a microphysical cloud model into the optimal
+    estimation framework. \cite[Lopez2006] used observations from
+    a ground-based microwave radiometer in a 2D-VAR scheme together with
+    a cloud radar to assimilate cloud liquid water. Recent efforts by
+    \cite[DeAngelis2016] aim at the direct assimilation of observed brightness
+    temperatures in a 4D-VAR scheme of a numerical weather prediction model.
 
-    Aside from linear regression models, neural network have a history of use
+    Besides linear regression models, neural networks have a history of use
     in retrieval. Non-linear in its parameters, theoretically able to
     approximate any complex function. Training phase is computationally more
     expensive than that of linear regression but evaluation is again cheap once
@@ -1258,9 +1269,9 @@ by \cite[Downey2013].
     profiles determined by regression methods need not be consistent with the
     observed brightness temperatures they are retrieved from.
 
-    Aside from the method itself there are additional components of the
-    retrieval that can be tweaked. \cite[Frate1998,Tan2011] have used principal
-    component analysis (PCA)/empirical orthogonal functions (EOF) to reduce the
+    Individual components of the retrieval can be tweaked parallel to the
+    method itself. \cite[Frate1998,Tan2011] have used principal component
+    analysis (PCA)/empirical orthogonal functions (EOF) to reduce the
     dimensionality of the retrieval problem. This is possible because
     simultaneous measurements from different radiometer channels are correlated
     and contain less independent pieces of information than the number of
@@ -1278,70 +1289,82 @@ by \cite[Downey2013].
 \stopsection
 
 
-\startsection[title={Training Data Sets and Priors}]
+\startsection[title={Priors and Training Data Sets}]
 
-    Representativity of training data set for regression techniques important
-    to avoid extrapolation.
-    
-    Relationship between brightness temperatures and atmospheric state not
-    unique. If training data set covers much of state space it is possible
-    that the regression model cannot reproduce the relationship appropriately.
-    Idea of specialized training data sets for seasons, months, day/night,
-    clear/cloudy/rainy, inversion cases, ... Specialization only possible if
-    case can be determined before the retrieval (trivial for season, not that
-    simple for inversion cases). Disadvantage also that time evolution might
-    not be continuous when the case changes.
+    The performance of optimal estimation and regression methods strongly
+    depends on the data that drive it. Error estimates and the prior
+    distribution in optimal estimation are important for uncertainty assessment
+    and constrain the ill-posed inversion problem of retrieval. The first
+    guess for the iteration is also often derived from the prior distribution.
+    The information contained in an observation of a ground-based radiometer
+    originates mainly from the lower atmosphere
+    \cite[authoryears][Cadeddu2013,Cimini2006,Lohnert2012], therefore the prior
+    governs the retrieval performance at upper atmospheric levels. This makes
+    NWP forecasts a good source of priors as these are generally more accurate
+    at higher levels (where larger scales dominate the atmospheric state) than
+    in the boundary layer, providing complementary information to the
+    radiometer's. Additionally, the retrieval profits from all information
+    included in the assimilation of the NWP model
+    \cite[authoryears][Cimini2015]. The result is good accuracy throughout the
+    entire troposphere \cite[alternative=authoryears,left={(see e.g. results
+    from }][Cimini2011]. The covariance of a NWP model prior is often directly
+    provided by its assimilation procedure or can be obtained from a comparison
+    of radiosonde ascents and previous forecasts. In complex terrain where
+    the model topography can significantly differ from the actual topography,
+    additional processing is necessary before model output can be used in an
+    optimal estimation framework.
 
-    Training data usually climatology of radiosonde ascents and brightness
-    temperature measurements simulated by a RTM. Completely synthetic training
-    data by \cite[Frate1998]. Few sites have radiometer measurements over
+    Priors may also be determined directly from a radiosonde climatology. This
+    generally leads to distributions with a large uncertainty as the
+    atmospheric state can vary greatly over the course of a year at a given
+    location. In order to still find the appropriate atmospheric state during
+    iteration a good first guess should be chosen. A possible choice can be
+    a profile retrieved by a simple regression model in a first step. Then it
+    might be worthwhile to consider using the regression retrievals to
+    construct the prior distribution as well as this likely yields a smaller
+    uncertainty. A disadvantage of this approach is that for the independent
+    estimation of the regression model parameters and the prior covariance
+    a large data set is needed. The covariance of a data-based prior can
+    further be reduced by categorization of the data and subsequent calculation
+    of specialized priors. It is possible to specialize on seasons
+    \cite[alternative=authoryears,left={(e.g. }][Peckham2000,Chan2010,Tan2011,Massaro2015],
+    months \cite[alternative=authoryears,left={(e.g. }][Turner2007],
+    time of day \cite[alternative=authoryears,left={(e.g. }][Massaro2015] or on
+    meteorological situations such as a distinction between clear, cloudy and
+    rainy cases or atmospheric stability \cite[authoryears][Meyer2016].
+    Meteorological categorization requires that the category can be determined
+    prior to the retrieval.
+
+    Regression models relate brightness temperature measurements to atmospheric
+    states based on data pairs that were used to train the model before the
+    retrieval. The entire information about the relationship is derived from
+    this training data set. Its representativity of actual atmospheric states
+    is therefore of highest importance as the extrapolation behavior of
+    a regression model is not guaranteed to be physically meaningful. If
+    certain meteorological situation are overrepresented in the data set, the
+    resulting model will have a bias towards these situations
+    \cite[authoryears][Cadeddu2002]. In practice, training data are usually
+    a climatology of radiosonde ascents and brightness temperature measurements
+    simulated by a radiative transfer model from these ascents.
+    \cite[Frate1998] used an entirely synthetic training data set from an
+    atmospheric profile generator.  Few sites have radiometer measurements over
     a long enough time period to allow measurement-based regression, i.e.
     training with collocated and simultaneous measurements by ballon and
-    radiometer. For these sites it is often found that retrievals have less
-    bias due to the bias of the radiative transfer model being absent.
-
-    For locations without radiosonde ascents NWP forecasts and analyses have
-    been used (REF). NWP has the problem though that model have deviating
-    topography and simulated soundings may not end at the actual surface.
-    Extrapolation to ground is not trivial as model does resolve boundary layer
-    processes and a simple connection between model surface value and surface
-    value of station ignores these information.
-
-    Location specificness of regression models.
-
-    For optimal estimation retrievals prior is also very important as it limits
-    the region of state space explored during iteration, influences the
-    a-posteriori uncertainty estimate and often also provides the first guess.
-    Radiometer information content mainly limited to lower atmosphere
-    \cite[Caddedu2013,Cimini006,Lohnert2012], therefore the prior governs the
-    retrieval performance at upper atmospheric levels. NWP model generally do
-    well at higher levels as scales are larger than at the surface. This
-    makes NWP model and radiometer a good combination as both provide
-    complementary information. Assimilation systems generally also provide
-    distributions than can be used directly as a prior for a specific time.
-    If only the direct model output is available a comparison of radiosondes
-    and previous forecasts can be used to determine the covariance of the
-    prior. Priors may also be determined directly from a radiosonde
-    climatology. Same issues of selection of a training data set apply,
-    specialization is possible. Climatology priors generally have larger
-    uncertainties than NWP model forecasts. Then choice of first guess very
-    important as much state space is allowed by prior. A possible choice might
-    be a profile retrieved by a regression model in a first step. Then it might
-    be worthwhile to consider using the regression retrievals to construct the
-    prior as well as this likely yields a smaller uncertainty. To estimate
-    regression model parameters and covariance independently a large training
-    set is needed.
-
-    TODO: A-priori knowledge may produce bias, pulling retrievals towards
-    statistical mean \cite[Caddedu2002]. Possible solution for optimal
-    estmation not based on model output and regression techniques:
-    specialization into seasons (e.g.
-    \cite[Chan2010,Tan2011,Massaro2015,Peckam2000]) or even monthly
-    \cite[Turner2007]. Cloud-free sky can often be classified befor retrieval
-    (ceilometer, possibly camera) and incorporated into prior/training dataset,
-    e.g. \cite[Solheim1998,Lohnert2012,Martinet2015,Xu2015]. Transition between
-    different priors may not be smooth and has to be managed
-    \cite[Massaro2015].
+    radiometer.  \cite[Guldner2013,Cimini2006] found that measurement-based
+    retrievals have significantly less bias due to the bias of the radiative
+    transfer model being absent. Where radiosonde data are not available,
+    weather prediction model output can be used alternatively
+    \cite[authoryears][Guldner2013].  Regression models based on specialized
+    training data sets may exhibit jumps in the the time evolution of retrieved
+    profiles is a transition procedure is missing
+    \cite[authoryears][Massaro2015]. In section \in[ch:linear_regression] it
+    was mentioned that regression models are not arbitrarily tranferable due to
+    measurement sites at different altitudes or of different climate. Most
+    authors therefore use data only directly from or very near to the site of
+    the radiometer to train their models. An exception is a study by
+    \cite[Sanchez2013], who combined radiosonde ascents from Denver (USA),
+    Madrid and Coruña (both Spain) as these stations are located at similar
+    latitude and altitude.
 
 \stopsection
 
