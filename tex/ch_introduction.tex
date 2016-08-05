@@ -17,21 +17,24 @@ microwave radiometers like the Atmospheric Radiation Measurement Program
 2016-08-04}) have emerged.
 
 
-\startsection[title={Properties Ground-based Microwave Radiometers}]
+\startsection[title={Properties and Applications of Microwave Radiometers}]
 
     Measurements from a ground-based microwave radiometers (MWR) can be used to
     determine vertical profiles of temperature, humidity and cloud liquid water
     content \cite[authoryears][Westwater2004] depending on the choice of
-    channels which are observed by the instrument. Radiative transfer in the
-    microwave region is dominated by absorption and emission of oxygen, water
-    vapor and liquid water droplets. Cloud absorption weak enough to allow
-    penetration of microwave radiation therefore it is possible to perform
-    radiometer measurements even during clouds, giving MWRs an advantage over
-    infrared radiometers which are used for similar purposes
+    channels which are observed by the instrument. In practice it has been
+    found that temperature retrievals generally achieve higher accuracy than
+    humidity retrievals, partially due to the microwave absorption properties
+    of the atmosphere \cite[authoryears][Lohnert2004,Xu2014]. Radiative
+    transfer in the microwave region is dominated by absorption and emission of
+    oxygen, water vapor and liquid water droplets. Cloud absorption weak enough
+    to allow penetration of microwave radiation therefore it is possible to
+    perform radiometer measurements even during clouds, giving MWRs an
+    advantage over infrared radiometers which are used for similar purposes
     \cite[authoryears][Westwater2004,Kadygrov2015]. The effect of ice particles
     on microwave radiation is negligible, but scattering caused by
     precipitation is too strong to be neglected and retrievals lose accuracy
-    (REF).
+    (REF, mention that elevation scanning might help?).
     
     A radiometer is a passive remote sensing instrument. It can therefore
     be used in settlements \cite[authoryears][Kadygrov2015] and generally
@@ -49,94 +52,82 @@ microwave radiometers like the Atmospheric Radiation Measurement Program
     for deployment in a long-term unattended mode
     \cite[authoryears][Westwater2004,Cimini2006].
 
-    It is instructive to compare the capabilities of a ground-based MWR to
-    those of other instruments. Radiosondes are usually treated as a reference
-    measurement of the thermodynamic atmospheric state due to their relatively
-    high sensor accuracy and fine vertical resolution.
+    It is instructive to compare the capabilities of instruments commonly used
+    to obtain the same atmospheric variables retrievable from a ground-based
+    MWR. Radiosondes are usually treated as a reference measurement of the
+    thermodynamic atmospheric state due to their high sensor accuracy and fine
+    vertical resolution. However, balloons experience horizontal drift during
+    their ascent and need a substantial amout of time to reach the tropopause
+    reducing the confidence in the representativity of the measurements for
+    a given location. The high cost of sensor and balloon causes radiosonde
+    launch sites to be distributed only sparsely and launches typically occur
+    only one to four times a day which is to little to appropriately capture
+    the daily boundary layer evolution. Aircraft soundings ar available in much
+    better temporal resolution but can only be taken where airports exist and
+    have similar representativity issues as radiosondes due to the horizontal
+    displacement of the aircraft path during the ascent. Remote sensing
+    instruments provide volume averaged profiles which have a higher
+    representativity of the atmospheric state at the cost of vertical
+    resolution \cite[authoryears][Westwater2004]. Good temporal resolution can
+    be achieved with remote sensors, depending on the need for temporal
+    averaging to reduce instrument noise.  Satellites in a polar orbit have
+    global coverage but pass a fixed location only in long intervals and
+    temperature and humidity sensors on satellites provide only coarse vertical
+    resolution in the boundary layer while being more accurate higher up
+    \cite[authoryears][Peckham2000,Sanchez2013]. The resolution of
+    a ground-based microwave radiometer however is highest in the boundary
+    layer and decreases with altitude \cite[authoryears][Cadeddu2002,Lohnert2004].
+    Low-level resolution can additionally be increased by scanning in
+    off-zenith directions, if the atmosphere is weakly inhomogeneous in the
+    horizontal \cite[authoryears][Cimini2006,Crewell2007,Guldner2013].
+    Together with a high achievable temporal resolution this makes ground-based
+    MWRs well suited for boundary layer research
+    \cite[authoryears][Cimini2006]. The spatial coverage of a network of
+    ground-based microwave radiometers obviously cannot compete with the
+    coverage of a satellite in a polar orbit but the instruments are mobile,
+    inexpensive and relatively compact, allowing a wide range of applications
+    \cite[authoryears][Kadygrov2015].
 
-    Less representativity error than radiosonde due to spatial and temporal
-    averaging \cite[Westwater2004] but lower resolution mainly at higher
-    altitudes \cite[Cadeddu2002,Lohnert2004], and problems with inhomogeneity
-    of atmosphere especially when elevation scanning is used
-    \cite[Cimini2006,Crewell2007,Guldner2013].
+    One might try to counter the lack of vertical information in the boundary
+    layer with numerical weather prediction (NWP) models but so far mesoscale
+    models alone have not been able to fill this data gap
+    \cite[authoryears][Sanchez2013]. In the contrary, the understanding of
+    boundary layer processed is essential for the development of
+    convective-scale models \cite[authoryears][Martinet2015] but this part of
+    the atmosphere is undersampled \cite[authoryears][Cimini2015]. Therefore
+    current research is concerned with the assimilation of observations from
+    ground-based microwave radiometers into NWP models which is currently not
+    being done operationally \cite[authoryears][Lohnert2012]. An experiment
+    with assimilation of temperature and humidity profiles retrieved from 13
+    MWRs by \cite[Cimini2014] resulted in a neutral-to-positive impact on
+    forecast skills. Recently a numerical radiative transfer model has been
+    developed by \cite[DeAngelis2016] with the goal of direct assimilation of
+    radiometer observations.
 
-    All three sources of measurement suffer from resolution issues: Aircraft
-    soundings are available with relatively high frequency but only where
-    airports exist.
-    Radiosondes are also quite sparse spatially, but are also
-    launched only one to four times a day due to high costs of equipment. They
-    have the smallest error of all mentioned instruments but suffer from drift
-    and locality of measurement.
-    Remote sensing instruments of satellites provide area averaged profiles
-    with generally limited vertical resolution and have largest errors near the
-    surface which is a problem for boundary layer research. While the temporal
-    resolution of space-bourne instruments is good, vertical profiles usually
-    stem from satellites in polar orbits resulting in large area coverage but
-    long times until a measurement is made at the same location again.
-    Polar orbiting satellites have global coverage but bad temporal resolution
-    at a fixed location and coarse vertical resolution in BL
-    \cite[Peckham2000,Sanchez2013].  Ground-based: best resolution in boundary
-    layer whereas satellites are better at height (opacity of atmosphere).
-
-\stopsection
-
-
-\startsection[title={A Short Review of Research and Applications}]
-
-    One of the earliest authors that used ground-based microwave radiometers to
-    determine tropospheric temperature profiles is \cite[Westwater1972]. Among
-    other publications, the same author has published a review paper focusing
-    on remote sensing by ground-based sensors in the microwave and
-    millimeter-wave region of the spectrum together with colleages that
-    appeared in two different forms \cite[authoryears][Westwater2004,Westwater2005].
-    Aside from the physical basics and aspects of instrument construction, the
-    authors also discuss derivable thermodynamic quantities and give an
-    overview of retrieval techniques. A extensive and general review of remote
-    sensing of the lower troposphere including a section about radiometers has
-    recently been given by \cite[Wulfmeyer2015]. Retrieval techniques are the
-    focus of a paper by \cite[Turner2013]\footnote{This paper has yet to be
-    published but can be obtained from
-    \hyphenatedurl{http://www.nssl.noaa.gov/users/dturner/public_html/metr5970/retrieval_uncertainty_paper.v4.pdf}}
-    who include example applications and recent developments.
-
-    Mobile and relatively compact instrument allowing wide range of
-    applications \cite[Kadygrov2015].
-
-    Although not all papers deal with temperature/humidity and some use
-    infrared radiation instead of microwaves, the methods of retrieval are the
-    same and all papers are considered here when discussing methodology.
-    Since the principles and techniques for all are the same, references are
-    mixed and include liquid retrievals as well.
-
-    Understanding of BL processes essential for convective model development
-    \cite[Martinet2015]. But BL is undersampled part of atmosphere despite
-    being important \cite[Cimini2015].  Temporal resolution of seconds, well
-    suited for boundary layer research \cite[Cimini2006].
-
-    Numerical models alone unable to fill data gap at mesoscale
-    \cite[Sanchez2013].
-
-    Assimilation into forecast models promising \cite[Westwater2004],
-    experiments with direct assimilation or radiometer measurements
-    \cite[Cimini2006] (check this ref and add RTTOV-GB paper?) and indirect
-    assimilation of retrieved profiles \cite[Martinet2015] have been done with
-    positive results \cite[Cimini2014]. Currently MWR are not included into
-    operational assimilation schemes yet \cite[Lohnert2012].
-
-    Severe weather forecasting is highly dependent on accurate vertical
-    profiles \cite[Lohnert2012] and \cite[Cimini2015] (and chinese?) have
-    looked at using radiometers to derive severe weather forecasting indices.
-    Additonally use at airports to asses fog and stratus development
-    \cite[Hewison2004] (chinese also use radiometer in hong kong).
-
-    Temperature retrievals generally work better than humidity reasons
-    partially due to microwave absorption properties of atmosphere
-    \cite[Lohnert2004,Lohnert2012,Xu2014].
-
-    Reliable first guess in combinead approaches \cite[Cimini2006], retrieval
-    methodology extensible in order to incorporate additional measurements.
-    Example: integrated profiling technique by \cite[Lohnert2004]. MWR together
-    with cloud radar, radiosondes, surface obs and cloud model.
+    Not only numericical weather prediction benefits from additional
+    information about the vertical state of the atmosphere, but also other
+    forms forecasts. Most prominent are short-term severe weather forecasts
+    which stongly depend on accurate vertical profiles of the atmosphere
+    \cite[authoryears][Lohnert2012]. \cite[Madhulatha2013,Cimini2015] used
+    radiometer observations to derive indices of severe convective activity and
+    fog. \cite[Chan2013] analysed the flucutations of brightness temperatures
+    measured by a MWR to assess low-level wind shear, crucial for the safe
+    operation of an airport. Aside from airports, such information are also
+    valuable for the safety nuclear power plants or the assessment of local
+    pollution propagation \cite[authoryears][Westwater1972,Kadygrov2015].
+    
+    To conclude this section, a few notable publication shall be mentioned.
+    A review of remote sensing by ground-based sensors in the microwave and
+    millimeter-wave region was given by \cite[Westwater2004]. Aside from the
+    physical basics and aspects of instrument construction, the authors also
+    discuss derivable thermodynamic quantities and give an overview of
+    retrieval techniques. A extensive and general review of remote sensing of
+    the lower troposphere including a section about radiometers has recently
+    been given by \cite[Wulfmeyer2015]. Retrieval techniques are the focus of
+    a currently unpublished article by \cite[Turner2013] which can be obtained
+    from \hyphenatedurl{http://www.nssl.noaa.gov/users/dturner/public_html/metr5970/retrieval_uncertainty_paper.v4.pdf}.
+    The authors have additionally included example applications and discuss
+    recent developments.
 
 \stopsection
 
@@ -187,7 +178,7 @@ microwave radiometers like the Atmospheric Radiation Measurement Program
 \stopsection
 
 
-\startsection[title={Objectives}]
+\startsection[title={Objectives and Outline}]
 
     In this thesis the retrieval problem is approached from a Bayesian
     perspective. One of the major benefits of the Bayesian approach is the
@@ -245,6 +236,12 @@ microwave radiometers like the Atmospheric Radiation Measurement Program
     implementation are shown and compared to regression retrievals. Finally,
     shortcomings of the presented work and ideas for future research are
     given.
+
+    TODO: Although not all papers deal with temperature/humidity and some use
+    infrared radiation instead of microwaves, the methods of retrieval are the
+    same and all papers are considered here when discussing methodology.
+    Since the principles and techniques for all are the same, references are
+    mixed and include liquid retrievals as well.
 
 \stopsection
 
