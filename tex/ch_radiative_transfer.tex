@@ -1,34 +1,22 @@
 The only common retrieval technique that does not depend on a numerical
-radiative transfer model is measurement based regression using simultaneous
-radiometer observations and radiosonde ascents as training data, but time
-series of such data pairs are rare.  The ability to simulate radiometer
-measurements provides a way to generate data pairs from radiosonde
-climatologies or NWP forecasts. The optimal estimation approach directly
-incorporates a numerical radiative transfer model into the retrieval and
-additionally makes of of its linearization. The development of microwave
-radiative transfer models has therefore been intimately linked to the
-development of retrieval techniques.
+radiative transfer model is measurement based regression. Time series of
+simultaneous radiometer observations and radiosonde ascents to train the model
+with are however rare. The ability to simulate radiometer measurements
+provides a way to generate data pairs from radiosonde climatologies or NWP
+forecasts. The optimal estimation approach directly incorporates a numerical
+radiative transfer model (RTM) into the retrieval procedure and additionally
+makes use of its linearization. The development of microwave radiative transfer
+models is therefore closely linked to the development of retrieval techniques.
 
-A few common model are used: MONORTM, MPM, ARTS, .... TODO: refer to comparison
-study. Currently developed: RTTOV-gb, which appears to be very promising.
-Older models such as MONORTM appear to be slowly left behind as more and more
-authors start to use optimal estimation techniques. Instead mature and more
-modern projects such as ARTS and now also RTTOV-gb, which provide analytical
-Jacobians are favored (show this with citations).
-
-In this chapter: presentation of the basics of radiative transfer, discussion
-of discretization techniques, linearization and error characterization. The
-chapter ends with a custom implementation of an RTM containing only the bare
-essentials but providing exact Jacobians. The model is supposed to
-be a demonstration prototype optimized for ease of use, not computational
-performance or accuracy.
-
+This chapter reviews the fundamental principles of microwave radiative transfer
+in the atmosphere, discusses issues related to radiative transfer simulations
+and the representation of atmospheric state for retrieval purposes and ends
+with the presentation of a numerical model implementation.
 
 \startsection[title=The Radiative Transfer Equation]
 
     The differential form of the radiative transfer equation in
     a non-scattering medium is given by
-    \cite[alternative=authoryears,left={(e.g. }][Buehler2005]
 
     \placeformula[eq:rte_general]
     \startformula
@@ -38,9 +26,10 @@ performance or accuracy.
     where $I_\nu$ is radiative power per frequency, solid angle and area in
     a specific direction (spectral radiance), $\ABSCOEF$ is the absorption
     coefficient of the medium, $F$ contains all sources of radiation and $s$ is
-    distance in beam direction. The only source term considered here is the
-    emission of the medium itself in thermal equilibrium according to Plank's
-    law
+    distance in beam direction.
+    \cite[alternative=authoryears,left={(e.g. }][Buehler2005]
+    The only source term considered here is the emission of the medium itself
+    in thermal equilibrium according to Plank's law
 
     \startformula
         F = \epsilon \, B_\nu(T)
@@ -170,19 +159,19 @@ performance or accuracy.
 
 \startsection[title={Atmospheric Extinction and Absorption Models},reference=ch:extinction]
 
-    Simulation of brightness temperatures using \ineq{rte_solution} requires
-    the determination of atmospheric absorption/emission coefficients. The
-    review of \cite[Westwater2004] includes a chapter on the properties of
-    atmospheric absorption in the microwave region from 20 to 200 GHz. Its main
-    features are repeated here with some additions. Also discussed are
-    numerical models for calculation of absorption coefficients.
+    The calculation of brightness temperatures using \ineq{rte_solution}
+    requires the determination of atmospheric absorption/emission coefficients
+    $\ABSCOEF$. The main properties of atmospheric absorption in the microwave
+    region from 20 to 200 GHz are given here based on a review by
+    \cite[Westwater2004] and some additions from other authors.
 
     \placefigure[top][fig:absorption]
         {Absorption coefficients (black) and contributions of individual terms
         (other) according to the models of \cite[Liebe1993] (gaseous) and
-        \cite[Turner2016] (cloud) for a atmospheric layer at 850 hPa pressure,
+        \cite[Turner2016] (cloud) for an atmospheric layer of 850 hPa pressure,
         0°C temperature and saturation, containing 0.1 g/kg of liquid water.
-        The arrows mark HATPRO channels.
+        The arrows mark frequencies of the channels of the HATPRO radiometer
+        which is used for subsequent retrievals.
         }
         {\externalfigure[absorption][width=\textwidth]}
 
@@ -192,11 +181,10 @@ performance or accuracy.
     atmospheric layer is shown in Figure \in[fig:absorption]. Water vapor has
     a relatively weak absorption band around 22.235 GHz (K band) and oxygen
     a stronger band around 60 GHz (V band). Outside of the shown frequency
-    range are also an oxygen absorption line at 118.75 GHz and a stronger water
-    vapor line at 183.31 GHz. The wings of these lines and others outside the
-    microwave region as well as broadening processes associated with pressure
-    and interactions with other atmospheric species also contribute to the
-    overall absorption as so-called continuum terms
+    range exist an oxygen absorption line at 118.75 GHz and a stronger water
+    vapor line at 183.31 GHz. The wings of these lines and so called continuum
+    absorption associated with pressure broadening processes and other
+    atmospheric species also contribute to the overall absorption
     \cite[authoryears][Liebe1993,Hewison2006]. Finally, in the presence of
     clouds there is absorption by water droplets. Due to the
     size-wavelength-ratio of droplets in non-precipitating clouds and microwave
@@ -204,29 +192,30 @@ performance or accuracy.
     apropriate for the description of absorption of radiation by liquid water.
     Absorption and scattering by snow and ice in the atmosphere has negligible
     effect on radiation in the K and V bands \cite[authoryears][Sanchez2013].
-    During rain events scattering of microwave radiation cannot be neglected
-    and rainwater accumulation on the radiometer's radome must be accounted
-    for as well. Since these effects are much more difficult to quantify than
-    absorption they are usually not included in radiative transfer models and
-    the resulting errors are accepted or retrievals are not performed during
-    precipitation at all.
+    During rain events however scattering of microwave radiation by
+    precipitation cannot be neglected and rainwater accumulation on the
+    radiometer's radome must be accounted for as well. Since these effects are
+    much more difficult to quantify than absorption they are usually not
+    included in radiative transfer models and the resulting errors are accepted
+    or retrievals are not performed during precipitation at all.
 
     The absorption spectrum in Figure \in[fig:absorption] was calculated by
     a model from \cite[Liebe1993] for gaseous absorption and a model from
-    \cite[Turner2016] for absorption by cloud liquid water. There are multiple
-    of such models in use, popular ones include a model by
-    \cite[Rosenkranz1998], MonoRTM \cite[authoryears][Clough2005] and ARTS
-    \cite[Buehler2005] (the latter two are not just absorption models but
-    entire radiative transfer simulators). These model usually account for the
-    most important absorption lines explicitly, correct for missing ones and
-    parameterize the continuum term by an empirical function. The
-    \cite[Liebe1993] model for example describes oxygen line absorption in the
-    microwave region by 44 lines and water vapor by 34 lines. Cloud absorption
-    is most often parameterized by a double-Debey model
+    \cite[Turner2016] for absorption by cloud liquid water. There are other
+    of such models in use, common are a model by \cite[Rosenkranz1998], MonoRTM
+    \cite[authoryears][Clough2005] and ARTS \cite[authoryears][Buehler2005]
+    (the latter two are not just absorption models but entire radiative
+    transfer simulators).  These models usually account for the most important
+    absorption lines explicitly, correct for missing ones and parameterize the
+    continuum term by an empirical function. The \cite[Liebe1993] model for
+    example describes oxygen line absorption in the microwave region by 44
+    lines and water vapor by 34 lines. Cloud absorption is most often
+    parameterized by a double-Debey model
     \cite[alternative=authoryears,left={(e.g. }][Turner2016]. Instead of only
-    describing atmospheric absorption, these models are formulated in terms of
-    the more general refractivity $N$ which is the complex refractive index
-    reduced by one. With knowledge of $N$, absorption can be calculated by
+    describing atmospheric absorption, absorption models are formulated in
+    terms of the more general refractivity $N$ which is the complex refractive
+    index reduced by one. With knowledge of $N$, absorption can be calculated
+    by
 
     \startformula
         \ABSCOEF = \frac{4 \pi \nu}{c}~ {\rm Im}(N)
@@ -239,29 +228,33 @@ performance or accuracy.
 
 \startsection[title={State Vector Variables},reference={ch:statevector}]
 
-    In order to determine atmospheric emission and absorption, the atmospheric
-    state has to be represented somehow on the retrieval grid. Naively one
-    would directly choose the quantites that are to be retrieved as state
-    vector variables and this approach can work reasonably well for regression
+    The emission and absorption properties of the atmosphere depend on its
+    state which has to be represented in some form for the retrieval. Directly
+    using the quantites that are to be retrieved (temperature, humidity, liquid
+    water content) as state vector variables works well for regression
     retrievals. Any method that makes the assumption of Gaussian distributed
-    state vector variables however might require variable transformations to
-    fulfil this requirement. For optimal estimation retrievals it is common to
-    combine water vapor and liquid water into a single quantity and retrieve
-    the logarithm of this quantity \cite[alternative=authoryears,left={(e.g.
-    }][Lohnert2004,Hewison2006,Cimini2011]. Figure \in[fig:gauss_verification]
-    shows the benefits of using the logarithm of humidity on the example of
-    the climatological distribution at a single altitude: while temperatures in
-    the atmosphere generally follow a Gaussian shape, humidity\footnote{In this
-    case specific humidity but the same applies to water vapor density
-    (absolute humidity) and relative humidity} is a positive variable and
-    therefore not symmetrically distributed. Using its logarithm enforces
-    positivity of values and reduces the skewness of the distribution, bringing
-    it closer to a Gaussian shape.
+    state vector variables however possibly requires variable transformations
+    to achieve value distribution that approximately follow a Gaussian curve.
+    For optimal estimation retrievals it is common to combine water vapor and
+    liquid water into a single quantity and then retrieve the logarithm of this
+    quantity
+    \cite[alternative=authoryears,left={(e.g. }][Lohnert2004,Hewison2006,Cimini2011].
+    Figure \in[fig:gauss_verification] shows the benefits of using the
+    logarithm of humidity with an example from a single height level of
+    a climatology based on radiosonde measurements from Innsbruck airport.
+    The distribution of temperature is very close to Gaussian, but
+    humidity\footnote{In this case specific humidity but the same applies to
+    water vapor density (absolute humidity) and relative humidity} is
+    a non-negative variable with a skewed distribution. Applying the logarithm
+    reduces the skewness of the distribution, brings it closer to a Gaussian
+    shape and has the additional positive effect of enforcing the positivity
+    of humidity values during retrieval.
 
     \placefigure[top][fig:gauss_verification]
         {Histograms of temperature (left), specific humidity (center) and
-        the natural logarithm of specific humidity (right) for the 1339 m
-        level of the radiosonde dataset (section \in[]).
+        the natural logarithm of specific humidity (right) for the 1366 m
+        level of the radiosonde training data set (section \in[ch:rasoclim]).
+        The black curves are Gaussian distributions fitted to respective data.
         }
         {\externalfigure[gauss_verification][width=\textwidth]}
 
@@ -269,34 +262,39 @@ performance or accuracy.
     variable is practical in multiple ways. In terms of the distribution
     functions the asymmetry found for liquid water content is even worse than
     for water vapor since many atmospheric profiles are cloud-free resulting
-    in a mode at zero. Because the logarithm is not defined at zero a variable
-    transformation does not help. Since there always is some water vapor in the
-    atmosphere this mathematical problem is avoided by adding both components
-    of water content and then applying the logarithm transformation. Another
-    advantage of the combined variable is the reduction of state vector
-    dimensionality resulting in smaller Jacobians and computationally faster
-    optimal estimation retrievals. Of course the combination is only sensible
-    if there is a way to separate the components again for the calculation of
-    absorption coefficients.
+    in a second mode at value zero. Because the logarithm is not defined at
+    zero this particular variable transformation to reduce skew is not
+    applicable. But since there always is some water vapor in the atmosphere
+    this mathematical problem can be avoided by adding both components of water
+    content and then applying the logarithm transformation. Another advantage
+    of the combined variable is the reduction of state vector dimensionality
+    resulting in computationally less expensive optimal estimation retrievals.
 
-    Because the effect of ice on microwave radiative transfer is negligible
-    (see section \in[ch:extinction]) only water vapor and liquid has to be
-    included in the total water content variable and subsequently separated.
-    The governing quantity of the partitioning scheme is the saturation vapor
-    pressure since it determines when the capabilities of the gaseos water
-    content is exceeded and cloud droplets form. Since saturation vapor
-    pressure is a function of temperature alone, it is possible to calculate
-    the separation threshold from known quantities of the atmospheric state. In
-    order to achive differentiability the chosen partition function has
-    a transition region starting at 95 \% relative humidity. This approach has
-    previously been employed by \cite[Hewison2006] who modified it from
-    \cite[Deblonde2003]. The chosen form here is
+    The combination of all atmospheric water into a single variable is only
+    sensible if there is a way to separate the components again for the
+    calculation of the absorption coefficients. The effect of ice on microwave
+    radiative transfer is negligible (see section \in[ch:extinction]) therefore
+    it is sufficient to only include water vapor and liquid in the total water
+    content. The governing quantity of the partitioning scheme for these
+    components is the saturation vapor pressure of air over water as it
+    determines when the capabilities of the gaseous water content are exceeded
+    and cloud droplets start to form\footnote{The possibility of supersaturated
+    air complicates this relation as other factors such as cloud condensation
+    nuclei become important. This is neglected here.}. Becuase saturation vapor
+    pressure is a function of temperature and temperature is included in the
+    retrieved state vector the water separation threshold can be calculated
+    during the retrieval. The chosen partition function should be
+    differentiable to stabilize the retrieval. \cite[Hewison2006] approached
+    this problem by introducing a transition region to a function of
+    \cite[Deblonde2003], which gradually introduced liquid water content
+    starting at a given relative humidity threshold. The chosen form of
+    partition function here is
 
     \startformula
         \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
             \NC 0 \MC s \lt 0.95 \NR
             \NC \cos \left( \frac{\RHL - 1.05}{0.1} \frac{\pi}{2} \right)^2
-                \MC 0.95 \le s \le 1.05 \EQCOMMA\NR
+                \MC 0.95 \le s \le 1.05 \NR
             \NC 1 \MC 1.05 \lt s \NR
         \stopcases
     \stopformula
@@ -333,35 +331,52 @@ performance or accuracy.
         \QVAP(\RHL) = \QTOT(\RHL) - \QLIQ(\RHL) \EQSTOP
     \stopformula
 
-    It is important to note that because temperature is critical for
-    determination of the saturation value of humidity the introduction of this
-    partion of water content results in a strong dependency of the humidity
-    retrieval on the temperature retrieval \cite[authoryears][Bleisch2012]
-    making it impossible to retrieve humidity independently of temperature.
-    Another important consequence is that cloud water is intrinsically tied to
-    relative humidity. The \cite[Karstens1994] cloud model used in this thesis
-    assumes cloud liquid water exists wherever relative humidity exceeds 95 \%
-    and but calculates the liquid water content independently of the specific
-    value. The output of COSMO-7 used later to provide prior distributions for
-    retrievals fixes relative humidity at 100 \% in all clouds. In both cases
-    it happens that the particular combination of humidity and cloud water is
-    not representable by the chosen partition. In practice both components are
-    nevertheless added and any changes after separation are accepted due to
-    there being a large uncertainty in the determination of cloud liquid water
-    from the start (REF this).
+    It uses 95 \% relative humidity as the threshold for the introduction of
+    cloud liquid water. Saturation is reached at 105 \% relative humidity and
+    any remaining water contributes to the liquid component.
 
-    For optimal estimation retrievals there is an additional need to update
-    pressure information after each iteration since pressure depends on
-    temperature and humidity but is not part of the explicitly retrieved
-    atmospheric state variables. Pressure is therefore calculated after each
-    iteration by numerical integration of the hydrostatic equation
+    It is important to note that because temperature is critical for
+    determination of the saturation pressure of water vapor the introduction of
+    such a partion of water content results in a strong dependency of the
+    humidity retrieval on the temperature retrieval
+    \cite[authoryears][Bleisch2012]. It is therefore impossible to retrieve
+    humidity independently of temperature and the direct connection between
+    relative humidity and cloud liquid water restricts the possible states
+    of the atmosphere. The \cite[Karstens1994] cloud model used in this thesis
+    to extract information on liquid water content from profiles obtained by
+    a radiosonde ascent assumes cloud liquid water exists wherever relative
+    humidity exceeds 95 \% but then calculates the liquid water content
+    independently of the exact value of relative humidity. The output of
+    the numerical weather prediction model COSMO-7 whose forecasts are used
+    later to provide prior distributions for optimal estimation retrievals
+    fixes relative humidity at 100 \% in all clouds. In both cases
+    given combinations of humidity and cloud water may not be representable by
+    the partition \ineq{qliq} and \ineq{qvap}. In practice the two components
+    are nevertheless added and any changes after separation are accepted. The
+    uncertainty in the determination of cloud liquid water from models like the
+    one by \cite[Karstens1994] is hard to assess \cite[authoryears][Ebell2010]
+    and potentially large, so the convenience of the partition function
+    outweighs the additional inaccuracies resulting from the restriction of
+    humidity state space by the variable combination.
+
+    For optimal estimation retrievals there is additionally the need to update
+    pressure information after each iteration since pressure is important for
+    the calculation of absorption coefficients and depends on temperature and
+    humidity but is not part of the explicitly retrieved atmospheric state
+    variables. Pressure is calculated after each iteration by numerical
+    integration of the hydrostatic equation
 
     \startformula
-        p(z) = p(z_0) + \exp \left( - g \int_{z_0}^{z} \frac{1}{R(h) T(h)} \, \diff h \right) \EQSTOP
+        p(z) = p(z_0) + \exp \left( - g \int_{z_0}^{z} \frac{1}{R(h) \, T(h)} \, \diff h \right)
     \stopformula
-    
-    The errors of this approximation have been assessed by comparison with
-    measured values of radiosonde ascents and are found to be neglible small.
+
+    where $z_0$ is the height of the radiometer and $p(z_0)$ is provided by
+    a pressure sensor at that height (which is built into the radiometer)
+    and $R$ is the specific gas constant of air which is a function of height
+    due to its dependence on water vapor content. The errors of this
+    approximation have been assessed by a comparison of hydrostatic
+    approximations with the pressure information from radiosonde ascents and
+    were found to be negligible.
 
 \stopsection
 
@@ -369,77 +384,90 @@ performance or accuracy.
 \startsection[title={Retrieval Information Content and Weighting Functions}]
 
     Two important properties associated with atmospheric absorption govern the
-    selection of frequencies at which a microwave radiometer measures in order
-    to retrieve vertical profiles of thermodynamic variables. Because oxygen is
-    a well mixed gas, its emission and absorption in the atmosphere does not
-    depend on its mixing ratio but is directly proportional to local
-    temperature. Water vapor amounts on the other hand vary strongly throughout
-    the atmosphere but with temperature known, water vapor emission is
-    proportional to its partial density \cite[Westwater2004]. These properties
-    allow the retrieval of temperature an humidity. In order to obtain vertical
-    profiles channels along the sides of the K and V band are observed. Because
-    of the differently strong absorption each channel allows to looking
-    differently far into the atmosphere \cite[authoryears][Churnside1994]. The
-    actual information content does not scale with the number of channels since
-    measurements at different positions of the same absorption band are not
-    independent of one another \cite[authoryears][Hewison2006]. The use of
-    multiple frequencies can be complemented by elevation scanning, discussed
-    in section \in[ch:elevation_scanning].
+    frequencies of channels which a microwave radiometer observes in order
+    to retrieve vertical profiles of thermodynamic variables. Temperature
+    information can be obtained from emission and absorption of oxygen which
+    are directly proportional to local temperature and independent of mixing
+    ratio because oxygen is a well mixed gas throughout the atmosphere.
+    Water vapor amounts on the other hand vary strongly with height but with
+    if temperature is known, the emission of water vapor is proportional to its
+    partial density \cite[Westwater2004]. To obtain vertical profiles, channels
+    along the sides of absorption bands like the K and V band are observed.
+    Each channel allows to look differently far into the atmosphere due the
+    different opacity of the atmosphere at each frequency
+    \cite[authoryears][Churnside1994]. Unfortunately measurements at different
+    frequencies along the same absorption band are not independent of one
+    another therefore the information content of observations is not
+    proportional to the number of radiometer channels
+    \cite[authoryears][Hewison2006]. To increase the vertical resolution
+    without the adding new channels the radiometer antenna can be pointed
+    away from zenith, resulting in longer attenuation
+    paths which provide more information on the lower layers of the atmosphere.
+    This procedure is called elevation scanning and is further discussed in 
+    section \in[ch:elevation_scanning].
 
-    A common way to visualize the information content of a radiometer
-    observation are the weighting functions, each one corresponding to
-    a brightness temperature observation or rather simulation since weighting
-    functions have to be obtained from a forward model. They are found by
-    taking the derivative of the measured brightness temperature with respect
-    to the atmospheric state vector. In the case of a vertically discretized
-    atmosphere the weighting functions are the rows of the Jacobian of the
-    forward model containing the derivatives with respect to each state vector
-    element \cite[Rodgers2000]. Weighting functions are therefore a concept
-    only applicable if the forward model can be linearly approximated.
+    A common visualization of the information content of a radiometer
+    observation are the so-called weighting functions each corresponding to
+    one brightness temperature observation. Weighting functions are obtained
+    from radiative transfer models by taking the derivative of the measured
+    brightness temperature with respect to the atmospheric state vector. In the
+    case of a vertically discretized atmosphere the weighting functions are the
+    rows of the Jacobian of the forward model, containing the derivatives with
+    respect to each state vector element \cite[Rodgers2000]. The weighting
+    functions therefore express the linearized response of the radiative
+    transfer to a change in the atmospheric state. Because weighting functions
+    have the same dimension as the atmospheric state vector they can
+    conveniently be visualized on the retrieval grid. Their magnitude can be
+    interpreted as the sensitivity of the measurement to the considered state
+    vector component at the given height. Hence weighting functions can be used
+    to assess from which heights in the atmosphere a radiometer channel obtains
+    its information \cite[authoryears][Martinet2015]. The optimal estimation
+    framework directly incorporates the forward model Jacobian in the inversion
+    process. The individual weighting functions act similarly to basis
+    functions which determine where and at which scales the profile can be
+    modified during the retrieval. The functions' smoothness is therefore
+    a limiting factor on the vertical resolution of features of the atmospheric
+    state which can be recovered by the retrieval from a radiometer
+    observation. This highlights the importance of the first guess in the
+    optimal estimation framework. Its small scale features may be fixed during
+    the retrieval if the weighting functions smooth.
 
-    Because these functions have the same dimension as the atmospheric state
-    vector they can conveniently be visualized on the retrieval grid. In this
-    representation one can interpret the magnitude as the sensitivity of the
-    measurement to the considered state vector component at the given height.
-    Hence weighting functions can be used to assess from which heights in the
-    atmosphere a radiometer channel obtains its information
-    \cite[authoryears][Martinet2015]. In the optimal estimation framework the
-    Jacobian is directly used in the inversion process with individual
-    weighting functions acting somewhat similar to basis functions which
-    determine where and at which scales the profile is modified during the
-    retrieval. The functions' smoothness is therefore a limiting factor on
-    details that can be recovered during the inversion. This highlights the
-    importance of the first guess in the optimal estimation framework as its
-    small scale features may be impossible to change during the retrieval if
-    the weighting functions are too smooth.
+    Derivation of the Jacobian from any numerical radiative transfer model is
+    possible by finite differencing. This brute force approach is very flexible
+    but computationally expensive and can result in inaccurate linearizations
+    if perturbations are selected without care. Model developers have therefore
+    started to implement routines dedicated to the accurate calculation of
+    Jacobians based on other differentiation techniques. ARTS
+    \cite[authoryears][Buehler2005] and the recently developed RTTOV-gb
+    \cite[authoryears][DeAngelis2016] provide such procedures and the numerical
+    model implemented at the end of this chapter is also able to calculate
+    exact Jacobians without finite differencing.
 
     \placefigure[top][fig:jacobian_frequency]
         {Normalized weighting functions for the V band (left) and K band
         (right) channels of the HATPRO instrument (see section \in[ch:hatpro])
         simulated by the radiative transfer model introduced in section
-        \in[ch:mwrtm] for an upwards looking view from an altitude of 612 m.
-        The V band weighting functions are with respect to temperature, the
-        K band weighting functions with respect to the natural logarithm of
-        humidity. Lighter colors correspond to channels of higher frequency.
-        The assumed atmospheric profile is the U.S. standard atmosphere with
-        relative humidity decreasing from 70 \% at the surface to 10 \% at 11
-        km above which it is constant.
-        }
+        \in[ch:mwrtm] for an upwards looking view. The ground is at an altitude
+        of 612 m. V band weighting functions are given with respect to
+        temperature, K band weighting functions with respect to the natural
+        logarithm of humidity. Lighter colors correspond to channels of higher
+        frequency. The assumed atmospheric profile is the U.S. standard
+        atmosphere with relative humidity decreasing from 70 \% at the surface
+        to 10 \% at 11 km above which it is constant.  }
         {\externalfigure[jacobian_frequency][width=\textwidth]}
 
     Figure \in[fig:jacobian_frequency] shows weighting functions for HATPRO
     channels in the V band with respect to temperature and in the K band with
-    respect to humidity. It can be seen that information originates mainly from
-    the lower part of the troposphere. The larger diversity of temperature
-    weighting functions compared to those of humidity indicates that the
-    vertical resolution of temperature retrievals is generally better than for
-    humidity retrievals \cite[authoryears][Cimini2011].
-
-    TODO: calculation of Jacobian.
-    Brute force: can be used with every model. Problems with selection of
-    perturbations, non-linearity (e.g. at liquid water boundary). One-sided
-    derivatives have bad accuracy (first order finite difference).  Possibility
-    of truncating the Jacobian at upper levels to save computing time.
+    respect to humidity. Temperature weighting functions are more diverse in
+    their shape than those of humidity. This indicates that the vertical
+    resolution of temperature retrievals is generally better than that of
+    humidity retrievals \cite[authoryears][Cimini2011]. Information on humidity
+    mainly comes from the lower part of the troposphere. This is largely due
+    to the much higher concentrations of water vapor at these heights as the
+    saturation vapor pressure decreases exponentially with decreasing
+    temperature. The V band channels of lower frequency show sensitivity to
+    mid-tropospheric temperatures while information from channels of higher
+    frequency is restricted to the lower troposphere.
 
 \stopsection
 
