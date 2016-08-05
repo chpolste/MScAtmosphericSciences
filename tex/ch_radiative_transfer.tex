@@ -474,23 +474,41 @@ with the presentation of a numerical model implementation.
 
 \startsection[title={Retrieval Grid},reference={ch:retrievalgrid}]
   
-    TODO: Compromise between resolution and model runtime. Take some stuff from
-    next section.
+    Section \in[ch:statevector] discussed issues regarding the choice of
+    variables used to represent the atmospheric state and used the concept of
+    a state vector. This vector is the result of a vertical discretization
+    of the atmospheric profile. This discretization is based on the retrieval
+    grid, a set of altitudes at which the state variables are determined.
 
-    Higher resolution does not mean that retrieval results in higher resolved
-    features. Changes to the profile in iterative approach are goverened by the
-    weighting functions, only features resolvable by this set of basis
-    functions can effectively be removed or introduced to a retrieved profile
-    (is this what Hewison talks about when he says the technique has problems
-    with inversion displacement?). Important! Fine structure of first guess is
-    likely preserved during retrieval. Smooth profiles likely better since they
-    do not allow for missinterpretation of small scale features which are only
-    an artefact of the initial value of the iterative scheme.
+    At first it seems sensible to choose a retrieval grid with a resolution as
+    high as possible in order to obtain the most accurate retrievals. Most
+    studies however use only around 40 to 60 vertical levels for the
+    discretization of the entire tropopause
+    \cite[alternative=authoryears,left={(e.g. }][Solheim1998,Hewison2006,Martinet2015].
+    Because the ability of a retrieval to resolve small scale features of the
+    atmospheric state is limited by the smoothness of the weighting functions.
+    Considering the shape of the weighting functions in Figure
+    \in[fig:jacobian_frequency], the retrieval grid should have a higher
+    resolution in the lower troposphere but at a certain point increases in
+    resolution will not be reflected by the retrieval performance. This was
+    confirmed by \cite[Meyer2016] who observed no improvement of accuracy
+    in an experiment with a retrieval grid of enhanced resolution. Practically,
+    the vertical discretization should be chosen such that it is not much finer
+    than the actual vertical resolution of the radiometer since less levels
+    result in higher computational performance of the retrieval technique. The
+    cost of calculating the Jacobians in particular scales with the number of
+    levels of the retrieval grid and is usually the most expensive process in
+    an optimal estimation retrieval.
 
-    Additional consideration: to which height is profile retrieved? For
-    transparent oxygen channels this may have significant effect on brightness
-    temperature calculation as tropopause/lower stratosphere have significant
-    contributions to radiometer observations.
+    Special consideration must be given to the altitude of the highest level
+    of the retrieval grid.  Radiometer channels measuring in the more
+    transparent regions of the microwave spectrum can have significant
+    contributions by emission of the tropopause and lower stratosphere. If such
+    parts of the profile are not represented by the atmospheric state vector
+    they should be corrected for in radiative transfer calculations otherwise
+    simulated brightness temperatures can be significantly biased. This issue
+    will be discussed further in sections \in[ch:missing_profile] and
+    \in[ch:model_comparison].
 
 \stopsection
 
@@ -500,79 +518,76 @@ with the presentation of a numerical model implementation.
     Many radiometers are able to rotate their antenna in order to measure
     brightness temperatures at off-zenith angles, a procedure called elevation
     scanning. Changing the angle of measurement changes the associated
-    weighting functions and therefore the region for which a channel is most
-    sensitive. Figure \in[fig:jacobian_angle] shows weighting functions for
-    two frequencies in the V band at different angles. When the zenith angle
-    is larger, that is when the radiometer view is more horizontal, the
-    weighting functions indicate higher sensitivity closer to the surface.
-    Therefore elevation scanning is used to obtain additional information about
-    and generally leads to more accurate retrievals in the boundary layer
+    weighting functions and therefore the heights from which the channels get
+    their information on the atmospheric state. This can increase the overall
+    information content of an observation and result in a higher vertical
+    resolution of the retrieval in the boundary layer
     \cite[authoryears][Westwater2004] while the impact on retrieval performance
-    at higher levels is only small \cite[authoryears][Cimini2006].
+    at higher levels is only small \cite[authoryears][Cimini2006]. Figure
+    \in[fig:jacobian_angle] shows weighting functions for two frequencies in
+    the V band at different angles. When the zenith angle is larger, i.e. when
+    the radiometer view is more horizontal, the sensitivity of the channels
+    increases near the surface while decreasing higher up.
+
     \cite[Xu2014] remarked that due to the U-shape of the radomes used by many
     microwave radiometers measurements from elevation scans are less affected
     by rainwater accumulation on the instrument than those at zenith. This
-    effect was also observed by \cite[Cimini2011] who noticed that off-zenith
-    signals during precipitation were less noisy than zenith observations.
+    effect was previously observed by \cite[Cimini2011] who noticed that
+    off-zenith signals during precipitation were less noisy than zenith
+    observations.
 
     \placefigure[top][fig:jacobian_angle]
         {Normalized weighting functions for 54.94 GHz (left) and 58.00 GHz
         (right) for different zenith angles simulated by the radiative transfer
         model introduced in section \in[ch:mwrtm]. The 0° weighting function
-        for 0° (upward looking) is the  blue line, angles 60°, 65°, 70°, 75°,
-        80°, 85° are the gray lines, with lighter colors being larger zenith
-        angles. Atmospheric profile and radiometer location are the same as in
-        Figure \in[fig:jacobian_frequency].
+        (upward looking) is the blue line, angles 60°, 65°, 70°, 75°, 80°, 85°
+        are the gray lines, with lighter colors refering to larger zenith
+        angles. The atmospheric profile and radiometer altitude are the same as
+        in Figure \in[fig:jacobian_frequency].
         }
         {\externalfigure[jacobian_angle][width=\textwidth]}
 
-    The use of elevation scanning puts additional demands on the instrument,
-    retrieval and radiative transfer model. In order to accurately observe
-    brightness temperatures at large zenith angles, radiometers must be of high
-    sensitivity. This is usually achieved by wide bandwidths of channels used
-    at off-zenith angles \cite[authoryears][Cadeddu2002,Crewell2007]. Because
-    an elevation scan needs more time than observations at a fixed angle
+    Elevation scanning puts additional demands on the instrument, retrieval and
+    radiative transfer model. In order to accurately observe brightness
+    temperatures at large zenith angles, radiometers be very sensitive.
+    High sensitivity is usually achieved by wide bandwidths of the channels
+    used at off-zenith angles \cite[authoryears][Cadeddu2002,Crewell2007].
+    Because the execution of an elevation scan requires additional time,
     a trade-off between temporal resolution and averaging time of a measurement
     is necessary \cite[authoryears][Cadeddu2002]. Measurements in transparent
-    channels are very sensitive to the misalignment of angles
-    \cite[authoryears][Hewison2006]. In complex terrain the radiometer view
-    might end on a mountain slope and surface emission must be considered.
-    Violations of the assumption of horizontal homogeneity are a major
-    problem in elevation scanning as the likelihood that the radiometer
-    view includes different air masses rises the more horizontal it is
-    \cite[authoryears][Cimini2006]. This is also an issue in situations of
-    inhomogeneous cloud cover \cite[authoryears][Guldner2013]. The effects may
-    be reduced by scanning in multiple directions and averaging the
-    measurements from same zenith angles though this additionally increases the
-    time to make a measurement. \cite[Cimini2006] noticed a strong impact of
-    horizontal inhomogeneity on neural network retrievals, likely due to the
-    non-linearity of the method amplifying the associated variations in the
-    brightness temperatures. \cite[Chan2010] used information from off-zenith
-    angles only for the lowest levels of the atmosphere when retrieving
-    humidity profiles by linear regression. For retrievals by optimal
-    estimation, this is no issue since the weighting functions are explicitly
-    included in the method.
+    channels are very sensitive to the misalignment of angles so the antenna
+    adjustment must be precise \cite[authoryears][Hewison2006]. In complex
+    terrain the radiometer view might intersect with a mountain and surface
+    emission by the slope must be considered. Violations of the assumption of
+    horizontal homogeneity are a major problem of elevation scanning in general
+    as the likelihood that the radiometer view includes different air masses
+    rises the more horizontal it is \cite[authoryears][Cimini2006]. This is
+    particularly an issue in situations of inhomogeneous cloud cover
+    \cite[authoryears][Guldner2013]. Effects of inhomogeneity can be reduced by
+    scanning in multiple directions and averaging the measurements from same
+    zenith angles. This increases the time to make an observation further.
+    \cite[Cimini2006] noticed a strong impact of horizontal inhomogeneity on
+    neural network retrievals of temperature and humidity, likely due to the
+    non-linearity of the method amplifying fluctuations in the brightness
+    temperatures. \cite[Chan2010] used information from off-zenith angles only
+    for the lowest levels of the atmosphere when retrieving humidity profiles
+    by linear regression.
 
-    TODO: rewrite parts of this to fit into new section ordering
-    In order to avoid many of the mentioned complications, transparent channels
-    may be excluded in retrievals using elevation scan data and only the most
-    opaque channels in the V band used at off-zenith angles
-    \cite[alternative=authoryears,left={(e.g. }][Crewell2007,Massaro2015]. This
-    is also done in the subsequent retrievals of this thesis although this
-    decision is mainly governed by the radiative transfer model. Off-zenith
-    light paths in the atmosphere are affected by refraction caused by density
-    changes of the air and Earth's curvature must be taken into account
-    \cite[authoryears][Hewison2006]. The radiative transfer model introduced in
-    section \in[ch:mwrtm] currently does not take refraction into account which
-    causes large errors in simulated brightness temperatures of transparent
-    channels at off-zenith angles. Simulations of four opaque channels in the
-    V band are nevertheless used. Due to paths lengths of light at these
-    frequencies being very short
-    \cite[alternative=authoryears,left={(300 - 2000 m, }][Crewell2007],
-    refraction of light is negligible. This is also confirmed by a comparison
-    of simulations with results from the reference model from section
-    \in[ch:model_comparison] which shows differences considerably lower than
-    the noise level of the radiometer.
+    Many of the mentioned complications can be avoided by excluding transparent
+    channels in retrievals using elevation scan data.
+    \cite[Crewell2007,Massaro2015] used only the most opaque channels in the
+    V band at off-zenith angles for this reason. Aside from these
+    considerations, subsequent retrievals in this work use only the four most
+    opaque channels in the V band due to a deficiency of the radiative transfer
+    model. Off-zenith light paths in the atmosphere are affected by refraction
+    caused by density changes of air with height and Earth's curvature must be
+    taken into account as well \cite[authoryears][Hewison2006]. The radiative
+    transfer model introduced in section \in[ch:mwrtm] currently does not
+    adjust light paths for refraction which causes large errors in simulated
+    brightness temperatures of transparent channels at off-zenith angles.
+    Paths lengths of light in the opaque region of the V band are very short
+    \cite[alternative=authoryears,left={(300 - 2000 m, }][Crewell2007] and
+    refraction of light is negligible.
 
 \stopsection
 
@@ -813,7 +828,7 @@ with the presentation of a numerical model implementation.
 
 \stopsubsection
 
-\startsubsection[title={Correcting for Missing Parts of the Profile}]
+\startsubsection[title={Correcting for Missing Parts of the Profile},reference=ch:missing_profile]
 
     Mentioned before in retrieval grid section. Multiple things to consider:
     information content of radiometer mostly limited to lower atmosphere (see
@@ -899,7 +914,11 @@ with the presentation of a numerical model implementation.
 
     Also compare with \cite[Lohnert2004], figure 2.
 
-    Elevation scanning.
+    Elevation scanning. TODO:
+    This is also confirmed by a comparison of simulations with results from the
+    reference model from section \in[ch:model_comparison] which shows
+    differences considerably lower than the noise level of the radiometer.
+
 
     The spectroscopic error covariance matrix is assembled from the comparison
     with the model used by \cite[Massaro2015].
