@@ -1,7 +1,9 @@
 import numpy as np
 from matplotlib.pyplot import figure
 from matplotlib.gridspec import GridSpec
+from matplotlib.patches import Rectangle
 
+from optimal_estimation import rgrid, z_hatpro, z_top
 import formulas as fml
 
 
@@ -79,3 +81,51 @@ def get_yticks(ylim):
         y += spacing
     return ticks
 
+
+def retrieval_template(figsize, *, ratio=1.7, hum="q", Tlims=None, qlims=None):
+    if hum == "q":
+        hum = "specific water content [g/kg]"
+    elif hum == "lnq":
+        hum = "ln(specific water content) [ln(kg/kg)]"
+    else:
+        raise ValueError()
+    gs = GridSpec(2, 2, height_ratios=[ratio, 1]) 
+    fig = figure(figsize=figsize)
+    axT1 = fig.add_subplot(gs[0,0])
+    axT2 = fig.add_subplot(gs[1,0])
+    axT1.set_xlabel("temperature [K]")
+    axT2.set_xlabel("temperature [K]")
+    if Tlims is not None:
+        axT1.set_xlim(*Tlims[0])
+        axT1.set_ylim(*Tlims[1])
+        axT2.set_xlim(*Tlims[2])
+        axT2.set_ylim(*Tlims[3])
+        rectT = Rectangle([Tlims[2][0], Tlims[3][0]],
+                         Tlims[2][1]-Tlims[2][0], Tlims[3][1]-Tlims[3][0],
+                         facecolor="#F0F0F0", linewidth=0, zorder=-100)
+        axT1.add_patch(rectT)
+    axq1 = fig.add_subplot(gs[0,1])
+    axq2 = fig.add_subplot(gs[1,1])
+    axq1.set_xlabel(hum)
+    axq2.set_xlabel(hum)
+    if qlims is not None:
+        axq1.set_xlim(*qlims[0])
+        axq1.set_ylim(*qlims[1])
+        axq2.set_xlim(*qlims[2])
+        axq2.set_ylim(*qlims[3])
+        rectq = Rectangle([qlims[2][0], qlims[3][0]],
+                         qlims[2][1]-qlims[2][0], qlims[3][1]-qlims[3][0],
+                         facecolor="#F0F0F0", linewidth=0, zorder=-100)
+        axq1.add_patch(rectq)
+    return fig, (axT1, axT2, axq1, axq2)
+
+
+def statistical_eval(ax, reference, *data, labels=None, colors=None):
+    if labels is None: labels = ["Data {}".format(i) for i in range(len(data))]
+    if colors is None: colors = ["#000000", "#1f78b4", "#33a02c", "#666666", "r"]
+    for df, name, clr in zip(data, labels, colors):
+        diff = reference - df
+        ax.plot(diff.std().values, (rgrid-z_hatpro)/1000, color=clr, label=name, linewidth=2)
+        ax.plot(diff.mean().values, (rgrid-z_hatpro)/1000, "--", color=clr, linewidth=1.5)
+    ax.set_ylabel("height above ground [km]")
+    ax.vlines(0, z_top/1000, 0, color="#BBBBBB", zorder=-80)
