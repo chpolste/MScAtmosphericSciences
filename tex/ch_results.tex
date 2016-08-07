@@ -1,13 +1,76 @@
-Recapitulation/Baseline: regression with and without additional information (Nordkette/COSMO)
+Main measure for general performance assessment: bias and root mean square
+error (rmse).
 
-Optimal estimation with climatology prior
+\startsection[title={Predictions without Radiometer Data}]
 
-Optimal estimation with COSMO prior
+    Establish baseline performance with climatology, persistence and COSMO-7.
 
-A combined approach: optimal estimation with regression prior
+    \placefigure[top][fig:baseline]
+        {Root mean square errors with respect to the radiosonde test data set
+        of COSMO-7 forecasts (black and grey), climatological mean (blue) and
+        persistence forecast (green). The +00+06 COSMO-7 profiles are
+        interpolated to the reference radiosonde launch times based on
+        forecasts with lead times of 0 and 6 hours while the +24+36 profiles 
+        are interpolated based on profiles with lead times of 24 and 36 hours.
+        The evaluation of the persistence forecasts is performed on a reduced
+        data set due to data gaps in the test set.
+        }
+        {\externalfigure[retrieval_baseline][width=\textwidth]}
 
-Additional information into prior
+\stopsection
 
-Zenith vs. full elevations
+\startsection[title={Synthetic Retrieval Performance}]
 
-Cloudy vs. clear sky
+    Cloudy vs. clear sky
+    Zenith vs. full elevations
+
+\startsubsection[title={Regression Retrievals}]
+
+
+\stopsubsection
+
+\startsubsection[title={Optimal Estimation Retrievals with COSMO-7 Prior}]
+
+    
+
+\stopsubsection
+
+\startsubsection[title={Optimal Estimation Retrievals with Climatology Prior}]
+
+    First guess from regression
+
+\stopsubsection
+
+\stopsection
+
+
+\startsection[title={Case Studies with Actual Radiometer Data}]
+
+...
+
+\startsubsection[title={Ground-based Temperature Inversion}]
+
+    2015-10-28 02:15:05
+
+\stopsubsection
+
+\startsubsection[title={Elevated Temperature Inversion}]
+
+    2015-09-11 03:48:00
+
+\stopsubsection
+
+\startsubsection[title={Mid-Troposphere Temperature Inversion}]
+
+    2015-10-21 02:15:04
+
+\stopsubsection
+
+\startsubsection[title={Boundary Layer Evolution}]
+
+    Start from elevated temperature inversion case.
+
+\stopsubsection
+
+\stopsection
+

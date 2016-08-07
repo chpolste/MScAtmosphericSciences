@@ -120,12 +120,12 @@ def retrieval_template(figsize, *, ratio=1.7, hum="q", Tlims=None, qlims=None):
     return fig, (axT1, axT2, axq1, axq2)
 
 
-def statistical_eval(ax, reference, *data, labels=None, colors=None):
+def statistical_eval(ax, reference, *data, labels=None, colors=None, bias=True):
     if labels is None: labels = ["Data {}".format(i) for i in range(len(data))]
     if colors is None: colors = ["#000000", "#1f78b4", "#33a02c", "#666666", "r"]
     for df, name, clr in zip(data, labels, colors):
         diff = reference - df
         ax.plot(diff.std().values, (rgrid-z_hatpro)/1000, color=clr, label=name, linewidth=2)
-        ax.plot(diff.mean().values, (rgrid-z_hatpro)/1000, "--", color=clr, linewidth=1.5)
+        if bias: ax.plot(diff.mean().values, (rgrid-z_hatpro)/1000, "--", color=clr, linewidth=1.5)
     ax.set_ylabel("height above ground [km]")
     ax.vlines(0, z_top/1000, 0, color="#BBBBBB", zorder=-80)
