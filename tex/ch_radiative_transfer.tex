@@ -594,52 +594,64 @@ with the presentation of a numerical model implementation.
 
 \startsection[title={Characterization of Errors},reference={ch:rtm_errors}]
 
-    Error sources:
-    FAP
-    finite bandwith of radiometer channels while model usually assume
-    monochromatic frequency
-    profile discretization/representation
-    choice of profile extension to account for stratospheric emission
-    uncertainties in angular position when elevation scanning
-    radiometric noise
-    calibration issues
-    radio frequency interference (other sources of microwave radiation than
-    atmosphere, especially relevant in highly populated areas), these are
-    hard to assess and likely very variable, therefore usually not accounted
-    for
-    representativeness (temporal averaging of measurement, horizontal
-    inhomogeneity)
+    The likelihood function \ineq{optimalest_likelihood} requires an error
+    estimate which is a combination of instrumental error and forward model
+    uncertainties. \cite[Hewison2006] provides a thorough assessment of terms
+    contributing to this estimate. Only a short review is given here.
 
-    bias vs. variation (assessed via root mean square error)
+    The instrumental error is mainly due to random fluctuations in the measured
+    brightness temperatures. The effect of these can be reduced by longer
+    averaging times of the radiometer as long as the atmospheric situation can
+    be considered stationary. \cite[Hewison2006] determined radiometric noise
+    from observations of a black body reference target but many authors simply
+    assume uncorrelated errors between 0.2 and 0.5 K for the radiometer
+    channels.  \cite[alternative=authoryears,left={(e.g.
+    }][Churnside1994,Frate1998,Lohnert2004,Martinet2015]. Additional
+    instrumental errors can occur from misaligned angles during elevation scans
+    and radio frequency interference caused by sources of microwave radiation
+    which are not the atmosphere.
 
-    problems of verification and determination: no perfect RTM, complications
-    with reference instruments, mainly radiosondes as these are affected by
-    errors as well (drift, representativity).
+    The second component of the likelihood covariance matrix are forward model
+    errors. \cite[Cimini2004] claimed that uncertainties in the radiative
+    properties of the atmosphere are the main limiting factor for the retrieval
+    of water vapor. Such uncertainties are related to inaccurate
+    representations of the atmospheric state and errors in the description of
+    physics, particularly absorption, in a numerical radiative transfer model.
+    Because retrieval grids are usually much coarser than the vertical
+    resolution of a radiosounding, a discretization error occurs when the
+    atmospheric state is represented on the retrieval grid. As mentioned in
+    section \in[ch:retrievalgrid], the assumptions made for extensions of the
+    vertical profile which are not explicitly included in the state vector can
+    significantly contribute to errors in simulated brightness temperatures.
+    Absorption model errors can be separated into a contribution from
+    uncertainties in the description of absorption processes and a contribution
+    from mathematical simplifications which are often made to speed up
+    radiative transfer calculations \cite[alternative=authoryears,left={(e.g.
+    }][Lohnert2004].
 
-    Instrument random noise and forward model errors important for retrieval
-    \cite[Caddedu2002]. Instrument noise of radiometers often assumed to be
-    0.5 K and Gaussian \cite[Chu1994,Frate1998,Lohnert2004]
+    Uncertainties related to implementation choices like the number of levels
+    of the retrieval grid, the restriction of radiative transfer to
+    monochromatic frequencies or the use of a fast absorption predictor can be
+    easily quantified from a comparison of model simulation with and without
+    the evaluated component. Uncertainties related to the description of
+    absorption are harder to assess because a reference absorption model does
+    not exist and modelled brightness temperatures are not easily comparable to
+    ones measured by a radiometer. \cite[Hewison2006] compared simulations of
+    two radiative transfer models with different descriptions of absorption
+    in order to quantify this error term.
 
-    Building part of the forward model covariance matrix.
-
-    Compare exact Jacobian with brute force Jacobian.
-
-    FAP errors: determine from climatology by comparison of exact
-    calculations with FAP predictions.
-
-    Discretization errors: deterine from climatology by comparing
-    interpolated profiles with full resolution profiles.
-
-    Bias correction important
-    \cite[Turner2007,Turner2013,Lohnert2012,Guldner2013,Martinet2015] but
-    \cite[Cimini2011] found this is not that big of an issue....
-
-    Calibration of radiometer can cause jumps in retrieval performance due to
-    bias changing \cite[Lohnert2012,Guldner2013].
-
-    Uncertainty of RT is major limit on retrieval especially water
-    vapor \cite[Cimini2004] and uncertainties in models can reach up to 4K in
-    terms of brightness temperatures.
+    Aside from the covariance there is also a bias term in
+    \ineq{optimalest_likelihood} compensating for systematic differences in
+    brightness temperatures obtained from radiometer and numerical model.
+    \cite[Turner2007,Lohnert2012,Martinet2015] observed significant changes in
+    retrieval performance if this offset was not corrected for.
+    \cite[Cimini2011] noticed only little sensitivity of the optimal estimation
+    method to a bias correction but remarked that this was likely related to
+    the choice of radiometer channels used for their retrievals. For long
+    timeseries of radiometer measurements it should be regularly tested if
+    the applied offset is stationary over time. Changes of the offset value
+    are especially likely after a recalibration of the radiometer
+    \cite[authoryears][Lohnert2012].
 
 \stopsection
 
@@ -777,6 +789,7 @@ with the presentation of a numerical model implementation.
     a special consideration of derivatives associated with the calculation of
     the absorption coefficients on the internal model grid.
 
+
 \stopsubsection
 
 \startsubsection[title=Fast Absorption Prediction]
@@ -849,7 +862,7 @@ with the presentation of a numerical model implementation.
 
 \stopsubsection
 
-\startsubsection[title={Model Comparison},reference={ch:model_comparison}]
+\startsubsection[title={Model Intercomparison},reference={ch:model_comparison}]
 
     The model should be compared to established radiative transfer models to
     ensure its correctness. A model comparison also allows a quantification of
@@ -955,6 +968,8 @@ with the presentation of a numerical model implementation.
     model calculations and subsequently accounted for. The observed discrepancy
     will therefore have no effect on the retrieval performance investigated
     here.
+
+    Compare exact Jacobian with brute force Jacobian.
 
 \stopsubsection
 
