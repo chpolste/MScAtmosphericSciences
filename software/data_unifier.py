@@ -64,15 +64,15 @@ def tb_dataset(data):
                 .loc[(data.angle == angle) & (data.p < 970)]
                 .drop_duplicates("valid")
                 .set_index("valid")
-                .drop(["angle", "rain", "kind", "id"], axis=1)
+                .drop(["angle", "kind", "id"], axis=1)
                 )
         if angle == angles[0]:
-            pTq = subset[["p", "T", "qvap"]]
+            pTqr = subset[["p", "T", "qvap", "rain"]]
         out.append(subset
-                .drop(["p", "T", "qvap"], axis=1)
+                .drop(["p", "T", "qvap", "rain"], axis=1)
                 .add_suffix("_{:0>4.1f}".format(angle))
                 )
-    out = pd.concat(out + [pTq], axis=1)
+    out = pd.concat(out + [pTqr], axis=1)
     out.index = out.index.map(dt.datetime.utcfromtimestamp)
     out.index.name = "valid"
     return out.round(10)
@@ -138,6 +138,25 @@ def make_lnq(data=None, qvap=None, qliq=None):
         out = np.log(qvap + qliq)
         out[out<-30] = -30
         return out
+
+
+tb_columns = ["TB_22240MHz_00.0", "TB_23040MHz_00.0",
+        "TB_23840MHz_00.0", "TB_25440MHz_00.0", "TB_26240MHz_00.0",
+        "TB_27840MHz_00.0", "TB_31400MHz_00.0", "TB_51260MHz_00.0",
+        "TB_52280MHz_00.0", "TB_53860MHz_00.0", "TB_54940MHz_00.0",
+        "TB_54940MHz_60.0", "TB_54940MHz_70.8", "TB_54940MHz_75.6",
+        "TB_54940MHz_78.6", "TB_54940MHz_81.6", "TB_54940MHz_83.4",
+        "TB_54940MHz_84.6", "TB_54940MHz_85.2", "TB_54940MHz_85.8",
+        "TB_56660MHz_00.0", "TB_56660MHz_60.0", "TB_56660MHz_70.8",
+        "TB_56660MHz_75.6", "TB_56660MHz_78.6", "TB_56660MHz_81.6",
+        "TB_56660MHz_83.4", "TB_56660MHz_84.6", "TB_56660MHz_85.2",
+        "TB_56660MHz_85.8", "TB_57300MHz_00.0", "TB_57300MHz_60.0",
+        "TB_57300MHz_70.8", "TB_57300MHz_75.6", "TB_57300MHz_78.6",
+        "TB_57300MHz_81.6", "TB_57300MHz_83.4", "TB_57300MHz_84.6",
+        "TB_57300MHz_85.2", "TB_57300MHz_85.8", "TB_58000MHz_00.0",
+        "TB_58000MHz_60.0", "TB_58000MHz_70.8", "TB_58000MHz_75.6",
+        "TB_58000MHz_78.6", "TB_58000MHz_81.6", "TB_58000MHz_83.4",
+        "TB_58000MHz_84.6", "TB_58000MHz_85.2", "TB_58000MHz_85.8"]
 
 
 parser = argparse.ArgumentParser()
@@ -231,25 +250,26 @@ if __name__ == "__main__":
                 WHERE kind = "igmk"
                 ORDER BY valid ASC;
                 """)
-        columns = ["TB_22240MHz_00.0", "TB_23040MHz_00.0",
-                "TB_23840MHz_00.0", "TB_25440MHz_00.0", "TB_26240MHz_00.0",
-                "TB_27840MHz_00.0", "TB_31400MHz_00.0", "TB_51260MHz_00.0",
-                "TB_52280MHz_00.0", "TB_53860MHz_00.0", "TB_54940MHz_00.0",
-                "TB_54940MHz_60.0", "TB_54940MHz_70.8", "TB_54940MHz_75.6",
-                "TB_54940MHz_78.6", "TB_54940MHz_81.6", "TB_54940MHz_83.4",
-                "TB_54940MHz_84.6", "TB_54940MHz_85.2", "TB_54940MHz_85.8",
-                "TB_56660MHz_00.0", "TB_56660MHz_60.0", "TB_56660MHz_70.8",
-                "TB_56660MHz_75.6", "TB_56660MHz_78.6", "TB_56660MHz_81.6",
-                "TB_56660MHz_83.4", "TB_56660MHz_84.6", "TB_56660MHz_85.2",
-                "TB_56660MHz_85.8", "TB_57300MHz_00.0", "TB_57300MHz_60.0",
-                "TB_57300MHz_70.8", "TB_57300MHz_75.6", "TB_57300MHz_78.6",
-                "TB_57300MHz_81.6", "TB_57300MHz_83.4", "TB_57300MHz_84.6",
-                "TB_57300MHz_85.2", "TB_57300MHz_85.8", "TB_58000MHz_00.0",
-                "TB_58000MHz_60.0", "TB_58000MHz_70.8", "TB_58000MHz_75.6",
-                "TB_58000MHz_78.6", "TB_58000MHz_81.6", "TB_58000MHz_83.4",
-                "TB_58000MHz_84.6", "TB_58000MHz_85.2", "TB_58000MHz_85.8",
-                "p", "T", "qvap"]
-        tb_dataset(igmk)[columns].sort_index().to_csv("../data/unified/TB_igmk.csv")
+        tb_dataset(igmk)[tb_columns+["p", "T", "qvap"]].sort_index().to_csv("../data/unified/TB_igmk.csv")
+
+
+    if args.data == "tb_hatpro":
+        # IGMK processed brightness temperatures
+        df = db.as_dataframe("""
+                SELECT * FROM hatpro
+                WHERE kind = "hatpro_blb"
+                ORDER BY valid ASC;
+                """)
+        df = tb_dataset(df)
+        tbs = df[tb_columns]
+        sfc = df[["p", "T", "qvap", "rain"]]
+        # Primitive quality control
+        tbs = tbs.where(df>0).dropna()
+        # Scanning frequency changed after 08-05 and data seem inconsistent after 10-29
+        tbs = tbs = tbs.loc[((tbs.index > "2015-08-05 07:50:41") & (tbs.index < "2015-10-29 02:15:06")),:]
+        sfc = sfc.ix[tbs.index]
+        tbs.to_csv("../data/unified/test/TB_hatpro.csv")
+        sfc.to_csv("../data/unified/test/sfc_hatpro.csv")
 
 
     if args.data == "cloudy_igmk":

@@ -8,6 +8,7 @@ python data_unifier.py cosmo7
 python data_unifier.py raso
 python data_unifier.py tb_igmk
 python data_unifier.py cloudy_igmk
+python data_unifier.py tb_hatpro
 
 echo "Brightness temperatures"
 python data_unifier.py --levels 180 tb_monortm > /dev/null &

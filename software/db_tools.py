@@ -1,6 +1,7 @@
 """Convenience tools for interacting with the database or csv files."""
 
 import os
+import apsw
 from collections import OrderedDict
 
 import pandas as pd
@@ -40,7 +41,6 @@ def iter_profiles(pattern, tryvars=("bt", "p", "T", "qvap", "qliq", "lnq")):
 class Database:
 
     def __init__(self, database):
-        import apsw
         self.connection = apsw.Connection(database)
 
     def execute(self, query, data=None):
