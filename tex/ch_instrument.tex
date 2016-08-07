@@ -34,7 +34,7 @@ all data sources.
     local time in winter and 03:00 to 06:00 local time during daylight saving
     time. Here, the climatological dataset of temperature, humidity and
     pressure spanning the years 1999 to 2005 and 2009 to 2012, previously used
-    by \cite[Massaro2015] and \cite[Meyer2016], is extended with profiles
+    by \cite[Massaro2013] and \cite[Meyer2016], is extended with profiles
     obtained between 2013 and 2016.  In total, data from 3561 radiosonde are
     available which are separated into a training data set of 3296 profiles and
     a test data set of 265 profiles which contains all data between February
@@ -53,7 +53,8 @@ all data sources.
     total water content together with intervals of ±1 and ±2 standard
     deviation. Temperature variability is almost constant throughout the
     troposphere, while water variability is greater near the surface and
-    vanishes at the mean height of the tropopause. The total water content
+    vanishes at the mean height of the tropopause. The latter is due to the
+    small water vapor content in the upper atmosphere. Total water content
     uncertainty intervals are asymmetric because the underlying distribution is
     a Gaussian in logarithmic space (see section \in[ch:statevector]).
 
@@ -82,47 +83,64 @@ all data sources.
 \stopsection
 
 
-\startsection[title=COSMO7 Simulated Radiosoundings]
+\startsection[title=COSMO-7 Simulated Soundings]
 
-    One year of simulated profiles (from ??? to ???) for gridpoint near
-    Innsbruck available. Lead times in 6 h steps and up to +30 h are used. To
-    match radiosonde ascent times and other retrieval times, profiles are
-    linearly interpolated between the nearest valid times of model forecasts.
-
-    Problem: model topography end above 1 km (???) but Innsbruck is at
-    approximately 600 m, therefore the profiles have to be extrapolated to the
-    surface. Easy solution considered was connecting COSMO7 profile to
-    radiometer surface measurement but model contains boundary layer processes
-    which would then be elevated. Instead profiles were stretched downward by
-    replacing the height grid such that COSMO surface is IBK surface. Because
-    it is assumed that the forecasts become less displaced farther away from
-    the surface, lower levels are stretched more than upper levels. Because
-    the stretching does not take temperature gradients into account and there
-    might be a possible model bias, the mean bias wrt radiosondes is removed
-    from the dataset. This can be understood as a simple MOS correction.
-    Important implication: profiles are not independent of raso test data set
-    any more. Better would be to use model uncertainty determined by.
-    assimilation system (REFERENCE) but that was not available.
-
-    Determine prior covariance matrix by comparison with raso: Figure
-    \in[fig:cosmo7_prior]. Uncertainty large in lower troposphere, but smaller
-    outside the boundary layer as expected (confirms assumptions made during
-    stretching). Example profile shows that model resolution is fine enough
-    that inversions may be represented in the model.
-
-    In clouds always 100 \% RH. Partition specific cloud content into liquid
-    and solid parts using
+    COSMO-7 is a regional weather prediction model for western and central
+    Europe operated by MeteoSwiss. Its terrain-following grid has a
+    horizontal mesh size of 6.6 km and 60 vertical levels up to 21453
+    m altitude. Vertical profiles of temperature, humidity and cloud water
+    content for a gridpoint near Innsbruck (marker 3 in Figure
+    \in[fig:map_ibk]) have been obtained for the timespan 2015-02-06 to
+    2016-01-20 from forecasts initiated at 00 UTC. Liquid water content
+    $\QLIQ$ is extracted from the total cloud water content $\QCLOUD$ based on
+    the temperature $T$ of the cloud according to
 
     \startformula
         \QLIQ = \QCLOUD \startcases
-            \NC 0 \MC 233.15 \KELVIN \le \TEMP \NR
-            \NC \frac{\TEMP - 233.15 \KELVIN}{40 \KELVIN}
-                \MC 233.15 \KELVIN \lt \TEMP \lt 273.15 \KELVIN \NR
-            \NC 1 \MC 273.15 \KELVIN \le \TEMP \NR
+            \NC 0 \MC 233.15 \, \KELVIN \le \TEMP \NR
+            \NC \frac{\TEMP - 233.15 \, \KELVIN}{40 \, \KELVIN}
+                \MC 233.15 \, \KELVIN \lt \TEMP \lt 273.15 \, \KELVIN \EQSTOP \NR
+            \NC 1 \MC 273.15 \, \KELVIN \le \TEMP \NR
         \stopcases
     \stopformula
 
-    Ice content is thrown away. (REFRENCE)
+    Forecasts are availabe 6 h steps and up to +30 h. Profiles are linearly
+    interpolated to match any given time of retrieval between two lead times.
+
+    Because the ground at the gridpoint near Innsbruck is located on the model
+    grid more than 400 m too high at an altitude of 1093 m, the COSMO-7
+    profiles have to be extrapolated to the true ground height. At first it was
+    considered to simply connect the lowest level of the COSMO-7 profile to
+    actual surface measurements of temperature and humidity. This however
+    disregards information from the boundary layer processes resolved by the
+    model which would then be elevated features. Instead, profiles are
+    stretched to the ground by replacing the original height grid of COSMO-7
+    by one that ends at the same altitude but starts at the true surface.
+    The new grid is chosen such that lower levels are streched more than
+    upper levels but the overall relative spacing of the model levels is
+    approximately preserved. Because this procedure does not take temperature
+    gradients into account the resulting profiles likely have a significant
+    bias relative to the true atmospheric state. To counter this, the mean
+    bias of the model profiles with respect to the radiosondes from Innsbruck
+    airport is removed from the dataset. Because there are only 253 times
+    where a radiosounding exists parallel to a COSMO-7 forecast this bias is
+    determined from the entire data set. An important implication of this
+    choice is that COSMO-7 profiles used for the retrieval are not independent
+    of the radiosonde reference data set. This inconvenience is accepted in
+    favor of a more robust bias determination based on a larger data set.
+
+    In order to use the COSMO-7 forecasts as a prior for optimal estimation
+    retrievals a covariance matrix quantifying the model's uncertainty must
+    be known. As for the bias, this matrix is calculated from a comparison
+    with the reference radiosonde profiles. Figure \in[fig:cosmo7_prior]
+    shows the uncertainty range of a model profile attached to a forecast
+    interpolated to 2015-09-11 03:48 UTC in the lower half of the troposphere.
+    Temperature uncertainty is highest in the lower troposphere, but smaller
+    outside the boundary layer. Uncertainty increases above 6 km only in the
+    tropopause region. The water content uncertainty is approximately constant
+    up to 5 km above which it is decrasing toward zero. The example profile
+    shows that COSMO-7 is able to simulate temperature inversions in the lower
+    atmosphere.
 
     \placefigure[top][fig:cosmo7_prior]
             {A COSMO7 prior distribution of temperature (left) and specific
@@ -137,7 +155,7 @@ all data sources.
 \stopsection
 
 
-\startsection[title=HATPRO,reference=ch:hatpro]
+\startsection[title=HATPRO Observations,reference=ch:hatpro]
 
     The Institute of Atmospheric and Cryospheric Sciences at the University of
     Innsbruck operates a passive microwave radiometer on the roof of one of the
