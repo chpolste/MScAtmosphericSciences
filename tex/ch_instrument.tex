@@ -1,51 +1,20 @@
-Introduce map with data locations, mention every instrument.
+The discussed optimal estimation and linear regression methods are applied
+to retrievals of temperature and humidity profiles based on data collected
+in Innsbruck. A radiosonde climatology provides reference profiles for
+the evaluation of synthetic performance of the retrieval techniques based
+on simulated brightness temperatures and for an application to actual
+radiometer data. Additional prior information is obtained from vertical
+profiles forcasted by a numerical weather prediction model. Figure
+\in[fig:map_ibk] gives an overview of the Innsbruck region and the locations of
+all data sources.
 
 
-\startsection[title={Applied Retrieval techniques}]
+\startsection[title={Review of the Retrieval Implementation}]
 
-    Which are used, short information about choice of parameters, algorithms,
-    components, etc.
-
-    All profiles cut off at 15 km. 50 level retrieval grid starting at 612 m,
-    log spacing.
-
-\stopsection
-
-
-\startsection[title=HATPRO,reference=ch:hatpro]
-
-    TODO: avoid repetition with introduction.
-    The Institute of Atmospheric and Cryospheric Sciences at the University of
-    Innsbruck operates a passive microwave radiometer on the roof of one of the
-    university's buildings as part of the Innsbruck Box project. The instrument
-    is a Humidity and Temperature Profiler (HATPRO), built by the Radiometer
-    Physics GmbH \cite[authoryears][Rose2005]. It obtains brightness
-    temperatures at 14 channels with a resolution of 1 s. The receiver antenna
-    can be rotated to allow elevation scanning. Additionally, HATPRO measures
-    environmental pressure, temperature and humidity.
     
-    Frequencies in water vapor band (K-band): 22.24, 23.04, 23.84, 25.44,
-    26.24, 27.84, 31.40 GHz.
-    Frequencies in oxygen band (V-band): 51.26, 52.28, 53.86, 54.94, 56.66,
-    57.30, 58.00 GHz.
-
-    TODO: channel selection for optimal estimation: fulfilment of Gaussian
-    assumption \cite[Martinet2015].
-
-    Boundary layer scans every ??? minutes, otherwise zenith measurements.
-    Angles of boundary layer scans (deviation from zenith): 0°, 60°, 70.8°,
-    75.6°, 78.6°, 81.6°, 83.4°.
-
-    Raw data available from 07-2015 to 10-2015 (???), this period provides
-    little data gaps and maximum overlap with other data sources. Averaging in
-    ?? min intervals of zenith measurements. Bias (wrt to numerical model)
-    correction by comparison with radiosonde climatology. This means that
-    measurements are not independent of referenc data anymore but else too
-    little data are available. In operational applications one might do rolling
-    updates to the bias correction as well. Profits non-verifiable data during
-    the day.
 
 \stopsection
+
 
 \placefigure[top][fig:map_ibk]
         {Data locations in the Inn-valley around Innsbruck. 1: Innsbruck
@@ -59,33 +28,54 @@ Introduce map with data locations, mention every instrument.
 
 \startsection[title={Radiosonde Climatology},reference=ch:rasoclim]
 
-    Treated as reference data set, radiosondes have high accuracy but drift
-    and time-lag problem. 
+    Radiosondes are launched regularly once per day from Innsbruck airport
+    at the location of marker 1 in Figure \in[fig:map_ibk]. Launch time is
+    usually between 01:00 and 04:00 UTC, which corresponds to 02:00 to 05:00
+    local time in winter and 03:00 to 06:00 local time during daylight saving
+    time. Here, the climatological dataset of temperature, humidity and
+    pressure spanning the years 1999 to 2005 and 2009 to 2012, previously used
+    by \cite[Massaro2015] and \cite[Meyer2016], is extended with profiles
+    obtained between 2013 and 2016.  In total, data from 3561 radiosonde are
+    available which are separated into a training data set of 3296 profiles and
+    a test data set of 265 profiles which contains all data between February
+    2015 and January 2016. This partitioning results in the largest overlap of
+    test data with other data sources.
 
-    Distance airport to university is approximately 2.5 km.
+    Because liquid water content is not measured by any instrument during
+    a balloon sounding, cloud water content is calculated by the empirical
+    cloud model of \cite[Karstens1994] based on humidity and temperature
+    information. This model is frequently used for microwave radiometer
+    retrieval studies, e.g. by \cite[Lohnert2012,Martinet2015].
 
-    What available, which resolution, which sensor? Interpolation to retrieval
-    grid. How many night, how many day sondes? KARSTENS ET AL liquid water
-    content.
+    The profiles of pressure, temperature, humidity and liquid water content
+    are linearly interpolated to the 50 levels of the retrieval grid. Figure
+    \in[fig:raso_prior] shows the climatology's mean profile of temperature and
+    total water content together with intervals of ±1 and ±2 standard
+    deviation. Temperature variability is almost constant throughout the
+    troposphere, while water variability is greater near the surface and
+    vanishes at the mean height of the tropopause. The total water content
+    uncertainty intervals are asymmetric because the underlying distribution is
+    a Gaussian in logarithmic space (see section \in[ch:statevector]).
 
-    Reference Figure \in[fig:raso_prior]. Training dataset: 3229 profiles
-    between ?? and ??. Test dataset 249/250? sondes between ?? and ??. Choice
-    of test and training datasets is data-driven, this way maximum
-    availablility overlap is achieved between raso, cosmo, nordkette and hatpro
-    measurements are available as well.
-
-    Rasos do not measure CLW, therefore (semi-)empirical cloud models are used.
-    Popular: \cite[Karstens1994]. Other authors have used fixed amounts based
-    on local measurements (REF some chinese paper, Tan11?). \cite[Tan2011]
-    found that impact of cloud liquid water on chosen cloud liquid amount is
-    not monotonic (read again).
+    Whenever the accuracy of a retrieval method is evaluated in subsequent
+    sections, these radiosonde data are the reference that retrieved profiles
+    are compared to. It must be noted that radiosondes provide point
+    measurements, are affected by horizontal drift and take a substantial amout
+    of time to reach their final height. These properties of balloon-bourne
+    sensors raise concerns regarding the representativity of the measured
+    vertical profiles for a fixed location. Also, only 4 \% of all radiosonde
+    profiles were obtained during day time which has to be condsidered when
+    assessing the applicability of retrieval methods based on the climatology.
+    Inaccuracies due to these issues are however tolerated due to the lack of
+    a better alternative.
 
     \placefigure[top][fig:raso_prior]
-            {The radiosonde climatology of temperature (left) and specific
-            humidity (including LWC) used as a prior in subsequent retrievals.
-            The black lines indicate the climatological mean, the grey shadings
-            the one (dark) and two (light) standard deviation interals obtained
-            by sampling the distribution.
+            {The radiosonde climatology of temperature (left) and total water
+            content (vapor and liquid water) derived from radiosondings from
+            Innsbruck airport. The black lines indicate the climatological
+            mean value, grey shadings mark the one (dark) and two (light)
+            standard deviation interals obtained from sampling the
+            distribution.
             }
             {\externalfigure[raso_prior][width=\textwidth]}
 
@@ -147,13 +137,42 @@ Introduce map with data locations, mention every instrument.
 \stopsection
 
 
-\startsection[title={Nordkette Slope Measurements}]
+\startsection[title=HATPRO,reference=ch:hatpro]
 
-    Data by ZAMG, previously used by Daniel Meyer, describe location of
-    stations and their height. Will be used as additional regressors.
-    Just as surface measurements are questionable in their use as additional
-    information the same can be said about these measurements which are also
-    taken in the surface layer of the slope.
+    The Institute of Atmospheric and Cryospheric Sciences at the University of
+    Innsbruck operates a passive microwave radiometer on the roof of one of the
+    university's buildings as part of the Innsbruck Box project. The instrument
+    is a Humidity and Temperature Profiler (HATPRO), built by the Radiometer
+    Physics GmbH \cite[authoryears][Rose2005]. It obtains brightness
+    temperatures at 14 channels with a resolution of 1 s. The receiver antenna
+    can be rotated to allow elevation scanning. Additionally, HATPRO measures
+    environmental pressure, temperature and humidity.
+
+    Distance airport to university is approximately 2.5 km.
+    Radiosond launches 577 m.
+
+    View downvalley in opposite direction of airport.
+    
+    Frequencies in water vapor band (K-band): 22.24, 23.04, 23.84, 25.44,
+    26.24, 27.84, 31.40 GHz.
+    Frequencies in oxygen band (V-band): 51.26, 52.28, 53.86, 54.94, 56.66,
+    57.30, 58.00 GHz.
+
+    TODO: channel selection for optimal estimation: fulfilment of Gaussian
+    assumption \cite[Martinet2015].
+
+    Boundary layer scans every 10 minutes, otherwise zenith measurements.
+    Angles of boundary layer scans (deviation from zenith): 0°, 60°, 70.8°,
+    75.6°, 78.6°, 81.6°, 83.4°.
+
+    Raw data available from 07-2015 to 10-2015 (???), this period provides
+    little data gaps and maximum overlap with other data sources. Averaging in
+    ?? min intervals of zenith measurements. Bias (wrt to numerical model)
+    correction by comparison with radiosonde climatology. This means that
+    measurements are not independent of referenc data anymore but else too
+    little data are available. In operational applications one might do rolling
+    updates to the bias correction as well. Profits non-verifiable data during
+    the day.
 
 \stopsection
 
