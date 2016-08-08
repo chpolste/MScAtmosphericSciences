@@ -20,7 +20,7 @@ rgrid = np.round(np.logspace(np.log10(z_hatpro), np.log10(z_top), 50)).astype(fl
 # Internal model grid
 mgrid = np.logspace(np.log10(z_hatpro), np.log10(z_top), 2500)
 # Parameter sequence
-paramseq = (10000, 5000, 2500, 1000, 500, 250, 100, 50)
+paramseq = (5000, 2500, 1000, 500, 250, 100, 50, 25, 10)
 
 
 class Gaussian:
