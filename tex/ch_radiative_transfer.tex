@@ -244,7 +244,7 @@ with the presentation of a numerical model implementation.
     a climatology based on radiosonde measurements from Innsbruck airport.
     The distribution of temperature is very close to Gaussian, but
     humidity\footnote{In this case specific humidity but the same applies to
-    water vapor density (absolute humidity) and relative humidity} is
+    water vapor density (absolute humidity) and relative humidity.} is
     a non-negative variable with a skewed distribution. Applying the logarithm
     reduces the skewness of the distribution, brings it closer to a Gaussian
     shape and has the additional positive effect of enforcing the positivity
@@ -258,17 +258,20 @@ with the presentation of a numerical model implementation.
         }
         {\externalfigure[gauss_verification][width=\textwidth]}
 
-    Reducing water vapor and liquid water to a combined total water content
-    variable is practical in multiple ways. In terms of the distribution
-    functions the asymmetry found for liquid water content is even worse than
-    for water vapor since many atmospheric profiles are cloud-free resulting
-    in a second mode at value zero. Because the logarithm is not defined at
-    zero this particular variable transformation to reduce skew is not
-    applicable. But since there always is some water vapor in the atmosphere
-    this mathematical problem can be avoided by adding both components of water
-    content and then applying the logarithm transformation. Another advantage
-    of the combined variable is the reduction of state vector dimensionality
-    resulting in computationally less expensive optimal estimation retrievals.
+    Reducing specific humidity and liquid water content to a combined total
+    water content \footnote{Total water content is meant to be specific to
+    a unit mass of air similar to specific humidity. For brevity this is not
+    explicity written out but always implied throughout this text.} variable is
+    practical in multiple ways. In terms of the distribution functions the
+    asymmetry found for liquid water content is even worse than for water vapor
+    since many atmospheric profiles are cloud-free resulting in a second mode
+    at value zero. Because the logarithm is not defined at zero this particular
+    variable transformation to reduce skew is not applicable. But since there
+    always is some water vapor in the atmosphere this mathematical problem can
+    be avoided by adding both components of water content and then applying the
+    logarithm transformation.  Another advantage of the combined variable is
+    the reduction of state vector dimensionality resulting in computationally
+    less expensive optimal estimation retrievals.
 
     The combination of all atmospheric water into a single variable is only
     sensible if there is a way to separate the components again for the
@@ -648,10 +651,9 @@ with the presentation of a numerical model implementation.
     \cite[Cimini2011] noticed only little sensitivity of the optimal estimation
     method to a bias correction but remarked that this was likely related to
     the choice of radiometer channels used for their retrievals. For long
-    timeseries of radiometer measurements it should be regularly tested if
-    the applied offset is stationary over time. Changes of the offset value
-    are especially likely after a recalibration of the radiometer
-    \cite[authoryears][Lohnert2012].
+    time operation of a radiometer it should be regularly tested if the offset
+    is stationary over time. Changes are especially likely after
+    a recalibration of the radiometer \cite[authoryears][Lohnert2012].
 
 \stopsection
 
@@ -659,136 +661,140 @@ with the presentation of a numerical model implementation.
 \startsection[title={Implementation of a Radiative Transfer Model Prototype},reference=ch:mwrtm]
 
     A numerical microwave radiative transfer model has been implemented as
-    part of this thesis. It is based on the absorption models by
-    \cite[Liebe1993] for gaseous absorption and \cite[Turner2016] for cloud
-    liquid water absorption. The prototype's distinguishing features are its
-    accessible implementation in a high-level, dynamic programming language
-    (Python 3) and the calculation of temperature and humidity Jacobians by
-    forward-mode automatic differentiation. Given an atmospheric profile of
-    pressure, temperature and humidity, it first calculates absorption
-    coefficients and then evaluates equation \ineq{rte_solution} numerically.
-    The model will subsequently be referred to as MWRTM (MicroWave Radiative
-    Transfer Model).
+    part of this thesis. It is based on the absorption model by
+    \cite[Liebe1993] for absorption due to oxygen and water vapor and a model
+    by \cite[Turner2016] for cloud liquid water absorption. Given an
+    atmospheric profile of pressure, temperature and humidity, it first
+    calculates absorption coefficients and then evaluates equation
+    \ineq{rte_solution} numerically.  The prototype's distinguishing features
+    are its accessible implementation in a high-level, dynamic programming
+    language (Python 3) and the ability to determine temperature and humidity
+    Jacobians by forward-mode automatic differentiation.  he model will
+    subsequently be referred to as MWRTM (MicroWave Radiative Transfer Model).
 
 \startsubsection[title={Motivation}]
 
-    It is not obvious why another implementation of a numerical radiative
-    transfer model is attempted when established and freely available software
-    such as MonoRTM \cite[authoryears][Clough2005] or ARTS
-    \cite[authoryears][Buehler2005] exists. The development of a new model
-    prototype is motivated by three aspects:
+    With established radiative transfer software such as MonoRTM
+    \cite[authoryears][Clough2005] or ARTS \cite[authoryears][Buehler2005]
+    freely available, another implementation of a numerical radiative transfer
+    model should be well motivated. The development of a model prototype for
+    this thesis was driven by these interests:
 
     Current RTMs either resort to expensive finite difference approaches when
     calculating Jacobians or use hand-crafted routines mixing analytically
-    derived expressions and finite difference approximations where analytical
-    expressions are unavailable. As examples, MonoRTM currently has no
-    implementation of derivatives making finite differencing necessary while
-    ARTS has specially written modules for calculating Jacobians. The rising
-    interest in machine learning in recent years has lead to the widespread use
-    of automatic differentiation, a method with which any numerical program can
-    be differentiated to machine precision without the need to explicitly write
-    code for the derivatives. This technique has proven its usefulness in
-    machine learning models and is used in the radiative transfer model for the
-    exact calculation of weighting functions.  Current radiative transfer
-    models are written in statically typed, compiled languages such as Fortran
-    or C++. Data analysis however is usually done in a high-level language such
-    as Python. A question of interest is if it is computationally feasible to
-    implement a RTM completely in a dynamic language. This would make the model
-    code more accessible to the user and simplify the setup procedure. Finally
-    there is a personal motivation of the author associated with the decision
-    to implement a radiative transfer model. It is assumed that detailed
-    knowledge of all implementation aspects and calculations will help with the
-    overall understanding of retrievals and their results.
+    derived expressions and finite difference approximations where such
+    expressions are unavailable. MonoRTM currently has no implementation of
+    derivatives, so finite differencing is the only option, while ARTS has
+    specially written modules for calculating Jacobians. Automatic
+    differentiation, a method with which any numerical program can be
+    differentiated to machine precision without the need to explicitly write
+    code for the derivatives has proven its usefulness and efficiency for the
+    efficient training of machine learning models. It is applied in the RTM
+    prototype for the fast and exact calculation of weighting functions without
+    the necessity of writing hand-crafted routines.
 
-    It is not expected that the implementation attempt directly results in
-    a perfect model. The expectation is rather to build a flexible, easy to
-    understand, reasonably fast and adequately accurate prototype. The next
-    sections discuss important aspects of development and evaluate the
-    overall model performance.
+    Radiative transfer models are typically written in statically typed,
+    compiled languages such as Fortran or C++ in order to achieve the best
+    computational performance. Data analysis however is usually done in
+    a high-level language such as Python. A question of interest is if it is
+    computationally feasible to implement a RTM in a dynamic language. This
+    would make the model code more accessible to a user who already uses this
+    language for data analysis and simplifies the setup procedure. Finally
+    there is a personal motivation of the author associated with the decision
+    to implement a radiative transfer model. It was hoped that the
+    implementation exercise would expand the author's understanding of
+    radiative transfer simulations and result in a better grasp on the
+    retrieval problem.
+
+    The expectation is not to write a \quote{perfect} model in the first try.
+    Is rather about building a flexible, easy to understand but reasonably fast
+    and accurate prototype adequate for optimal estimation retrievals. The next
+    sections discuss important aspects of development and evaluate the overall
+    model performance.
 
 \stopsubsection
 
 \startsubsection[title=Numerical Considerations]
 
-    In order to obtain numerically stable results the radiative transfer model
-    has to operate internally with a much finer discretization than that of
-    typical grids on which retrievals take place. Due to the generally greater
-    changes of absorption and temperature with height in the lower troposphere,
-    the internal model grid can be coarser at greater altitudes without losing
-    accuracy.
+    In order to obtain numerically accurate results the radiative transfer
+    model has to operate internally with a much finer discretization than that
+    of typical retrievals grids. The input profiles of pressure, temperature
+    and total water content must therefore be interpolated to the internal
+    model grid. The model provides a linear interpolation scheme for this task.
+    Absorption coefficients are then calculated on the finder model grid where
+    the numerical integration also takes place. A first implementation
+    calculated absorption coefficients on the retrieval grid and then
+    interpolated for the integration. However, this resulted in large errors in
+    the model output. The quadrature scheme used for integrations is the second
+    order trapezoidal rule.
 
-    User has full control over internal model discretization, choice for
-    subsequent retrievals is a logarithmically spaced grid.
-
-    Input has to be interpolated to internal grid. First try was calculating
-    absorption coefficients first and linearly interpolating those but this
-    resulted in large errors. It was then decided to first interpolate
-    pressure, temperature and humidity to the model grid and to calculate
-    the absorption coefficients on the fine grid.
-
-    Quadrature scheme: second order trapezoidal rule.
-    
-    Error covariance.
+    It was found that due to the generally greater vertical changes of
+    absorption coefficients and temperature in the lower troposphere, the
+    internal model and retrieval grids can be coarser at greater altitudes
+    without a loss of accuracy.
 
 \stopsubsection
 
 \startsubsection[title=Automatic Differentiation,reference=ch:autodiff]
 
-    Interest in efficient and accurate computation of gradients has risen
-    immensely in recent years due to its need during the training of many
-    machine learning algorithms. The concept has been known at least since the
-    1960s and been rediscovered multiple times since then
-    \cite[authoryears][Griewank2012]. The need to efficiently calculate
-    Jacobians of numerical models (often called adjoint modelling) is also
-    a problem often encountered in atmospheric sciences. Data assimilation for
-    numerical weather prediction models was one of the first applications of
-    automatic differentiation \cite[authoryears][Griewank2012]. Despite that,
-    the technique was mentioned only in one short paragraph modelling by
-    \cite[Errico1997] in a review of adjoint models and even a modern radiative
-    transfer model such as ARTS still has hand-written code for the calculation
-    of Jacobians.
+    The interest in efficient and accurate computation of gradients has risen
+    immensely in recent years due to the training of many machine learning
+    algorithms requiring such information. Automatic differentiation is
+    established as the standard approach to this problem. The necessity of
+    efficiently calculating Jacobians of numerical models (often called adjoint
+    modelling) is also a problem often encountered in atmospheric sciences.
+    Data assimilation for numerical weather prediction models was one of the
+    first applications of automatic differentiation
+    \cite[authoryears][Griewank2012]. However, the technique was mentioned only
+    in one short paragraph in a review of adjoint models by \cite[Errico1997]
+    and even a modern radiative transfer model such as ARTS still has
+    hand-written code for the calculation of Jacobians.
 
-    At its core, automatic differentiation is nothing more than the application
-    of the chain rule of differentiation to the computational graph of
-    a program. It is not the same as symbolic differentiation though, which
-    often requires significant effort and has the problem of combinatorial
-    blowup of expressions. Instead, implementations of automatic
+    The concept of automatic differentiation has been known at least since the
+    1960s and was rediscovered multiple times since then
+    \cite[authoryears][Griewank2012]. At its core, it is nothing more than the
+    application of the chain rule of differentiation to the computational graph
+    of a program. It is not the same as symbolic differentiation though, which
+    often requires significant effort from a human and has the problem of
+    combinatorial blowup of expressions. Implementations of automatic
     differentiation are able to compute derivatives simultaneously with the
-    forward code or in a second pass and a decent implementation has to visit
-    each edge of the computational graph only once resulting in equal
-    complexities of forward and Jacobian calculations. A short and good
-    (although not peer-reviewed) explanation of the idea behind automatic
-    differentiation is found at
-    \hyphenatedurl{http://colah.github.io/posts/2015-08-Backprop}
-    \footnote{last accessed 2016-07-25}.
+    forward code or in a second pass by deriving each edge of
+    the computational graph individually and combining the results directly at
+    each node. A decent implementation has to visit each edge of the
+    computational graph only once resulting in similar complexities of forward
+    and Jacobian calculations. A good (although not peer-reviewed) explanation
+    of the idea behind automatic differentiation is found at
+    \hyphenatedurl{http://colah.github.io/posts/2015-08-Backprop}.
 
-    There are two ways of performing automatic differentiation, differentiated
-    by the direction of traversal of the computational graph. The forward-mode
-    moves from the input nodes towards the output, computing the derivatives
-    with respect to each input variable along the way. Implementations of
-    forward-mode automatic differentation are easy in programming languages
-    supporting dispatch on types. Aside from replacing numeric variables with
-    instances of a custom type with additional fields for the derivatives and
-    overloading the usd operators and functions, only minor or no changes to
-    the program at all are necessary. The reverse-mode moves from the output
-    leafs toward the input nodes, computing the derivative of each output with
-    respect to each node of the computational graph. Because the reverse-mode
-    requires a second pass thorough the graph implementations need to keep
-    track of intermediate results calculated in the first pass. Both techniques
+    There are two ways of performing automatic differentiation, characterized
+    by the direction in which the computational graph is traversed. The
+    forward-mode moves from the input nodes towards the output, computing
+    derivatives with respect to each input variable along the way.
+    Implementations of forward-mode automatic differentation are easy in
+    programming languages supporting dispatch on types. Only minor or
+    no changes to the program are necessary aside from replacing
+    numeric variables with instances of custom types that carry the derivatives
+    and overloading the used operators and functions. The custom types and
+    operators have to be implemented once and can then be used in any program.
+    Reverse-mode automatic differentiation moves from the output leaves toward
+    the input nodes, computing the derivative of each output with respect to
+    each node of the computational graph. Because the reverse-mode requires
+    a second pass through the graph, implementations need to keep track of
+    intermediate results calculated in the first pass, which requires
+    additional infrastructure compared to the forward mode. Both techniques
     yield the same results but can be very different in terms of computational
-    cost. Generally speaking, reverse-mode is suitable for problems with many
-    inputs and only few outputs while the forward mode is more efficient for
-    problems with more outputs than inputs.
+    cost for a given problem. Generally speaking, reverse-mode is suitable for
+    problems with many inputs and only few outputs while the forward mode is
+    more efficient for problems with more outputs than inputs.
 
-    A radiative transfer model, with many atmospheric layers as input and only
+    A radiative transfer model with many atmospheric layers as input and only
     a few brightness temperatures as output is better suited for reverse-mode
-    differentiation. The prototype here nevertheless uses the much easier to
+    differentiation. The prototype here nevertheless uses the easier to
     implement forward-mode. Transformation of the forward model code required
-    a custom type, the overloading of a few operators and functions and minimal
-    changes to the existing code. The only performance optimization made is
-    a special consideration of derivatives associated with the calculation of
-    the absorption coefficients on the internal model grid.
-
+    two custom types, the overloading of a few operators and functions and
+    minimal changes to the existing code. The only performance optimization
+    is a special consideration of derivatives associated with the calculation
+    of the absorption coefficients on the internal model grid.
 
 \stopsubsection
 
@@ -796,69 +802,69 @@ with the presentation of a numerical model implementation.
 
     The radiative transfer model spends the majority of its time calculating
     absorption coefficients. Although the models of \cite[Liebe1993] and
-    \cite[Turner2016] are already fairly simple, it is convenient to replace
-    them by a fast absorption predictor (FAP) in order to reduce the overall
-    model computation time. FAPs are regression models of the absorption
-    coefficient as a funcion of the state vector, trained on data representing
-    typical atmospheric conditions. fast absorption predictors have previously
+    \cite[Turner2016] are faily simple, it is convenient to replace them by
+    a fast absorption predictor (FAP) in order to reduce the overall model
+    computation time. FAPs are regression models approximating the absorption
+    coefficients as a funcion of the state vector. A FAP is trained
+    specifically for each simulated frequency based on data representing
+    typical atmospheric conditions. Fast absorption predictors have previously
     been used by \cite[Lohnert2004], \cite[Hewison2006] and others.
 
     Following the choice of state vector variables from section
-    \in[ch:statevector], the predictors are chosen to be pressure, temperature
-    and the natural logarithm of total specific water content. A first
-    implementation modelled both gaseous and cloud absorption together using a
-    polynomial of the state vector variables. Even for polynomials of degree
-    five including all interaction terms large errors were found in the
-    approximated absorption coefficients. Investigation of this issue showed
-    that the polynomial was unable to adequately represent the strong
+    \in[ch:statevector], the predictors of the regression models are chosen to
+    be pressure, temperature and the natural logarithm of total water content.
+    A first implementation modelled both gaseous and cloud absorption together
+    with a polynomial of the state vector variables. But even for polynomials
+    of degree five including all interaction terms, large errors were found in
+    the approximated absorption coefficients. Investigation of this issue
+    revealed that the polynomial was unable to adequately represent the strong
     non-linearity of absorption near the cloud threshold. Polynomials of higher
-    order are strongly affected by combinatorial blowup of interaction terms
-    and numerical stability issues, therefore a more refined approach is taken.
+    order are suffer from combinatorial blowup of interaction terms and
+    numerical stability issues, therefore a more refined approach was taken.
 
     Instead of fitting a polynomial to the combined gaseous and cloud
-    absorption the components are approximated separately after the total
-    water content of the state vector has been separated into vapor and liquid
+    absorption, the components are approximated separately after separation of
+    the total water content of the state vector into vapor and liquid
     components according to \ineq{qliq} and \ineq{qvap}. Specific cloud
     absorption following \cite[Turner2016] is only a function of temperature
-    modelled by the FAP as a 5th order polynomial of temperature. Gaseous
-    absorption depends on $p$, $T$ and $\QVAP$. \cite[Lohnert2004] and
-    \cite[Hewison2006] used third order polynomials without interaction terms
-    as FAPs and claimed good accuracy. Here it was found to be necessary to
+    and modelled by the FAP as a 5th order polynomial. Gaseous absorption
+    depends on $p$, $T$ and $\QVAP$. \cite[Lohnert2004] and \cite[Hewison2006]
+    used third order polynomials without interaction terms as FAPs for gaseous
+    absorption and claimed good accuracy. Here it the necessity was found to
     approximate absorption coefficients by third order polynomials including
     all interaction terms for V band frequencies and third order polynomials
-    including interactions terms up to second order for K band frequencies. The
-    higher order polynomial for K band frequencies was found to be necessary to
-    avoid negative absorption coefficients in the more opaque channels. Before
-    it was also tested to model the logarithm of the absorption coefficient
-    with an FAP to enforce positivity. Due to a negative impact on accuray,
-    likely due to the additional non-linearity introduced by the
-    transformation, this was not pursued further.
+    including interactions terms up to second order for K band frequencies else
+    the FAPs were inaccurate at low pressures particularly in the more opaque
+    channels of the K band. Modelling the logarithm of the absorption
+    coefficient to enforce its positivity was tested but found to negatively
+    affect the accuracy, likely due to the stronger non-linearity introduced by
+    the transformation.
 
-    Errors introduced by the FAPs are quantified in an error covariance matrix
-    and included in the total forward model error. The matrix is determined
-    from differences of simulations with and without fast absorption
-    predictors.
+    In general, low-order polynomial FAPs perform rather badly at low
+    pressures. More accurate, higher-order FAPs are however much more expensive
+    to evaluate, defeating their original purpose. The retrieval grid used in
+    this thesis end at 12 km above ground and the accuracy of the FAPs
+    described in the previous section is a major reason for this choice.
 
 \stopsubsection
 
 \startsubsection[title={Correcting for Missing Parts of the Profile},reference=ch:missing_profile]
 
-    Mentioned before in retrieval grid section. Multiple things to consider:
-    information content of radiometer mostly limited to lower atmosphere (see
-    weighting functions). Absorption becomes increasingy non-linear at pressure
-    lower than 150 hPa, therefore FAPs perform badly or have to use
-    higher-order polynomials which are more expensive, defeating the purpose of
-    the FAP.
+    As discussed in section \in[ch:retrievalgrid], it is important to consider
+    contributions from the tropopause and lower stratosphere to brightness
+    temperatures measured by a radiometer at the ground. With the retrieval
+    grid ending at 12 km, the radiative transfer model must account for the
+    emission and absorption in the upper atmosphere in order to make accurate
+    predictions particularly for the more transparent V band oxygen channels.
+    The transparent K band channels are not significantly affected by the upper
+    atmosphere because water vapor concentrations are low and emission is weak.
 
-    Choice here: 12 km above ground is end of profile. Transparent channels
-    have contributions from above. K band is irrelevant since water vapor
-    content at these height is negligible. V band significantly affected by
-    emission from tropopause and lower stratosphere. If not accounted for,
-    modelled BTs are biased. MWRTM provides the possiblility to account for
-    the missing emission from above the profile end by adjusting the cosmic
-    background temperature to a value that includes the emission and opacity
-    of the upper atmosphere. The assumed values of temperature and pressure
-    come from the US standard atmosphere. Humidity is set to zero.
+    MWRTM provides the possiblility to correct for missing parts of the profile
+    by adjusting the cosmic background temperature to account for the emission
+    and opacity properties of the upper atmosphere. This is a static correction
+    based on a reference profile of pressure, temperature and humidity. Here,
+    values from the US standard atmosphere with no water vapor are used to
+    determine corrections for emission from heights between 12 and 40 km.
 
 \stopsubsection
 
