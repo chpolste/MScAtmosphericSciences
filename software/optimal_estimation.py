@@ -20,7 +20,7 @@ rgrid = np.round(np.logspace(np.log10(z_hatpro), np.log10(z_top), 50)).astype(fl
 # Internal model grid
 mgrid = np.logspace(np.log10(z_hatpro), np.log10(z_top), 2500)
 # Parameter sequence
-paramseq = [5000, 2500, 1000, 500, 250, 100, 50, 25]
+paramseq = (10000, 5000, 2500, 1000, 500, 250, 100, 50)
 
 
 class Gaussian:
@@ -32,7 +32,8 @@ class Gaussian:
         assert self.mean.shape[0] == self.cov.shape[0] == self.cov.shape[1]
 
     def sample(self, size):
-        return np.random.multivariate_normal(mean=self.mean.flatten(), cov=self.cov, size=size)
+        return np.random.multivariate_normal(mean=self.mean.flatten(),
+                cov=self.cov, size=size)
 
     @property
     def covi(self):
@@ -81,12 +82,16 @@ class OptimalEstimationRetrieval:
         self.prior = prior
         self.obserr = obs_error
         self.counter = 0
-        self.obs_dists = []
-        self.state_dists = []
+        self.obs_measures = []
+        self.state_measures = []
         self.costs = []
 
-    def iterate(self, calculate_dists="all"):
-        """Levenberg-Marquard step with 5.36 from Rodgers (2000)."""
+    def iterate(self, only=None, calculate_measures="all"):
+        """Levenberg-Marquard step with 5.36 from Rodgers (2000).
+        
+        The 'only' parameter is just for test purposes. Use the specialized
+        Virtual HATPROs instead.
+        """
         μ = self.μs[-1]
         if len(self.params) > self.counter:
             γ = self.params[self.counter]
@@ -95,29 +100,33 @@ class OptimalEstimationRetrieval:
         Fμ, jac = self.model(μ, self.p0)
         rhs = (jac.T @ self.obserr.covi @ (self.y - Fμ - self.obserr.mean)
                 + self.prior.covi @ (μ - self.prior.mean))
-        cov = self.prior.covi + jac.T @ self.obserr.covi @ jac
-        lhs = cov + γ * self.prior.covi
+        covi = self.prior.covi + jac.T @ self.obserr.covi @ jac
+        lhs = covi + γ * self.prior.covi
         diff = np.linalg.solve(lhs, rhs)
         # Save new values
+        if only is not None:
+            diff_ = diff
+            diff = np.zeros_like(diff)
+            diff[only] = diff_[only]
         self.μs.append(μ + diff)
         self.Fμs.append(Fμ)
-        self.covs.append(cov)
+        self.covs.append(np.linalg.inv(covi))
         self.counter += 1
-        # Calculate requested distances
-        alldist = (calculate_dists == "all")
-        if alldist or calculate_dists == "state":
-            self.state_dists.append(float(diff.T @ np.linalg.inv(cov) @ diff))
+        # Calculate requested convergence measures
+        alldist = (calculate_measures == "all")
+        if alldist or calculate_measures == "state":
+            self.state_measures.append(float(diff.T @ covi @ diff))
         else:
-            self.state_dists.append(None)
-        if alldist or calculate_dists == "obs":
+            self.state_measures.append(None)
+        if alldist or calculate_measures == "obs":
             m = (self.obserr.cov
                     @ np.linalg.inv(jac @ self.prior.cov @ jac.T + self.obserr.cov)
                     @ self.obserr.cov)
             d = self.Fμs[-2] - self.Fμs[-1]
-            self.obs_dists.append(float(d.T @ m @ d))
+            self.obs_measures.append(float(d.T @ m @ d))
         else:
-            self.obs_dists.append(None)
-        if alldist or calculate_dists == "cost":
+            self.obs_measures.append(None)
+        if alldist or calculate_measures == "cost":
             v1 = self.y - Fμ
             v2 = self.prior.mean - μ
             cost = v1.T @ self.obserr.covi @ v1 + v2.T @ self.prior.covi @ v2
@@ -184,13 +193,33 @@ class VirtualHATPRO:
         jac = np.vstack(jac)
         return fwd if only_forward else (fwd, jac)
 
-    def retrieve(self, y, p0, μ0, prior, max_iterations=15):
+    def retrieve(self, y, p0, μ0, prior, max_iterations=15, only=None):
         optest = OptimalEstimationRetrieval(
                 model=self.simulate, params=self.params,
                 y=y, p0=p0, μ0=μ0,
                 prior=prior, obs_error=self.error
                 )
         for i in range(max_iterations):
-            optest.iterate()
+            optest.iterate(only=only)
         return optest
+
+
+class VirtualHATPRO_Kband(VirtualHATPRO):
+    
+    absorptions = faps[:7]
+    backgrounds = bgs[:7]
+    angles = [0.]
+
+    def __init__(self, z_retrieval, z_model, error, params, scanning=()):
+        super().__init__(z_retrieval, z_model, error, params, scanning) 
+
+
+class VirtualHATPRO_Vband(VirtualHATPRO):
+    
+    absorptions = faps[7:]
+    backgrounds = bgs[7:]
+
+    def __init__(self, z_retrieval, z_model, error, params, scanning=None):
+        super().__init__(z_retrieval, z_model, error, params,
+                scanning=(3, 4, 5, 6))
 

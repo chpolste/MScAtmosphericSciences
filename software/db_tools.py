@@ -38,6 +38,17 @@ def iter_profiles(pattern, tryvars=("bt", "p", "T", "qvap", "qliq", "lnq")):
         yield valid, df
 
 
+def split_bands(df):
+    kband, vband = df.copy(), df.copy()
+    if df.index.dtype == "O" and any("TB_" in idx for idx in df.index):
+        kband = kband.ix[[idx for idx in kband.index if int(idx[3:8]) < 40000]]
+        vband = vband.ix[[idx for idx in vband.index if int(idx[3:8]) > 40000]]
+    if df.columns.dtype == "O" and any("TB_" in idx for idx in df.columns):
+        kband = kband.drop([idx for idx in kband.columns if int(idx[3:8]) > 40000], axis=1)
+        vband = vband.drop([idx for idx in vband.columns if int(idx[3:8]) < 40000], axis=1)
+    return kband, vband
+
+
 class Database:
 
     def __init__(self, database):
