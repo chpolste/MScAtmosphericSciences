@@ -19,6 +19,111 @@ z_top = 12612.
 rgrid = np.round(np.logspace(np.log10(z_hatpro), np.log10(z_top), 50)).astype(float)
 # Internal model grid
 mgrid = np.logspace(np.log10(z_hatpro), np.log10(z_top), 2500)
+# Parameter sequence
+paramseq = [5000, 2500, 1000, 500, 250, 100, 50, 25]
+
+
+class Gaussian:
+    """Gaussian distribution with convenience methods/properties."""
+
+    def __init__(self, mean, cov):
+        self.mean = np.array(mean).reshape(-1,1)
+        self.cov = np.array(cov)
+        assert self.mean.shape[0] == self.cov.shape[0] == self.cov.shape[1]
+
+    def sample(self, size):
+        return np.random.multivariate_normal(mean=self.mean.flatten(), cov=self.cov, size=size)
+
+    @property
+    def covi(self):
+        """Memoized inverse of covariance."""
+        if not hasattr(self, "_covi"):
+            self._covi = np.linalg.inv(self.cov)
+        return self._covi
+
+    @classmethod
+    def read_csv(cls, mean, cov):
+        from db_tools import read_csv_covariance, read_csv_mean
+        cov = read_csv_covariance(cov)
+        if mean is None:
+            mean = np.zeros(cov.shape[0])
+        else:
+            mean = read_csv_mean(mean)
+        return cls(mean, cov)
+
+    def __len__(self):
+        return self.mean.shape[0]
+
+
+class OptimalEstimationRetrieval:
+
+    def __init__(self, *, model, params, y, p0, μ0, prior, obs_error):
+        """Set up an optimal estimation retrieval.
+
+        z: retrival grid
+        model: forward model (accepts state vector and surface pressure,
+            returns simulated observation and Jacobian)
+        params: a sequence of parameters to control the Levenberg-Marquard
+            minimization. Last value is repeated if sequence is too short.
+        y: observation vector
+        p0: surface pressure in hPa
+        μ0: first guess of state vector
+        prior: prior distribution of atmospheric state
+        obs_error: observation/model error distribution
+        """
+        self.model = model
+        self.params = list(params)
+        self.y = y
+        self.p0 = p0
+        self.μs = [μ0]
+        self.Fμs = [0]
+        self.covs = [prior.cov]
+        self.prior = prior
+        self.obserr = obs_error
+        self.counter = 0
+        self.obs_dists = []
+        self.state_dists = []
+        self.costs = []
+
+    def iterate(self, calculate_dists="all"):
+        """Levenberg-Marquard step with 5.36 from Rodgers (2000)."""
+        μ = self.μs[-1]
+        if len(self.params) > self.counter:
+            γ = self.params[self.counter]
+        else:
+            γ = self.params[-1]
+        Fμ, jac = self.model(μ, self.p0)
+        rhs = (jac.T @ self.obserr.covi @ (self.y - Fμ - self.obserr.mean)
+                + self.prior.covi @ (μ - self.prior.mean))
+        cov = self.prior.covi + jac.T @ self.obserr.covi @ jac
+        lhs = cov + γ * self.prior.covi
+        diff = np.linalg.solve(lhs, rhs)
+        # Save new values
+        self.μs.append(μ + diff)
+        self.Fμs.append(Fμ)
+        self.covs.append(cov)
+        self.counter += 1
+        # Calculate requested distances
+        alldist = (calculate_dists == "all")
+        if alldist or calculate_dists == "state":
+            self.state_dists.append(float(diff.T @ np.linalg.inv(cov) @ diff))
+        else:
+            self.state_dists.append(None)
+        if alldist or calculate_dists == "obs":
+            m = (self.obserr.cov
+                    @ np.linalg.inv(jac @ self.prior.cov @ jac.T + self.obserr.cov)
+                    @ self.obserr.cov)
+            d = self.Fμs[-2] - self.Fμs[-1]
+            self.obs_dists.append(float(d.T @ m @ d))
+        else:
+            self.obs_dists.append(None)
+        if alldist or calculate_dists == "cost":
+            v1 = self.y - Fμ
+            v2 = self.prior.mean - μ
+            cost = v1.T @ self.obserr.covi @ v1 + v2.T @ self.prior.covi @ v2
+            self.costs.append(float(cost))
+        else:
+            self.costs.append(None)
 
 
 class VirtualHATPRO:
@@ -29,7 +134,7 @@ class VirtualHATPRO:
 
     angles = [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8]
 
-    def __init__(self, z_retrieval, z_model, model_error,
+    def __init__(self, z_retrieval, z_model, error, params,
             scanning=(10, 11, 12, 13)):
         """
 
@@ -40,16 +145,17 @@ class VirtualHATPRO:
         itp = LinearInterpolation(source=z_retrieval, target=z_model)
         state_dims = 0
         self.mod_ang = []
-        for i, (a, bg) in enumerate(self.absorptions, self.backgrounds):
+        for i, (a, bg) in enumerate(zip(self.absorptions, self.backgrounds)):
             angles = self.angles if i in scanning else [0.]
             self.mod_ang.append([MWRTM(itp, a, background=bg), angles])
             state_dims += len(angles)
-        self.model_error = model_error
-        assert state_dims == len(self.model_error)
+        self.error = error
+        assert state_dims == len(self.error)
+        self.params = params
 
     def separate(self, x, p0):
         """Take apart the state vector and calculate pressure.
-        
+
         Approximate pressure by barometric height formula. The specific gas
         constant is set to 288 to account for water vapor. The problem is that
         a good estimation of the actual R requires qvap but partition_lnq
@@ -77,60 +183,14 @@ class VirtualHATPRO:
         fwd = np.vstack(fwd)
         jac = np.vstack(jac)
         return fwd if only_forward else (fwd, jac)
-    
-    def retrieve(self, y, μ0, p0, prior, γ0=5.0e3, max_iterations=15):
-        """Levenberg Marquard minimization using form 5.36 from Rodgers (2000)"""
-        μ, cov = μ0, prior.cov
-        γ, dist = γ0, 1.0e20
-        me = self.model_error
-        for i in range(15):
-            Fμ, jac = self.simulate(μ, p0)
-            rhs = jac.T @ me.covi @ (y - Fμ - me.mean) + prior.covi @ (μ - prior.mean)
-            cov = prior.covi + jac.T @ me.covi @ jac
-            lhs = cov + γ * prior.covi
-            diff = np.linalg.solve(lhs, rhs)        
-            μ = μ + diff
-            # Convergence check
-            dist_old = dist
-            dist = diff.T @ np.linalg.inv(cov) @ diff
-            if dist < 2/γ: # how to do this best...? gamma influences dist
-                return μ, cov
-            # No convergence, adjust γ, try again
-            if dist/dist_old > 0.75:
-                γ = γ * 5
-            elif dist/dist_old < 0.25:
-                γ = γ * 0.5
-        raise StopIteration()
 
-
-class Gaussian:
-    """Gaussian distribution with convenience methods/properties."""
-    
-    def __init__(self, mean, cov):
-        self.mean = np.array(mean).reshape(-1,1)
-        self.cov = np.array(cov)
-        assert self.mean.shape[0] == self.cov.shape[0] == self.cov.shape[1]
-    
-    def sample(self, size):
-        return np.random.multivariate_normal(mean=self.mean.flatten(), cov=self.cov, size=size)
-    
-    @property
-    def covi(self):
-        """Memoized inverse of covariance."""
-        if not hasattr(self, "_covi"):
-            self._covi = np.linalg.inv(self.cov)
-        return self._covi
-    
-    @classmethod
-    def read_csv(cls, mean, cov):
-        from db_tools import read_csv_covariance, read_csv_mean
-        cov = read_csv_covariance(cov)
-        if mean is None:
-            mean = np.zeros(cov.shape[0])
-        else:
-            mean = read_csv_mean(mean)
-        return cls(mean, cov)
-
-    def __len__(self):
-        return self.mean.shape[0]
+    def retrieve(self, y, p0, μ0, prior, max_iterations=15):
+        optest = OptimalEstimationRetrieval(
+                model=self.simulate, params=self.params,
+                y=y, p0=p0, μ0=μ0,
+                prior=prior, obs_error=self.error
+                )
+        for i in range(max_iterations):
+            optest.iterate()
+        return optest
 
