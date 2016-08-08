@@ -82,7 +82,7 @@ def get_yticks(ylim):
     return ticks
 
 
-def retrieval_template(figsize, *, ratio=1.7, hum="q", Tlims=None, qlims=None):
+def retrieval_template(figsize, *, ratio=1.5, hum="q", Tlims=None, qlims=None):
     if hum == "q":
         hum = "specific water content [g/kg]"
     elif hum == "lnq":
@@ -102,7 +102,7 @@ def retrieval_template(figsize, *, ratio=1.7, hum="q", Tlims=None, qlims=None):
         axT2.set_ylim(*Tlims[3])
         rectT = Rectangle([Tlims[2][0], Tlims[3][0]],
                          Tlims[2][1]-Tlims[2][0], Tlims[3][1]-Tlims[3][0],
-                         facecolor="#F0F0F0", linewidth=0, zorder=-100)
+                         facecolor="#E9E9E9", linewidth=0, zorder=-100)
         axT1.add_patch(rectT)
     axq1 = fig.add_subplot(gs[0,1])
     axq2 = fig.add_subplot(gs[1,1])
@@ -115,7 +115,7 @@ def retrieval_template(figsize, *, ratio=1.7, hum="q", Tlims=None, qlims=None):
         axq2.set_ylim(*qlims[3])
         rectq = Rectangle([qlims[2][0], qlims[3][0]],
                          qlims[2][1]-qlims[2][0], qlims[3][1]-qlims[3][0],
-                         facecolor="#F0F0F0", linewidth=0, zorder=-100)
+                         facecolor="#E9E9E9", linewidth=0, zorder=-100)
         axq1.add_patch(rectq)
     return fig, (axT1, axT2, axq1, axq2)
 
