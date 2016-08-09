@@ -49,6 +49,15 @@ def split_bands(df):
     return kband, vband
 
 
+def get_zenith(df):
+    out = df.copy()
+    if df.index.dtype == "O" and any("TB_" in idx for idx in df.index):
+        out = out.ix[[idx for idx in out.index if idx.endswith("_00.0")]]
+    if df.columns.dtype == "O" and any("TB_" in idx for idx in df.columns):
+        out = out.drop([idx for idx in out.columns if not idx.endswith("_00.0")], axis=1)
+    return out
+
+
 class Database:
 
     def __init__(self, database):

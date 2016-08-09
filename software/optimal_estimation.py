@@ -19,8 +19,6 @@ z_top = 12612.
 rgrid = np.round(np.logspace(np.log10(z_hatpro), np.log10(z_top), 50)).astype(float)
 # Internal model grid
 mgrid = np.logspace(np.log10(z_hatpro), np.log10(z_top), 2500)
-# Parameter sequence
-paramseq = (5000, 2500, 1000, 500, 250, 100, 50, 25, 10)
 
 
 class Gaussian:
@@ -58,7 +56,7 @@ class Gaussian:
 
 class OptimalEstimationRetrieval:
 
-    def __init__(self, *, model, params, y, p0, μ0, prior, obs_error):
+    def __init__(self, *, model, y, p0, μ0, prior, obs_error):
         """Set up an optimal estimation retrieval.
 
         z: retrival grid
@@ -73,7 +71,6 @@ class OptimalEstimationRetrieval:
         obs_error: observation/model error distribution
         """
         self.model = model
-        self.params = list(params)
         self.y = y
         self.p0 = p0
         self.μs = [μ0]
@@ -85,18 +82,16 @@ class OptimalEstimationRetrieval:
         self.obs_measures = []
         self.state_measures = []
         self.costs = []
+        self.γs = []
 
-    def iterate(self, only=None, calculate_measures="all"):
+
+    def iterate(self, γ, only=None):
         """Levenberg-Marquard step with 5.36 from Rodgers (2000).
 
         The 'only' parameter is just for test purposes. Use the specialized
         Virtual HATPROs instead.
         """
         μ = self.μs[-1]
-        if len(self.params) > self.counter:
-            γ = self.params[self.counter]
-        else:
-            γ = self.params[-1]
         Fμ, jac = self.model(μ, self.p0)
         rhs = (jac.T @ self.obserr.covi @ (self.y - Fμ - self.obserr.mean)
                 + self.prior.covi @ (μ - self.prior.mean))
@@ -112,27 +107,20 @@ class OptimalEstimationRetrieval:
         self.Fμs.append(Fμ)
         self.covs.append(np.linalg.inv(covi))
         self.counter += 1
-        # Calculate requested convergence measures
-        alldist = (calculate_measures == "all")
-        if alldist or calculate_measures == "state":
-            self.state_measures.append(float(diff.T @ covi @ diff))
-        else:
-            self.state_measures.append(None)
-        if alldist or calculate_measures == "obs":
-            m = (self.obserr.cov
-                    @ np.linalg.inv(jac @ self.prior.cov @ jac.T + self.obserr.cov)
-                    @ self.obserr.cov)
-            d = self.Fμs[-2] - self.Fμs[-1]
-            self.obs_measures.append(float(d.T @ m @ d))
-        else:
-            self.obs_measures.append(None)
-        if alldist or calculate_measures == "cost":
-            v1 = self.y - Fμ
-            v2 = self.prior.mean - μ
-            cost = v1.T @ self.obserr.covi @ v1 + v2.T @ self.prior.covi @ v2
-            self.costs.append(float(cost))
-        else:
-            self.costs.append(None)
+        self.γs.append(γ)
+        # Calculate state space measure
+        self.state_measures.append(float(diff.T @ covi @ diff))
+        # Calculate observation space measure
+        m = (self.obserr.cov
+                @ np.linalg.inv(jac @ self.prior.cov @ jac.T + self.obserr.cov)
+                @ self.obserr.cov)
+        d = self.Fμs[-2] - self.Fμs[-1]
+        self.obs_measures.append(float(d.T @ m @ d))
+        # Cost function
+        v1 = self.y - Fμ
+        v2 = self.prior.mean - μ
+        cost = v1.T @ self.obserr.covi @ v1 + v2.T @ self.prior.covi @ v2
+        self.costs.append(float(cost))
 
 
 class VirtualHATPRO:
@@ -143,7 +131,7 @@ class VirtualHATPRO:
 
     angles = [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8]
 
-    def __init__(self, z_retrieval, z_model, error, params,
+    def __init__(self, z_retrieval, z_model, error,
             scanning=(10, 11, 12, 13)):
         """
 
@@ -160,7 +148,6 @@ class VirtualHATPRO:
             state_dims += len(angles)
         self.error = error
         assert state_dims == len(self.error)
-        self.params = params
 
     def separate(self, x, p0):
         """Take apart the state vector and calculate pressure.
@@ -195,13 +182,23 @@ class VirtualHATPRO:
 
     def retrieve(self, y, p0, μ0, prior, iterations=0, only=None):
         optest = OptimalEstimationRetrieval(
-                model=self.simulate, params=self.params,
+                model=self.simulate,
                 y=y, p0=p0, μ0=μ0,
                 prior=prior, obs_error=self.error
                 )
-        for i in range(max_iterations):
+        for i in range(iterations):
             optest.iterate(only=only)
         return optest
+
+
+class VirtualHATPRO_zenith(VirtualHATPRO):
+
+    absorptions = faps
+    backgrounds = bgs
+    angles = [0.]
+
+    def __init__(self, z_retrieval, z_model, error, scanning=()):
+        super().__init__(z_retrieval, z_model, error, scanning)
 
 
 class VirtualHATPRO_Kband(VirtualHATPRO):
@@ -210,8 +207,8 @@ class VirtualHATPRO_Kband(VirtualHATPRO):
     backgrounds = bgs[:7]
     angles = [0.]
 
-    def __init__(self, z_retrieval, z_model, error, params, scanning=()):
-        super().__init__(z_retrieval, z_model, error, params, scanning)
+    def __init__(self, z_retrieval, z_model, error, scanning=()):
+        super().__init__(z_retrieval, z_model, error, scanning)
 
 
 class VirtualHATPRO_Vband(VirtualHATPRO):
@@ -219,22 +216,23 @@ class VirtualHATPRO_Vband(VirtualHATPRO):
     absorptions = faps[7:]
     backgrounds = bgs[7:]
 
-    def __init__(self, z_retrieval, z_model, error, params, scanning=None):
-        super().__init__(z_retrieval, z_model, error, params,
+    def __init__(self, z_retrieval, z_model, error, scanning=None):
+        super().__init__(z_retrieval, z_model, error,
                 scanning=(3, 4, 5, 6))
 
 
-def iterate_to_convergence(ret, max_iterations=20, debug=False):
+def iterate_to_convergence(ret, γ0=3000, max_iterations=20, debug=False):
     min_cost, min_cost_at = 1.0e50, 0
     last_cost, current_cost = 1.0e50, 1.0e50
     cost_diff_counter = 0
     counter = 0
+    γ = γ0
 
     if debug: print("Start")
     while counter < 20:
         counter += 1
         if debug: print("Next iteration. Counter at {}.".format(counter))
-        ret.iterate()
+        ret.iterate(γ=γ)
         current_cost = ret.costs[-1]
 
         # Convergence condition: relative cost function change
@@ -265,6 +263,14 @@ def iterate_to_convergence(ret, max_iterations=20, debug=False):
             # min_cost_at indexes ret.μs which has one element more than
             # ret.costs i.e. the minimum of ret.costs is at min_cost_at - 1
             return True, min_cost_at
+        
+        # Update gamma (Schneebeli 2009)
+        if current_cost < last_cost:
+            γ = γ * 0.5
+        elif current_cost >= last_cost:
+            γ = γ * 5
+        else:
+            pass
 
         last_cost = current_cost
 
