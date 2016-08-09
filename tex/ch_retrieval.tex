@@ -251,35 +251,35 @@ introduction to Bayesian statistics is additionally influenced by
     approaching a Gaussian when the number of terms in the sum increases
     \cite[authoryears][Bishop2006]. Physical measurements are often time
     averages of observations of higher frequency. The central limit theorem
-    causes such averages to have error distributions that are to a good
+    causes such averages to have error distributions that are to good
     approximation Gaussian.
 
 \startsubsection[title=Parameter Estimation]
     
-    For the description of a dataset in the form of a Gaussian distribution the
-    mean and covariance parameters have to be estimated from the data. This is
-    done by finding the maximum likelihood solutions for $\MEANVEC$ and
-    $\COVMAT$ given a dataset $\{\VECX_1, \dots, \VECX_N\}$, whose elements are
-    assumed to be independent and identically distributed. The results are
-    found in most textbooks dealing with statistics
-    \cite[alternative=authoryears,left={(e.g. }][Bishop2006]. and are shown
-    here without derivations.
+    To approximate a data set with the a Gaussian distribution, the mean and
+    covariance parameters have to be estimated from the data.  For a given set
+    $\{\VECX_1, \dots, \VECX_N\}$ of data, whose elements are assumed to be
+    independent and identically distributed, appropriate values are found in
+    the maximum likelihood estimators of $\MEANVEC$ and $\COVMAT$. The
+    respective expressions are repeated here from the book of
+    \cite[Bishop2006] without derivations.
 
-    The likelihood of a single datapoint $\VECX_i$ is
-    $\GAUSS{\VECX_i}{\MEANVEC}{\COVMAT}$ and because of the assumption of
-    independent data the likelihood of the entire dataset is
+    The likelihood of a single data point $\VECX_i$ given the mean $\MEANVEC$
+    and covariance $\COVMAT$ of the distribution it is assumed to be drawn from
+    is $\GAUSS{\VECX_i}{\MEANVEC}{\COVMAT}$. Because the data are assumed to be
+    independent and identically distributed, the likelihood of the entire
+    data set $\{\VECX_1, \dots, \VECX_N\}$ given $\MEANVEC$ and $\COVMAT$ is
 
     \startformula
         \PROB{\{\VECX_1, \dots, \VECX_N\} \GIVEN \MEANVEC, \COVMAT}
         = \prod_{i=1}^N \GAUSS{\VECX_i}{\MEANVEC}{\COVMAT} \EQCOMMA
     \stopformula
 
-    i.e. the product of each individual likelihood. The product of Gaussians is
-    again Gaussian and mean of a Gaussian is its maximum therefore $\MEANVEC$
-    is found by maximizing the likelihood function of the dataset or
-    equivalently minimizing its negative natural logarithm.  Determination of
-    the covariance matrix is more involved as it has to be symmetric and
-    positive definite. The resulting ML estimates are
+    i.e. the product of all individual likelihood functions. This product of
+    Gaussians is again Gaussian and its mean can be found at its maximum
+    or equivalently at the minimum of its negative naturam logarithm.
+    Determination of the covariance matrix is more involved as it has to be
+    symmetric and positive definite. The resulting ML estimates are
 
     \startformula
         \MEANVEC_{ML} = \frac{1}{N} \sum_{i=1}^N \VECX_i
@@ -289,33 +289,32 @@ introduction to Bayesian statistics is additionally influenced by
 
     \startformula
         \COVMAT_{ML} = \frac{1}{N} \sum_{i=1}^N (\VECX_i - \MEANVEC_{ML})^\top
-            (\VECX_i - \MEANVEC_{ML})
+            (\VECX_i - \MEANVEC_{ML}) \EQSTOP
     \stopformula
 
-    Notably the mean can be calculated independently from the covariance. The
-    ML estimator of the covariance systematically underestimates the true
-    covariance but can be corrected by using
+    Notably, the mean is calculated independently from the covariance. The ML
+    estimator of the covariance can be proven to systematically underestimate
+    the true covariance. The correct estimator is
 
     \startformula
         \tilde\COVMAT_{ML} = \frac{1}{N-1} \sum_{i=1}^N (\VECX_i - \MEANVEC_{ML})^\top
-            (\VECX_i - \MEANVEC_{ML})
+            (\VECX_i - \MEANVEC_{ML}) \EQSTOP
     \stopformula
-
-    instead of $\COVMAT_{ML}$.
 
 \stopsubsection
 
 \startsubsection[title={Bayesian Operations for Gaussians},reference=ch:bayes_gauss]
 
-    In this section two important results for Gaussian distributions are
-    derived which are used later for the optimal estimation method and linear
-    regression with error estimates. A rigorous derivation of these results is
-    found in \cite[Bishop2006]. Here, shortcuts are taken by taking the facts
-    that the product of two Gaussians is Gaussian and that the marginalization
-    of a Gaussian is again Gaussian as a given.
+    Two important results for Gaussian distributions are derived in this
+    section which are subsequently used in the optimal estimation and
+    linear regression methods.  The derivations are shortened by taking the
+    facts that a product of two Gaussians and the marginalization of a Gaussian
+    are again Gaussian for granted.  Rigorous derivations of these results are
+    given by \cite[Bishop2006].
 
-    The goal is to find the missing probability distributions in Bayes' Theorem
-    when the prior $\PRIOR$ and likelihood function $\LIKELIHOOD$ are given by
+    The goal of this section is to find the missing probability distributions
+    $\POSTERIOR$ and $\NORMALIZATION$ in Bayes' theorem when the prior $\PRIOR$
+    and likelihood function $\LIKELIHOOD$ are given by
 
     \startsubformulas[eq:gaussbayesinit]
     \placesubformula
@@ -323,15 +322,16 @@ introduction to Bayesian statistics is additionally influenced by
     \startalign[n=2,align={right,left}]
         \NC \PRIOR = \NC \GAUSS{\VECX}{\VECA}{\MATPI} \EQCOMMA \NR[eq:gaussbayesinitx]
         \NC \LIKELIHOOD = \NC \GAUSS{\VECY}{\MATB \VECX + \VECB}{\MATQI}
-            \EQSTOP \NR[eq:gaussbayesinityx]
+            \NR[eq:gaussbayesinityx]
     \stopalign
     \stopformula
     \stopsubformulas
 
-    The mean of the conditional likelihood function is a linear function of
-    $\VECX$ but the covariance is independent of $\VECX$. Covariances are given
-    as inverted $\MATP$ and $MATQ$ making the notation of the Gaussians in
-    their logarithm form less cluttered:
+    respectively. The mean of the conditional likelihood
+    \ineq{gaussbayesinityx} is a linear function of $\VECX$ but the covariance
+    is independent of $\VECX$. To reduce clutter in the logarithmic forms of
+    these distributions their covariances have been specified as the inverse of
+    matrices $\MATP$ and $\MATQ$:
 
     \startsubformulas[eq:gaussbayesinitln]
     \placesubformula
@@ -346,19 +346,9 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
     \stopsubformulas
 
-    The terms denoted \quote{const} contain the respective normalizations.
-    Bayes' theorem is derived from the joint probability distribution
-
-    \startformula
-        \JOINT = \LIKELIHOOD \PRIOR = \POSTERIOR \NORMALIZATION \EQSTOP
-    \stopformula
-
-    Viewing $\LIKELIHOOD$ and $\PRIOR$ as likelihood and prior makes
-    $\POSTERIOR$ the posterior distribution. It can be extracted from the joint
-    probability distribution or derived by the product of $\LIKELIHOOD$ and
-    $\PRIOR$ directly since $\NORMALIZATION$ only provides a constant
-    normalization which can also be determined by the covariance of
-    $\POSTERIOR$.
+    Terms denoted \quote{const} are containers for any constant expressions
+    independent of $\VECX$ repeatedly be used as such in following
+    calculations. Consider Bayes' theorem in logarithmic space
 
     \placesubformula
     \startformula
@@ -367,7 +357,7 @@ introduction to Bayesian statistics is additionally influenced by
         \NC = \NC -2 \ln\left(\frac{\LIKELIHOOD \PRIOR}{\NORMALIZATION}\right) \NR
         \NC = \NC -2 \ln(\LIKELIHOOD) - 2 \ln(\PRIOR) + \CONST \NR
         \NC = \NC \GAUSSEXP{\VECY}{\MATB \VECX - \VECB}{\MATQ}
-            + \GAUSSEXP{\VECX}{\VECA}{\MATP} \NR
+            + \GAUSSEXP{\VECX}{\VECA}{\MATP} + \CONST\NR
         \NC = \NC
             \VECYT \MATQ \VECY
             - \VECYT \MATQ \MATB \VECX
@@ -384,13 +374,13 @@ introduction to Bayesian statistics is additionally influenced by
             + \VECXT \MATP \VECX
             - \VECXT \MATP \VECA
             - \VECAT \MATP \VECX
-            + \CONST \EQCOMMA
+            + \CONST
             \NR
     \stopalign
     \stopformula
 
-    where the last step is expanding the vector-matrix-vector products. The
-    posterior is again a Gaussian distribution, therefore an equivalent
+    where the last step expands the vector-matrix-vector products. The
+    posterior is known to be a Gaussian distribution, therefore an equivalent
     representation of the form
 
     \placesubformula
@@ -406,9 +396,9 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    must exist. Noting that the equivalence must hold for all $\VECX$, an
-    expression for $\COVMAT$ is found by matching terms quadratic in $\VECX$ of
-    both forms \ineq{gaussprodexpand} and \ineq{gausspostexpand}:
+    must exist. Because that the equivalence must hold for all $\VECX$, an
+    expression for $\COVMAT$ is found by matching quadratic terms of $\VECX$
+    between both forms \ineq{gaussprodexpand} and \ineq{gausspostexpand}:
 
     \startformula
     \startalign[n=3,align={left,right,left}]
@@ -422,9 +412,9 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    Matching the linear terms involving $\VECXT$ of both forms
+    Matching the linear terms involving $\VECXT$ between both forms
     \ineq{gaussprodexpand} and \ineq{gausspostexpand} results in an expression
-    for $\VECC$:
+    for the posterior mean $\VECC$:
 
     \startformula
     \startalign[n=3,align={left,right,left}]
@@ -440,7 +430,7 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
 
     Equating terms linear in $\VECX$ yields the same result. With $\VECC$
-    (mean) and $\MATS$ (inverse covariance) determined,
+    (mean) and $\MATS$ (inverse covariance) determined, the posterior
 
     \placeformula[eq:gaussbayespost]
     \startformula
@@ -453,31 +443,33 @@ introduction to Bayesian statistics is additionally influenced by
         \NORMALIZATION = \frac{\JOINT}{\POSTERIOR} \EQCOMMA
     \stopformula
 
-    making the assumption that it is a Gaussian distribution
+    a subtraction in linear space, assuming that $\NORMALIZATION$ is a Gaussian
+    distribution
 
     \startformula
         -2 \ln(\NORMALIZATION) = \GAUSSEXP{\VECY}{\VECD}{\MATT}
     \stopformula
 
-    and matching terms between both expressions as done for the posterior.  Due
-    to the rather complex mean and covariance of $\POSTERIOR$ this is tedious.
-    It is also possible to directly integrate the joint distribution with
-    respect to $\VECX$
+    and matching terms between both expressions like is was done for the
+    posterior. Due to the rather complex mean and covariance of $\POSTERIOR$
+    this is tedious. Alternatively, it is possible to directly integrate the
+    joint distribution with respect to $\VECX$
     
     \startformula
         \NORMALIZATION = \int \JOINT \, \diff \VECX = \int \LIKELIHOOD \, \PRIOR \, \diff \VECX \EQCOMMA
     \stopformula
     
-    again a quite tedious procedure.  Starting from the joint distribution and
-    rewriting it in blocked form, an intuitive argument is made which can be
-    reinforced by rigorous derivation given by \cite[Bishop2006].  Let $\VECZ$
-    be the vector obtained by stacking $\VECX$ and $\VECY$:
+    again a quite tedious procedure. Instead, starting from the joint
+    distribution and rewriting it in a blocked form, an intuitive argument is
+    made which can be reinforced by rigorous derivation
+    \cite[alternative=authoryears,left={(given e.g. by }][Bishop2006]. Let
+    $\VECZ$ be the vector obtained by stacking $\VECX$ and $\VECY$
 
     \startformula
         \VECZ = \startpmatrix \VECX \NR \VECY \NR \stoppmatrix \EQSTOP
     \stopformula
 
-    The joint distribution is Gaussian
+    The joint distribution $\JOINTZ$ is Gaussian
 
     \placeformula
     \startformula
@@ -489,11 +481,10 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    and by matching terms with $\JOINT = \LIKELIHOOD \PRIOR$ \footnote{Which
-    are the same terms as in \ineq{gaussprodexpand} with exception of the
-    constant term containing the normalization $2 \ln(\NORMALIZATION)$.},
-    $\MATR$ and $\MEANVEC$ can be determined. As before, the quadratic terms
-    are used for the inverse of the covariance
+    and by matching terms with $\JOINT = \LIKELIHOOD \PRIOR$ which was
+    evaluated previously in \ineq{gaussprodexpand} $\MEANVEC$ and $\MATR$
+    can be determined. Again, the quadratic terms are matched to obtain the
+    inverse of the covariance
 
     \placeformula
     \startformula
@@ -514,7 +505,7 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    and linear terms for determination of the mean (here shown with the
+    and linear terms are matched to determine the mean (here shown for the
     transposed terms)
 
     \startformula
@@ -533,20 +524,19 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    An expression for the inverse of a block matrix is given e.g. by
-    \cite[Petersen2012] yielding
+    Inversion of the block matrix $\MATR$ from \ineq{gaussbayesjointcovi}
+    \cite[alternative=authoryears,left={(e.g. }][Petersen2012] yields the
+    covariance matrix
 
     \placeformula[eq:gaussbayesjointcov]
     \startformula
         \MATRI = \startpmatrix[n=2,align={middle,middle}]
             \NC \MATPI \NC \MATPI \MATBT \NR
             \NC \MATB \MATPI \NC \MATQI + \MATB \MATPI \MATBT \NR
-        \stoppmatrix \EQCOMMA
+        \stoppmatrix \EQSTOP
     \stopformula
 
-    for \ineq{gaussbayesjointcovi} while using the fact that covariance
-    matrices are symmetric. Knowing \ineq{gaussbayesjointcov}, the mean is
-    given by
+    Knowing \ineq{gaussbayesjointcov}, the mean is found to be
 
     \placeformula[eq:gaussbayesjointmean]
     \startformula
@@ -559,24 +549,25 @@ introduction to Bayesian statistics is additionally influenced by
             \stoppmatrix \EQSTOP
     \stopformula
 
-    Comparing \ineq{gaussbayesjointcov} and \ineq{gaussbayesjointmean} with the
-    probability distribution $\PRIOR = \GAUSS{\VECX}{\VECA}{\MATPI}$ from
-    \ineq{gaussbayesinit} one finds that the upper left block of the covariance
-    matrix and the upper block of the mean vector of the joint distribution
-    correspond directly to the covariance and mean of $\PRIOR$. This makes
-    intuitive sense: When the distribution is evaluated, these are the blocks
-    that interact with $\VECX$ exclusively while the off-diagonal blocks of
-    $\MATRI$ model the interaction between $\VECX$ and $\VECY$. It would make
-    sense that the former blocks are then the only ones neccesary to describe
-    the (marginalized) distribution with respect to $\VECX$ alone. The same
-    idea leads to the expectation that the lower left block of $\MATRI$ and the
-    lower block of $\MEANVEC$ are the only ones neccessary to describe the
-    (marginalized) distribution with respect to $\VECY$ only. For symmetry
-    $\NORMALIZATION$ should therefore be given by
+    Comparison with the probability distribution $\PRIOR
+    = \GAUSS{\VECX}{\VECA}{\MATPI}$ from \ineq{gaussbayesinit} reveals that the
+    upper left block of the covariance matrix \ineq{gaussbayesjointcov} and the
+    upper block of the mean vector \ineq{gaussbayesjointmean} of the joint
+    distribution $\JOINTZ$ correspond directly to the covariance and mean of
+    $\PRIOR$. This makes intuitive sense: When the distribution is evaluated,
+    these are the blocks that interact with $\VECX$ exclusively while the
+    off-diagonal blocks of $\MATRI$ result in interaction of $\VECX$ and
+    $\VECY$. It seems reasonable that the blocks interacting exclusively with
+    $\VECX$ are the only ones neccesary to describe the (marginalized)
+    distribution with respect to $\VECX$ alone. The same idea leads to the
+    expectation that the lower left block of $\MATRI$ and the lower block of
+    $\MEANVEC$ are the only ones neccessary to describe the (marginalized)
+    distribution with respect to $\VECY$ only. For symmetry, $\NORMALIZATION$
+    should therefore be given by
     
     \placeformula[eq:gaussbayesnorm]
     \startformula
-        \NORMALIZATION = \GAUSS{\VECY}{\MATB \VECA + \VECB}{\MATQI + \MATB \MATPI \MATBT} \EQCOMMA
+        \NORMALIZATION = \GAUSS{\VECY}{\MATB \VECA + \VECB}{\MATQI + \MATB \MATPI \MATBT}
     \stopformula
 
     and this is indeed the result found in a rigorous derivation.
@@ -588,65 +579,67 @@ introduction to Bayesian statistics is additionally influenced by
 
 \startsection[title={Optimal Estimation},reference=ch:optimalestimation]
 
-    This retrieval technique uses a Bayesian update to incorporate radiometer
-    observations $\VECY$ into prior knowledge of the atmospheric state vector
-    $\VECX$. The Bayesian update incorporates a forward model, optimal
-    estimation is therefore often called a physical retrieval technique as it
-    explicitly makes use of the physics behind radiative transfer
-    \cite[alternative=authoryears,left={(e.g. }][Guldner2001,Turner2007].  The
-    forward model allows the retrieval of atmoshperic states that are
-    consistent with simulations of the radiative transfer while also
-    considering the prior information (which is essential to solve the
-    non-uniqueness problem of retrieval) and uncertainties associated with the
-    components of the method \cite[authoryears][Lohnert2004]. An estimate of
-    the error of the retrieved state can also be derived since the Bayesian
-    approach propagates the uncertainty estimates of the components. Because of
-    the need for error estimates and a forward model, the optimal estimation
-    method is more complex than regression techniques and makes higher demands
-    on the data used in the retrieval. While being significantly more expensive
-    in terms of computational time than regression methods, the computational
-    cost has been offset by the hardware development in recent years and
-    retrievals in a frequency necessary for operational use are possible with
-    a modern desktop computer. Software such as Qpack aims to simplify the
-    setup procedure for end users by providing not only a forward model (ARTS)
-    but also the routines necessary for the optimal estimation procedure
-    \cite[authoryears][Eriksson2005].
+    This retrieval technique incorporates radiometer observations into a prior
+    estimate of the atmospheric state with a Bayesian update. Because this
+    update explicitly makes use of the physics behind radiative transfer as
+    simulated by a numerical model, optimal estimation is often called a
+    physical retrieval technique
+    \cite[alternative=authoryears,left={(e.g. }][Guldner2001,Turner2007].
+    With knowledge of the uncertainties of the forward model and the prior
+    information which are essential to solve the non-uniqueness problem of
+    retrieval, a atmospheric states consistent with these error characteristics
+    are derived by the method \cite[authoryears][Lohnert2004]. Because
+    uncertainties are propagated in a Bayesian approach, an estimate of
+    the error of the retrieved state is derived as well.
 
-    Recent research using optimal estimation methods is often connected to
-    the desire of assimilating radiometer-retrieved profiles into numerical
+    Due to the requirements of error estimates and a forward model, the optimal
+    estimation method is more complex to set up than regression techniques
+    and more expensive in terms of computational time. However, the
+    computational cost has been offset by increasing hardware capabilites and
+    retrievals with a frequency suitable for real-time operational use are
+    possible with any modern desktop computer. Setup can be simplified by
+    software such as Qpack \cite[authoryears][Eriksson2005]
+    which providing not only a forward model (ARTS) but also the routines
+    necessary for the optimal estimation procedure.
+
+    Recent research involving optimal estimation methods is often connected to
+    the desire of assimilating retrieved profiles into numerical
     weather prediction models \cite[alternative=authoryears,right={ and
     references therein)}][Cimini2014]. \cite[Martinet2015] employed a two step
-    assimilation procedure: first vertical atmospheric profiles are retrieved
-    from radiometer observations and those are then assimiliated in a second
-    step into the model analysis. Recently \cite[DeAngelis2016] presented a new
-    radiative transfer model providing the capability to assimilate radiometer
-    observations directly into an NWP model analysis.
+    assimilation procedure: vertical atmospheric profiles are retrieved
+    from radiometer observations first and then assimiliated into a weather
+    prediction model in a second step. \cite[DeAngelis2016] recently presented
+    a new radiative transfer model called RTTOV-gb providing the capability to
+    assimilate radiometer observations directly into an NWP model fields.
 
-    The most often cited reference for the theory behind optimal estimation
-    schemes is the book by \cite[Rodgers2000]. The derivation here also follows
-    this book but only shows the purely Bayesian parts. All distributions
-    involved in the optimal estimation procedure are assumed to be Gaussian.
-    This allows an analytical derivation and results in a relatively efficient
-    retrieval scheme even for atmospheric state vectors of high dimensionality
-    where discrete approaches are very costly.
+    The standard reference for the theory behind optimal estimation
+    schemes is a book by \cite[Rodgers2000]. The presentation here also follows
+    this book but is restricted to a purely Bayesian approach.
 
-    The prior $\PRIOR$ should contain all knowledge about the state vector
-    before the measurement is evaluated. This knowledge might come from
-    a climatology, output from a NWP model, information from other instruments
-    and any combination of these sources. The construction of an optimal prior
-    is not an easy task and will be discussed in section
-    \in[ch:construct_prior]. In any case, due to the assumption that the {\PDF}
-    is Gaussian it is of the form:
+    All probability distributions involved in the optimal estimation procedure
+    are assumed to be Gaussian allowing analytical derivations. The result is
+    a retrieval scheme efficient even for atmospheric state vectors of high
+    dimensionality for which discrete approaches are very costly.
+
+    All knowledge about the state vector $\VECX$ independent of a radiometer
+    observation is contained in the prior distribution $\PRIOR$.
+    This knowledge might originate from climatological records, output from
+    a NWP model, other instruments than the radiometer or any combination of
+    these sources. The construction of an optimal prior is not an easy task and
+    will be discussed in sections \in[ch:construct_prior] and
+    \in[ch:additionalinfo]. Wherever from, due to the assumption that the prior
+    PDF is Gaussian it is of the form
 
     \placeformula[eq:optimalest_prior]
     \startformula
         \PRIOR = \GAUSS{\VECX}{\MEANVECA}{\COVMATA} \EQCOMMA
     \stopformula
 
-    where the subscript \quote{a} stands for \quote{a-priori}.  The likelihood
-    function $\LIKELIHOOD$ expresses the confidence that the observation
-    $\VECY$ is the result of a state $\VECX$. This confidence is quantified
-    with the help of the forward model, formulated as
+    where the subscript \quote{a} stands for \quote{a-priori}. The likelihood
+    function $\LIKELIHOOD$ expresses the probability that an observation
+    $\VECY$ is the result of some state $\VECX$. It is quantified with the help
+    of a forward model of the radiative transfer governing the radiometer
+    observation $\VECY$
 
     \placeformula[eq:forward_model]
     \startformula
@@ -655,19 +648,19 @@ introduction to Bayesian statistics is additionally influenced by
 
     where $\FWD$ is the forward model operator and $\ERR$ is an error term,
     arising from measurement noise, inaccuracies of the forward model,
-    discretization errors and possibly other terms. The distribution of the
-    error term is assumed to be Gaussian, centered around a systematic bias
-    $\MEANVECERR$ with a convariance matrix $\COVMATERR$
+    discretization errors and possibly other terms (see section
+    \in[ch:rtm_errors]. The distribution of the error term is Gaussian,
+    centered around a systematic bias $\MEANVECERR$ with a convariance matrix
+    $\COVMATERR$
 
     \placeformula[eq:optimalest_errpdf]
     \startformula
         \PROB{\ERR} = \GAUSS{\ERR}{\MEANVECERR}{\COVMATERR} \EQSTOP
     \stopformula
 
-    A discussion of how $\MEANVECERR$ and $\COVMATERR$ can be determined is
-    given in section \in[rtm_errors]. Substituting \ineq{forward_model}
-    into \ineq{optimalest_errpdf} and changing the independent variable of
-    the {\PDF} to $\VECY$ results in the likelihood function:
+    Substituting \ineq{forward_model} into \ineq{optimalest_errpdf} and
+    changing the independent variable of the {\PDF} to $\VECY$ yields in the
+    likelihood function
     
     \placesubformula
     \startformula
@@ -680,7 +673,7 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
 
     Knowing \ineq{optimalest_prior} and \ineq{optimalest_likelihood}, the
-    posterior {\PDF} is given by
+    posterior PDF (which is the result of the retrieval) is
 
     \placeformula[eq:optimalest_posterior]
     \startformula
@@ -692,21 +685,24 @@ introduction to Bayesian statistics is additionally influenced by
 
     It expresses the probability of an atmospheric state $\VECX$ given a
     measurement $\VECY$ and incorporates the forward model with its error
-    characteristic and any a-priori knowledge of the atmospheric state before
-    the measurement. As all involved distributions are assumed to be Gaussian,
-    the $\POSTERIOR$ is also a Gaussian distribution therefore the
-    normalization $\NORMALIZATION$ does not have to be determined explicitly
-    but follows from the product in the numerator. The forward model operator
-    $\FWD$ is non-linear, therefore this product cannot be carried out
-    analytically. To use the results from section \in[ch:bayes_gauss], the
-    model has to be linearized and an iterative approach is taken.
+    characteristics and a-priori knowledge of the atmospheric state independent
+    of the observation. All involved distributions are Gaussians, therefore
+    $\POSTERIOR$ is also a Gaussian distribution and the normalization
+    $\NORMALIZATION$ does not have to be determined explicitly
+    but can be inferred from the product in the numerator.
+    The results from section \in[ch:bayes_gauss] cannot be used yet with
+    \ineq{optimalest_posterior}, because the forward model operator $\FWD$ is
+    non-linear which is why the product of $\LIKELIHOOD$ and $\PRIOR$ cannot
+    be carried out analytically. 
+    The model operator $\FWD$ has to be linearized first resulting in an
+    iterative approach.
 
 \startsubsection[title=Iterative Solutions]
 
     To linearize $\FWD$, a reference state to linearize at must be chosen.
     Let this state be $\ITER{\VECX}{i}$. Applying a Taylor series
-    expansion to the forward model and chopping off all higher-than-linear
-    order terms yields the approximation
+    expansion to the forward model and chopping off all non-linear
+    terms yields the linear approximation
 
     \startformula
         \FWD(\VECX) \approx \FWD(\ITER{\VECX}{i})
@@ -715,7 +711,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     $\ITER{\FWDJAC}{i}$ is the Jacobian of $\FWD$ at $\ITER{\VECX}{i}$
     containing the derivatives of the forward model output with respect to each
-    state vector variable. After replacing $\FWD$ in
+    element of the state vector $\VECX$. After replacing $\FWD$ in
     \ineq{optimalest_posterior} by this linearization, the likelihood function
 
     \startformula
@@ -724,9 +720,9 @@ introduction to Bayesian statistics is additionally influenced by
             \ITER{\VECX}{i} + \MEANVECERR}{\COVMATERR}
     \stopformula
 
-    and the prior \ineq{optimalest_prior} fulfill the assumptions
-    \ineq{gaussbayesinit} and the result \ineq{gaussbayespost} can be used with
-    the substitutions
+    and the prior \ineq{optimalest_prior} fulfill the assumptions of
+    \ineq{gaussbayesinit} and the result \ineq{gaussbayespost} can be used by
+    substituting
 
     \startformula
         \{ \VECA \rightarrow \MEANVECA,~
@@ -742,21 +738,22 @@ introduction to Bayesian statistics is additionally influenced by
     
     \startformula
     \startalign[n=2,align={right,left}]
-        \NC \POSTERIOR = \NC \GAUSS{\VECX}{\MEANVEC}{\COVMAT} \NR
+        \NC \POSTERIOR = \NC \GAUSS{\VECX}{\MEANVEC}{\COVMAT} \EQCOMMA \NR
         \NC \MEANVEC = \NC \COVMAT (\ITER{\FWDJAC}{i}^\top
             \COVMATERR^{-1} (\VECY - \FWD(\ITER{\VECX}{i})
             + \ITER{\FWDJAC}{i} \ITER{\VECX}{i} - \MEANVECERR)
-            + \COVMATA^{-1} \MEANVECA) \NR
+            + \COVMATA^{-1} \MEANVECA) \EQCOMMA \NR
         \NC \COVMAT = \NC 
             (\ITER{\FWDJAC}{i} \COVMATERR^{-1} \ITER{\FWDJAC}{i}^\top
-            \COVMATA^{-1})^{-1} \NR
+            + \COVMATA^{-1})^{-1} \EQSTOP \NR
     \stopalign
     \stopformula
     
-    Because of the linearization the solution for $\MEANVEC$ and $\COVMAT$ will
-    not be optimal. Starting from a first guess $\ITER{\MEANVEC}{0}$, use
-    fixed-point iteration to find the optimal solution, using the mean of the
-    previous iteration as the linearization point
+    Due to the linear approximation of $\FWD$ the solution for $\MEANVEC$ and
+    $\COVMAT$ will not be optimal. Instead, starting from a first guess
+    $\ITER{\MEANVEC}{0}$, the optimal solution is found by fixed-point
+    iteration, using the mean of the previous iteration as the linearization
+    point in each step
 
     \startsubformulas[eq:gausspostiter]
     \placesubformula
@@ -775,19 +772,14 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
     \stopsubformulas
 
-    In practice more robust iteration schemes are needed to obtain good
-    convergence properties. The search for the mean of the posterior can be
-    translated into a minimization problem, for which many well studied
-    numerical methods exist. This is because of the symmetry of Gaussian which
-    implies that the mean of the distribution is also its maximum \footnote{In
-    Bayesian terminology this is called the maximum a-posteriori solution or
-    MAP for short. The equivalence of MAP and the expected value is one of the
-    convenient analytic properties of the Gaussian distribution which make it
-    such an attractive assumption.}. The natural logarithm is a strictly
-    monotonic function therefore the maximum distribution is equal to the
-    minimum of its negated quadratic form. The task is then to find the root of
-    the gradient of the quadratic form of \ineq{optimalest_posterior} with
-    respect to $\VECX$:
+    In practice more robust iteration schemes are required to obtain good
+    convergence properties. The easiest approach to find such schemes is to
+    replace \ineq{gausspostmeaniter} by an algorithm searching for the position
+    of the global maximum of \ineq{optimalest_posterior} which is the same as
+    the mean due to the posterior being Gaussian. This search is best carried
+    out in logarithmic space where the location of the extremum is found at the
+    the root of the gradient of the quadratic form of
+    \ineq{optimalest_posterior} with respect to $\VECX$
 
     \placeformula
     \startformula
@@ -799,12 +791,14 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
     
-    Usually one settles for a least squares solution to the minimization
-    problem as methods for these problems are much simpler to implement (e.g.
-    Newton's method for finding the root of a function requires the Hessian,
-    which is often expensive to calculate). \cite[Rodgers2000] shows resulting
-    iterative schemes for the Gauss-Newton method and a more robust version of
-    it, the Levenberg-Marquard iteration. Using the identity
+    Usually one settles for a least squares solution to this minimization
+    problem\footnote{The maximum search is translated to a minimum search after
+    application of the logarithm and multiplication by -2.} as methods for
+    these problems are simpler to implement (e.g. Newton's method for finding
+    the root of a function requires the Hessian, which is often expensive to
+    calculate). \cite[Rodgers2000] shows resulting iterative schemes for the
+    Gauss-Newton method and a more robust variant, the Levenberg-Marquard
+    iteration. With the identity
 
     \startformula
         \MEANVECA - \ITER{\COVMAT}{i} \ITER{\FWDJAC}{i}^\top
@@ -817,7 +811,8 @@ introduction to Bayesian statistics is additionally influenced by
     it is easily seen that \ineq{gausspostmeaniter}, the solution obtained from
     fixed point iteration with the linearized forward model, is equivalent to
     equation 5.9 from \cite[Rodgers2000], which he obtained by applying the
-    Gauss-Newton method. This underlines the equivalence of the two approaches.
+    Gauss-Newton method to \ineq{gaussminimization}. This underlines the
+    equivalence of the two approaches to determine the posterior mean.
 
     \placefigure[top][fig:iteralgo]
             {Visualization of the iterative retrieval algorithm. Missing
@@ -828,39 +823,41 @@ introduction to Bayesian statistics is additionally influenced by
             {\FLOWchart[flow:iteralgo]}
 
     The flowchart in Figure \in[fig:iteralgo] visualizes the resulting
-    iterative retrieval scheme. Given the prior knowledge, the measurement and
-    an initial guess of the profile, minimization steps with a linearized
-    forward model are taken until convergence. The profile of the last
-    iteration is then the result of the retrieval.
+    iterative retrieval scheme. Given prior knowledge, a measurement and
+    an initial guess of the state vector, minimization steps with
+    linearizations of the forward model are taken until the state vector has
+    converged. The mean and covariance matrix of the last iteration are the
+    result of the retrieval.
 
 \stopsubsection
 
 \startsubsection[title={Convergence Testing}]
 
-    It is unnecessary to iterate until the atmospheric state vector has beed
-    determined to machine precision and depending on the quality of the
-    linearization of the forward model this might never happen. Therefore a
-    criterion is needed that determines when the state vector has been
-    determined with sufficient accuracy. \cite[Rodgers2000] presents multiple
-    possibilities which are repeated here.
+    Considering the magnitude of expected errors of a retrieval, it is
+    unnecessary to iterate until the atmospheric state vector has beed
+    determined to machine precision. Therefore, a criterion is required which
+    indicates determines that the state vector has been determined with
+    sufficient accuracy. \cite[Rodgers2000] presents multiple possibilities
+    which are repeated here.
 
-    One possibility is to determine convergence directly from the value of
-    the posterior distribution $-ln(\POSTERIOR)$ whose extemum is determined
-    by iterative procedure. The gradient \ineq{gaussminimization} can be
-    incorporated in such criteria too \cite[authoryears][Hewison2006]. More
-    common are criteria based on the change between to iterations measured in
-    observation or atmospheric state space. It is important to scale such
-    measures to account for the different magnitudes of the elements of the
-    observation or state vector. The error covariance matrices of measured vs.
-    simulated brightness temperatures
+    One possibility is to assess convergence directly from the value of
+    the posterior distribution $-2 \ln(\POSTERIOR)$ whose extremum is
+    determined by the iterative procedure. The value of the gradient
+    \ineq{gaussminimization} can be incorporated in this criterion too
+    \cite[authoryears][Hewison2006]. More commonly used are criteria based on
+    change between two iteration steps measured in observation or state space.
+    It is important to scale such measures to account for the naturally
+    different magnitudes of the elements of the observation or state vector.
+    The error covariance matrices of measured vs. simulated brightness
+    temperatures,
 
     \startformula
         \COVMATI_{\delta y} = \COVMATERR (\ITER{\FWDJAC}{i}
-            \COVMATA \ITER{\FWDJAC}{i}^\top)^{-1} \COVMATERR
+            \COVMATA \ITER{\FWDJAC}{i}^\top)^{-1} \COVMATERR \EQCOMMA
     \stopformula
 
-    \cite[authoryears][Rodgers2000] and of the state vector
-    $\ITER{\COVMAT}{i+1}$ given by \ineq{gausspostcoviter} provide appropriate
+    \cite[authoryears][Rodgers2000] and of the state vector,
+    $\ITER{\COVMAT}{i+1}$ given by \ineq{gausspostcoviter}, provide appropriate
     scalings. Because covariance matrices are positive definite the resulting
     measures are always positive. They are
 
@@ -880,66 +877,67 @@ introduction to Bayesian statistics is additionally influenced by
         (\ITER{\VECX}{i} - \ITER{\VECX}{i+1})
     \stopformula
 
-    in state space. When these measures are sufficiently small iteration can be
-    stopped.
+    in state space. When these terms are sufficiently small iteration can be
+    stopped and the retrieved atmospheric state returned.
 
-    In practice the issue of convergence is more complicated as not only
-    the choice of criterion affects convergence but the minimization technique,
-    method of forward model linearization and included radiometer channels
-    are all relevant components. The first guess of the iteration procedure
-    also influences the convergence properties. Different strategies are
-    applied to increase the rate and likelihood of convergence.
-    \cite[Cimini2011] found that retrieving temperature first and then humidity
-    in a second step improved convergence efficency. \cite[Hewison2006] relaxed
-    the chosen criterion after the first 10 iterations to encourage
-    convergence. \cite[Turner2014] coupled convergence to a fixed sequence of
-    parameters that control the minimization algorithm.
+    In practice, the issue of convergence is more complicated because not only
+    the choice of criterion affects convergence is important. The minimization
+    technique, method of forward model linearization and included radiometer
+    channels are all relevant components affecting convergence. The first guess
+    of the iteration procedure also influences the convergence properties.
+    Different strategies can be applied to increase the rate and likelihood of
+    convergence.  \cite[Cimini2011] found that retrieving temperature first and
+    then humidity in a second step improved convergence efficency.
+    \cite[Hewison2006] relaxed the chosen criterion after the first 10
+    iterations to encourage convergence. \cite[Turner2014] additionally coupled
+    the criterion to a fixed sequence of parameters that controlling their
+    minimization algorithm.
 
 \stopsubsection
 
 \startsubsection[title={1D-VAR, Cost Functions and Regularization},reference=ch:costfunction]
 
-    There is another way to derive the optimal estimation retrieval scheme.
-    Instead of working directly with probability distributions the retrieval
-    problem can be approached as a minimization of the expected value of the
-    retrieval error variance. In case of the assumption of Gaussian
-    distributions this leads to the same solutions as the Bayesian approach.
-    Because of the focus on minimization variance this approach is called
-    \quote{variational} often abbreviated as 1D-VAR, since it is an applied to
-    an atmospheric profile which represents one dimension of the atmosphere.
-    A derivation from the variational perspective is found in chapter 4.2 in
-    the book by \cite[Rodgers2000].
+    There is an alternative way to derive the optimal estimation retrieval
+    scheme. Instead of directly working with probability distributions, the
+    retrieval problem can be set up as the minimization of the expected value
+    of the retrieval error variance. This leads to the same solution as the
+    Bayesian approach assuming all variables are Gaussian-distributed.
+    Because of the minimization of a variance in the alternative approach,
+    optimal estimation is also called a \quote{variational} method, often
+    abbreviated as 1D-VAR, due to its application to a vertical profile
+    representing one dimension of the atmospheric state.  A derivation starting
+    from the variational perspective is found in chapter 4.2 of the book by
+    \cite[Rodgers2000].
 
-    The quadratic form minimized in the MAP solution $-ln(\POSTERIOR)$
-    is often referred to as a cost function, terminology that is common in
-    regression problems. It is popular to add so-called regularization or
-    penalty terms to this cost function in order to make the retrieval favor
-    physically realistic solutions. In atmospheric profile retrieval such
-    a penalty might be a term involving the lapse rate
-    \cite[authoryears][Peckham2000]. \cite[Hewison2006] discussed penalizing
-    superadiabatic layers and considered a regularization of excessively high
-    liquid water content in clouds.
+    The quadratic form $-2 \ln(\POSTERIOR)$ minimized during the iteration
+    is often referred to as a cost function, terminology that is also common in
+    regression problems. So-called regularization or penalty terms can be added
+    to this cost function in order to make the retrieval favor physically
+    realistic solutions. In atmospheric profile retrieval such a penalty might
+    be a term involving the lapse rate \cite[authoryears][Peckham2000].
+    \cite[Hewison2006] discussed penalizing superadiabatic layers and also
+    considered a regularization of excessively high liquid water content in
+    clouds.
     
-    There is a problem with including information in the retrieval by adding
-    regularization terms: while the information is included in the retrieved
-    profile, it is absent from its uncertainty estimate given by
+    There is a problem with including information in the retrieval in the form
+    of regularization terms: while the information is included in the retrieved
+    mean profile, it is absent from its uncertainty estimate given by
     $\ITER{\COVMAT}{i}$. This issue can be resolved with the Bayesian
-    perspective. Viewing the cost function as the product of the prior and
-    likelihood function it becomes obvious that each additional penalty term is
-    nothing else than a multiplication by a distribution representing prior
-    knowledge. For a quadratic penalty term the associated distribution is
-    Gaussian, making the posterior a Gaussian and an analytic form of the
-    uncertainty can be derived as shown in the next section. For other terms
-    the distribution might not permit an analytic form of the posterior. Then
-    one has to resort to discretized distributions and/or Monte Carlo methods
-    which are costly due to the high dimensionality of the retrieval problem.
+    perspective. Viewing the cost function as the combination of the likelihood
+    function with prior distribution, it appears that each additional penalty
+    term corresponds to another prior distribution involved in the Bayesian
+    update. Quadratic penalty terms are associated with Gaussian distributions.
+    For these, an analytic form of the uncertainty can be derived. This is
+    further discussed in section \in[ch:additionalinfo]. Other types of
+    distributions may not permit an analytic form of the posterior.
 
     Regularization is a powerful tool for the inclusion of additional knowledge
     but penalities more complex than quadratic forms generally violate the
-    Gaussian assumptions leading to inaccurate uncertainty estimates. Often
-    these errors are tolerable since for many end users a more accuratly
-    retrieved profile is more valuable than an inconsistent uncertainty
-    assessment.
+    Gaussian assumptions leading to inaccurate uncertainty estimates. For many
+    end users a more accurately retrieved mean profile is more valuable than a
+    theoretically consistent uncertainty assessment and such errors are
+    tolerable. Other ways to include additional knowledge of the atmospheric
+    state are discussed in section \in[ch:additionalinfo].
 
 \stopsubsection
 
@@ -1387,7 +1385,7 @@ introduction to Bayesian statistics is additionally influenced by
 
 \stopsection
 
-\startsection[title={Inclusion of Additional Information}]
+\startsection[title={Inclusion of Additional Information},reference=ch:additionalinfo]
 
     Current and important topic of research. Many sites that operate
     a radiometer also operate other instruments such as infrared
