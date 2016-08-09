@@ -1,82 +1,89 @@
 The retrieval problem of atmospheric remote sensing can be stated as: given
 a measurement of a sounding device, derive some part of the atmospheric state,
-e.g. a vertical profile of temperature. The difficulty is that this derivation
-requires the inversion of radiative transfer which is an ill-posed problem
-due to the complex nature of electromagnetic wave propagation in the
-atmosphere. When a passive instrument observes atmospheric radiation, its
-measurement is affected by many emitting and absorbing layers of the atmosphere
-and multiple states may exist which result in the same measurement. Therefore
-additional information is needed to arrive at a unique solution which is
-as close as possible to the true atmospheric state. Depending on the available
-information and recources, different retrieval techniques are applicable. A
-great variety of regression models exists which are purely statistical methods.
-These directly model the inverse problem, predicting the atmospheric state
-from a measurement based on a training data set, often a time series of past
-measurements for which the corresponding atmospheric state is known by some
-other method. Regression methods are generally easy to set up once such a data
-set is available but they carry the risk of bad performance in situations not
-adequately represented in the training data. Other methods make use of a
-numerical model of the forward problem, which is used in combination with
-boundary conditions given by additional measurements and/or statistical
-knowledge to iteratively determine a solution that is consitent with both the
-boundary conditions and the forward model. Such methods are called optimal
-methods or physical retrievals.
+for example a vertical profile of temperature. The inherent difficulty of this
+procedure is that the required inversion of radiative transfer is an ill-posed
+problem due to the complex nature of electromagnetic wave propagation in a
+medium like air. When a passive remote sensing instrument observes atmospheric
+radiation, its measurement is the result of emission and extinction by all
+layers of the atmosphere. In general, multiple atmospheric states exist that
+result in very similar observations by the instrument and additional information
+is necessary to constrain the state space such that a unique solution, ideally
+the true atmospheric state, exists. These constraints can be a climatology,
+a numerical forecast or measurements from other instruments.
 
-Here, an optimal estimation method is derived and compared to the commonly used
-linear regression method. This chapter will review the necessary mathematics
-for both methods entirely in the framework of Bayesian statistics. All
-following results have beed derived before. They are derived here again to
-achieve consistent notation and to show the benefits of starting from a purely
-Bayesian approach. The calculations are based on books by \cite[Rodgers2000]
-and \cite[Bishop2006]. The former treats all aspects of the retrieval problem
-specifically for atmospheric sounding from a mixed perspective of classical and
-Bayesian statistics. His results are used for the optimal estimation technique.
-The book by Bishop is the foundation for general results on Bayesian statistics
-and the Gaussian distribution as well as for the Bayesian approach to linear
-regression. The introduction to Bayesian statistics is additionally influenced
-by \cite[Downey2013].
+Depending on the available information and resources, different retrieval
+techniques for the inversion are be applicable. A variety of statistical
+regression models exists which try to directly describe the inversion problem.
+These models approximate the atmospheric state based on an observation by
+a remote sensing instrument after being trained on a data set representative of
+the relationship which the model tries to imitate. Regression methods are
+generally easy to set up if such a data set is available, but they a prone to
+large errors in situations not adequately represented in the training data.
+Other retrieval methods use a numerical model of the forward problem
+to iteratively determine a solution consistent with given constraints on the
+atmospheric state and physical processes as simulated by the forward model.
+These methods are called optimal or physical methods.
+
+In this chapter, an optimal retrieval technique and the linear regression
+method are derived from a purely Bayesian approach to statistics. Although all
+following results have been given before, their derivations are repeated here
+in order to achieve consistent notation and discuss the benefits of operating
+in a purely Bayesian framework. The mathematics are based on the work of
+\cite[Rodgers2000], who treats all aspects of the retrieval problem of
+atmospheric sounding partially in the Bayesian framework. His results are used
+for the derivation of the optimal estimation technique. Fundamental results
+of Bayesian statistics, properties of the Gaussian distribution and the
+Bayesian approach to linear regression are taken from \cite[Bishop2006]. The
+introduction to Bayesian statistics is additionally influenced by
+\cite[Downey2013].
 
 \startsection[title={Bayesian Statistics}]
 
-    Probability always refers to some entity, which may be a hypothesis, an
-    event or a value that some variable takes. A probability is a value between
-    0 and 1 representing a continuum of certainty about the state of the
-    entity. If the entity is a hypothesis, 0 stands for absolute certainty that
-    the hypothesis is false, and 1 is absolute certainty that it is true. All
-    numbers between 0 and 1 express certainties between these extremes.
+    A probability always refers to some entity, which may be a hypothesis, an
+    event or the value of some physical variable. By convention, probability is
+    scaled to the interval $[0, 1]$ representing a continuum of certainty about
+    the state of the associated entity. For the example of a hypothesis,
+    a probability of 0 stands for the absolute certainty that the hypothesis is
+    false, 1 stands for the absolute certainty that it is true and values
+    between 0 and 1 express certainties in between these extremes.
 
-    The entity that a probability refers to can be discrete or continuous.
-    In both cases a \infull{PDF}, also called probability distribution,
-    probability mass function or {\PDF} can be defined. For the retrieval
-    problem the entity is always a continuous variable, e.g. $x \in U$, and its
-    probability distribution is a function $U \rightarrow \REALS$ which is
-    nonnegative almost everywhere. Integrating the {\PDF} over a subset of $U$
-    results in the probability that $x$ takes a value in that subset. Therefore
-    all probability distributions must fulfil
+    A probablity always has an associated probability density function, also
+    called probability distribution, probability mass function or just PDF.
+    Let $x \in U$ be a continuous variable. Its probability distribution is
+    a function $U \rightarrow \REALS$ which is non-negative almost everywhere.
+    Integrating the PDF over a subset of $U$ yields the probability that
+    $x$ is an element of that subset. Therefore all probability distributions
+    must fulfil
 
     \placeformula[eq:probaint]
     \startformula
         \int_U \PROB{x} \, \diff x = 1 \EQCOMMA
     \stopformula
     
-    that is the probability that any value of all possible will be taken must
-    be 1. A fundamental concept in Bayesian statistics is that of joint and
+    i.e. the probability that x has any value of all possible values must
+    be 1.
+
+    A fundamental concept in Bayesian statistics is that of joint and
     conditional probability. A joint probability is the probability that two
-    variables lie in a specified subset of their domain at the same time and
-    a conditional probability is a probability of one variable being part of a
-    set when it is known that the second variable takes a value in a given set.
-    The joint {\PDF} is written as $\PROB{x, y}$ (read $x$ and $y$) and the
-    conditional $\PROB{x \GIVEN y}$ (read $x$ given $y$). It is possible to
-    remove the conditioning of a probability distribution by integrating over
-    all possible values of the variable the provides the condition
+    variables are each elements of specified subsets of their respective
+    domains at the same time. A conditional probability is the probability of
+    one variable being an element of a given set when it is known that the
+    second variable is an element of another given set. Let $x$, $y$ be two
+    variables of a statistical scenario. The PDFs associated with joint and
+    conditional probabilities of $x$ and $y$ are written as $\PROB{x, y}$ (read
+    $x$ and $y$) and $\PROB{x \GIVEN y}$ (read $x$ given $y$) or $\PROB{y
+    \GIVEN x}$, respectively. It is possible to extract the probability
+    distribution of a variable from a joint distribtion by integrating
+    over all possible values of the other variables. For example:
 
     \startformula
-        \PROB{y} = \int_U \PROB{x \GIVEN y} \, \PROB{y} \, \diff x \EQSTOP
+        \PROB{y} = \int_U \PROB{x, y} \, \diff x
     \stopformula
 
-    This process is called marginalization. The extension of these concepts to
-    more than two variables is straightforward.  To derive the fundamental
-    theorem of Bayesian statistics, the product rule of probability is needed
+    if $x \in U$. This process is called marginalization.
+
+    The fundamental theorem of Bayesian statistics (aptly named \quote{Bayes'
+    theorem}), can be derived from the product rule of probability
     \cite[authoryears][Bishop2006] which reads
 
     \startformula
@@ -84,16 +91,16 @@ by \cite[Downey2013].
     \stopformula
 
     i.e. the joint probability distribution of $x$ and $y$ is the product of
-    the conditional probability distribution $x$ given $y$ and the {\PDF} of
-    $y$ independent of $x$. Because the ordering of $x$ and $y$ is
-    irrelevant, symmetry dictates that
+    the conditional probability distribution $x$ given $y$ and the PDF of
+    $y$ independent of $x$. Because $x$ and $y$ are interchangeable,
+    symmetry dictates that
 
     \startformula
         \PROB{x, y} = \PROB{y \GIVEN x} \, \PROB{x}
     \stopformula
 
-    is valid too. Together both expressions for the joint {\PDF} can be equated
-    and rearranged to yield Bayes' theorem:
+    is valid too. Equating both expressions of the joint PDF and rearranging
+    yields Bayes' theorem:
 
     \placeformula[eq:bayes_theorem]
     \startformula
@@ -101,79 +108,90 @@ by \cite[Downey2013].
             \sim \PROB{y \GIVEN x} \, \PROB{x} \EQSTOP
     \stopformula
 
-    All probability distributions must fulfil \ineq{probaint}, therefore the
-    denominator is just a normalization and generally does not need to be
-    determined explicitly. Bayes' theorem allows to turn the conditioning
-    around getting from $\PROB{y \GIVEN x}$ to $\PROB{x \GIVEN y}$ which else
-    may be hard to compute directly. For retrieval applications it is useful
-    to consider the diachronic interpretation of Bayes' theorem
-    \cite[authoryears][Downey2013], which sees \ineq{bayes_theorem} as
-    an update of the distribution of $x$ in light of some data $y$. At
-    first only $\PROB{x}$ is known, this is the a-priori distribution of $x$ or
-    just prior for short. Now some data $y$ is observed and $\PROB{x \GIVEN y}$
-    expresses the likelihood of this observation given the prior knowlege $y$.
-    Multiplying prior and likelihood and normalizing the result by $\PROB{y}$
-    yields the so called posterior distribution $\PROB{y \GIVEN x}$
-    representing the distribution of $x$ after having observed $y$. The
-    application of Bayes' theorem updates the knowledge of $x$ with new
-    knowlegde contained in $y$. This is visualized in Figure
-    \in[fig:bayes_theorem] for a variable distributed in two dimensions.
+    Because all probability distributions fulfil \ineq{probaint}, the
+    denominator acts as merely as a normalization and often does not need to be
+    determined explicitly. Bayes' theorem allows to change the conditioning
+    of a probability distribution from $\PROB{y \GIVEN x}$ to $\PROB{x \GIVEN
+    y}$ which otherwise may be hard to compute directly. For retrieval
+    applications it is useful to consider the diachronic interpretation of
+    Bayes' theorem in which \ineq{bayes_theorem} is viewed as an update of the
+    distribution of $x$ in light of some data $y$
+    \cite[authoryears][Downey2013]. At first only $\PROB{x}$ is known,
+    containing a-priori knowledge of $x$. This PDF is called prior of x. Then,
+    some new data $y$ is observed and $\PROB{y \GIVEN x}$ expresses the
+    likelihood of this observation under consideration of prior knowlege of
+    $x$.  Multiplying prior and likelihood and normalizing the result with
+    $\PROB{y}$ yields the so called posterior distribution $\PROB{x \GIVEN y}$,
+    which is the now updated distribution of $x$ after having observed $y$. By
+    applying Bayes' theorem, the prior knowledge of $x$ is combined with new
+    information contained in the distribution of $y$. This process is
+    visualized in Figure \in[fig:bayes_theorem] for two two-dimensionally
+    distributed variables.
 
     \placefigure[top][fig:bayes_theorem]
-        {Visualization of a Bayesian update. A prior {\PDF} is combined
-        with the likelihood {\PDF} according to Bayes' theorem resulting in
-        a posterior distribution combining the knowledge contained in both.}
+        {Visualization of a Bayesian update. A circular prior PDF is combined
+        with an elliptical likelihood function according to Bayes' theorem,
+        resulting in a posterior distribution combining the knowledge contained
+        in both. Combining both information on the state of the considered
+        variable has significantly constrained the high-probability state space
+        (shaded) of the posterior relative to the prior.}
         {\externalfigure[bayes_theorem][width=\textwidth]}
 
     The Bayesian framework is valuable because it deals with entire probability
-    distributions instead of just values. This means the uncertainty of a value
-    or a fact is always quantified enabeling better decisions based on this
-    data. Additionally a distribution allows sampling, i.e. generating new data
-    from the distribution. This is useful for example when visualizing the
-    data. But having to deal with probability distributions also complicates
-    calculations and analytical solutions to a problem might not exist. One way
-    to handle these situations is by discretization of the involved {\PDF}s and
-    the use of Monte Carlo methods. As shown by \cite[Downey2013] these methods
-    can work very well but they suffer from the high dimensionality of many
-    problems and quickly become computationally expensive. Sometimes it
-    sufficient to settle for a solution that is just values but still based on
-    the underlying distributions. A common solution of the type is the
-    determination of just the maximum of a probability distribution which often
-    can be derived analytically even for complicated {\PDF}s. Depending on which
-    distribution this solution is determined for, it is called the maximum
-    likelihood (ML) or maximum a-posteriori (MAP) solution.
+    distributions instead of plain values. Quantifying the uncertainty of
+    a value or a fact by such distributions enables a user to make better
+    decisions and obtain an accurate description of the state of some entity.
+    A probability distribution also allows sampling, which is useful for the
+    generation of synthetic data based on the distribution and for
+    visualization of error margins of higher-dimensional variables. However,
+    having to deal with probability distributions complicates calculations and
+    analytical solutions to specific problems do not always exist. Such
+    problems can be treated with discrete representations of the involved PDFs
+    and with the use of Monte Carlo methods. \cite[Downey2013] shows that
+    these methods can work well but they suffer under the high dimensionality
+    of many problems which causes them to be too computationally expensive to
+    be practical. Another way to deal with complicated problems in the Bayesian
+    framework is by settling for a solution that is just values but still based
+    on the underlying distribution of the result. For example, determination
+    of the maximum of a probability distribution is often possible with
+    analytic methods even for complicated PDFs. Depending on which distribution
+    the maximum solution is derived for, it is called the maximum likelihood
+    (ML) or maximum a-posteriori (MAP) solution.
 
-    There is another issue with the need for probability distributions in
-    Bayesian statistics: sometimes one just has no data at hand to decide how
-    the distribution of some variable should look like. At that point the
-    science becomes subjective and distributions are chosen based on
-    mathematical convenience or personal experience. Subjectivity in science
-    sounds like a bad idea at first but here it is argued that the way it is
-    treated in the Bayesian framework is actually a good thing. The reason is
-    not that subjectivity is good in itself but unavoidable. Most of the time
-    alternative methods starting from a non-Bayesian approach make the
-    same subjective assumption only that they are implicit and sometimes
-    downright hidden. This can be seen for example for the case of linear
-    regression, which will be derived from a Bayesian approach in section
-    \in[ch:linear_regression]. The assumption of Gaussian distributed target
-    variables and regression parameters leads to the same solution as the
-    classical approach of minimizing the sum of squared residuals with $L^2$
-    regularization. The equivalence of solutions implies that both methods rely
-    on the same assumptions but they are relatively hidden in the classical
-    approach while they are clearly exposed in the Bayesian framework and the
-    extension to different assumptions is obvious as well. Making a user
-    explicitly aware of the assumptions that a model is based on allows him/her
-    to include this information into the interpretation of results and the
-    assessment of the applicability of a model which clearly is an advantage.
+    Another issue with the need for probability distributions in Bayesian
+    statistics arises when no data are at hand with which to decide how the
+    distribution of some variable should look like. At that point, decisions
+    become subjective and distributions are chosen based on mathematical
+    convenience or personal experience. Allowing subjectivity in a scientific
+    method initially sounds like a bad idea, but here it is argued that the way
+    this issue is treated in the Bayesian framework is favorable over its
+    alternatives. The reason is not that subjectivity itself is good but that
+    it is unavoidable. Most alternative methods starting from a non-Bayesian
+    approach make the same subjective assumptions as a substitute Bayesian
+    technique, only that the assumptions are often made implicitly.
+    This can be seen in the case of linear regression, which will be derived
+    from a Bayesian approach in section \in[ch:linear_regression]. The
+    assumption of Gaussian-distributed target variables and regression
+    parameters leads to the same solution in the Bayesian framework as the
+    classical approach of minimizing the sum of squared residuals with an $L^2$
+    regularization term. The equivalence of solutions implies that both methods
+    rely on the same assumptions. In the Bayesian framework they ar explicit
+    and exposed and the extension to different assumptions is obvious. The
+    classical approach hides these assumptions behind a sum of squares whose
+    connection to the Gaussian distribution is not directly obvious. If a user
+    is explicitly aware of the assumptions on which a model is built, he/she
+    can include this information into the interpretation of results and
+    assessments of applicability of the model to various scenarios, which
+    clearly is an advantage.
 
 \stopsection
 
 \startsection[title=The Multivariate Gaussian Distribution]
 
-    The Bayesian framework is based on operations on probability distributions.
-    For theoretical derivations it is desireable to work with PDFs for which
-    analytic solutions to the necessary Bayesian operations exist. The most
-    prominent example of such a distribution is the Gaussian distribution
+    For theoretical derivations in the Bayesian framework it is desireable to
+    work with probability distributions for which analytic solutions to common
+    problems exist. The most prominent example of such a distribution is the
+    Gaussian distribution
 
     \placeformula[eq:gaussian]
     \startformula
@@ -181,37 +199,35 @@ by \cite[Downey2013].
         = \frac{1}{(2 \pi)^{d / 2} \det(\COVMAT)^{1/2}}
             \exp \left( -\frac{1}{2}(\VECX - \MEANVEC)^\top \COVMAT^{-1}
             (\VECX - \MEANVEC) \right)
-        \EQSTOP
     \stopformula
 
-    $\VECX, \, \MEANVEC \in \REALS^d$ and $\COVMAT \in \REALS^{d \times d}$
-    and the exponential function is applied component-wise. The mean of
-    this distribution is $\MEANVEC$ and the mean is also the location of the
-    only extremum. This is particularly useful for determination of the mean
-    as a simple extremum search directly yields the unique maximum. The
-    covariance matrix $\COVMAT$ determines the shape of the distribution. For
-    a proper Gaussian distribution, it is always a symmetric positive definite
-    matrix. When all off-diagonal elements of $\COVMAT$ are zero, each
-    component of the multidimensional distribution is independent from the
-    others. If nonzero off-diagonal elements exist, some or all componentes are
-    correlated. The two-dimensional example distributions shown in Figure
-    \in[fig:bayes_theorem] are all Gaussian distributions. The prior has
-    a diagonal covariance matrix and is therefore circular while the likelihood
-    function has non-zero off-diagonal elements resulting in tilted,
+    with $\VECX, \, \MEANVEC \in \REALS^d$ and $\COVMAT \in \REALS^{d \times d}$.
+    $\MEANVEC$ is the mean of this distribution and it is also the location of
+    the only extremum. This is particularly useful for the determination of
+    $\MEANVEC$ from a given Gaussian since a simple extremum search directly
+    yields the unique maximum. The symmetric and positive definite covariance
+    matrix $\COVMAT$ governs the shape of the distribution. If all off-diagonal
+    elements of $\COVMAT$ are zero, all components of the multidimensional
+    distribution are independent. If non-zero off-diagonal elements exist, some
+    or all components are correlated. The two-dimensional example distributions
+    shown in Figure \in[fig:bayes_theorem] are all Gaussian distributions. The
+    prior has a diagonal covariance matrix and is therefore circular. The
+    likelihood function has non-zero off-diagonal elements resulting in tilted,
     ellipsoidal isolines.
 
-    The Gaussian distribution is completely characterized by its mean and
-    covariance matrix. In particular, the normalization $((2 \pi)^{d/2}
-    \det(\COVMAT)^{1/2})^{-1}$ can be determined solely as a function of
-    $\COVMAT$. This is especially convenient in derivations where it is known
-    that the result is a Gaussian distribution because the normalization can be
-    inferred independently afterwards. This simplification benefits Bayesian
-    operations greatly since the marginalization of a Gaussian yields
-    a Gaussian and a conditional distribution of two Gaussian variables is
-    again Gaussian if the conditioning is linear
-    \cite[authoryears][Bishop2006]. With the normalization out of the way it is
-    furthermore practical to operate with Gaussian distributions in logarithmic
-    space. There, the Gaussian distribution is given by the quadratic form
+    A Gaussian distribution is characterized by its mean and covariance.
+    In particular, the normalization $((2 \pi)^{d/2} \det(\COVMAT)^{1/2})^{-1}$
+    can be determined from $\COVMAT$ alone. This simplifies derivations where
+    it is known that the result is a Gaussian distribution, because the
+    normalization can be inferred directly once $\COVMAT$ is known.
+    Bayesian operations benefit from this simplification since the
+    marginalization of a Gaussian yields a Gaussian and a conditional
+    distribution of two Gaussian variables is again Gaussian if the
+    conditioning is linear \cite[authoryears][Bishop2006].
+
+    With the normalization out of the way it is furthermore practical to
+    operate with Gaussian distributions in logarithmic space. There,
+    \ineq{gaussian} is given by the quadratic form
 
     \startformula
         -2 \ln(\GAUSS{\VECX}{\MEANVEC}{\COVMAT})
@@ -219,21 +235,24 @@ by \cite[Downey2013].
     \stopformula
 
     where $c \in \REALS$ is a constant that contains the normalization. This
-    form still contains all information from the original distribution.
+    form still contains all information from \ineq{gaussian} and is used
+    extensively in subsequent derivations.
 
-    Throughout this thesis it will be assumed again and again a continuous
-    variable follows a Gaussian distribution. Its convenient analytic
-    properties are a major reason for this choice and it will be tested
-    in section \in[ch:statevector] for temperature and humidity. From
-    theoretical considerations it is known that the Gaussian distribution is
-    the best distribution in terms of information content when only the mean
-    and variance of the distribution is known \cite[authoryears][Rodgers2000].
-    With the central limit theorem it can be shown that the sum of many sets
-    of random variables has a distribution that approaches a Gaussian when
-    the number of terms in the sum increases \cite[authoryears][Bishop2006]. In
-    practice, measurements are often time averages of observations of
-    higher-frequency. The central limit theorem causes such averages to have
-    error distributions that are to good approximation Gaussian.
+    Throughout this thesis it will be assumed again and again that the values
+    of a continuous variable can be described by a Gaussian distribution. Its
+    convenient analytic properties are a major reason for this choice but
+    there are other arguments supporting this assumption. From theoretical
+    considerations it is known that the Gaussian distribution is
+    the best distribution that can be chosen in terms of information content
+    when only the mean and variance of a variable are known because it
+    comes with the least assumptions about the unknown properties of the
+    variable \cite[authoryears][Rodgers2000]. Furthermore, due to the central
+    limit theorem, the sum of a set of random variables has a distribution
+    approaching a Gaussian when the number of terms in the sum increases
+    \cite[authoryears][Bishop2006]. Physical measurements are often time
+    averages of observations of higher frequency. The central limit theorem
+    causes such averages to have error distributions that are to a good
+    approximation Gaussian.
 
 \startsubsection[title=Parameter Estimation]
     
