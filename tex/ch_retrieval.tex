@@ -946,118 +946,113 @@ introduction to Bayesian statistics is additionally influenced by
 
 \startsection[title={Linear Regression},reference=ch:linear_regression]
 
-    Linear regression is a computationally cheap retrieval method. It relies
-    on an approximate model of the inversion process which is generated to fit
-    a set of training data and then used to make predictions of the atmospheric
-    state when given new brightness temperature measurements. Training data
-    are often historic data from radiosonde ascents at a given location. If
-    such data are not available, NWP analyses or forecasts may be used
-    \cite[authoryears][Guldner2013]. Predictions of the regression model do not
-    require the evaluation of a forward model, but a radiative transfer model
-    is often used to simulate the brightness temperatures for training as
-    sufficiently long time series of radiometer measurements are rare. The
-    computational effort is concentrated in the training but then evaluation of
-    the model is cheap.  This is true of all regression models and linear
-    regression shares many other properties, advantages and disadvantages with
-    most other regression methods (see also section \in[ch:otherretrievals]).
-    When generating a linear regression model, three aspects affect its
-    performance: the choice of basis functions, the training data set and the
-    measures taken to avoid overfitting.
+    Linear regression is a simple and computationally cheap retrieval method.
+    It uses an approximate model of the inversion process of radiative transfer
+    to predict the atmospheric state based on a radiometer observation.
+    This model is fitted to a representative set of training data, for example
+    historic data from radiosonde ascents paired with collocated radiometer measurements.
+    Predictions of a regression model do not require the evaluation of
+    a forward model during retrieval and are therefore quickly evaluated.
+    The computational effort is concentrated in the training phase where the
+    model parameters are determined. When generating a linear regression
+    model, three aspects affect its subsequent performance: the choice of basis
+    functions, the quality of the training data set and the measures taken to
+    avoid overfitting.
 
-    The model in linear regression consists of a set of basis functions
-    dependent on the input variables which are combined linearly to make
-    a prediction. In case of retrieval the measured brightness temperatures are
-    the input and the atmospheric profile of temperature, humidity and/or
-    liquid water is the model's output. Linear regression models can
-    approximate non-linear relationships if non-linear basis functions are
-    chosen. The \quote{linear} in the name refers to the linearity in the model
-    coefficients that are the weights with which the basis is combined. In
-    retrieval applications it is common to use the basis functions that
-    correspond to the individual brightness temperatures.
-    \cite[Crewell2007,Massaro2015] included quadratic terms as well to better
-    approximate the non-linear nature of the retrieval problem. Because the
+    The linear regression model consists of a set of basis functions
+    dependent on the input variables (predictors) which are combined linearly
+    to make a prediction of the target variables. Applied to the retrieval
+    problem, the observed brightness temperatures are
+    the model's input and an atmospheric profile of temperature, humidity
+    or liquid water is the output. A linear regression model can
+    approximate a non-linear relationship if non-linear basis functions are
+    chosen. The \quote{linear} in its name refers to the linearity in the model
+    coefficients acting as weights with which the evaluated basis functions are
+    combined. In retrieval applications it is common to use a basis directly
+    corresponding to individual brightness temperatures.
+    \cite[Crewell2007,Massaro2015] also included quadratic terms to better
+    approximate the non-linear nature of the inversion. problem Because the
     coefficients affect the model only linearly they can be determined from
-    a training data set in one step without the need for iteration, resulting
-    in a well understood, easy and cheap training process.
+    a training data set in a single fitting step without the need for
+    iteration.
 
     In order to obtain a model that provides good predictions in many
-    situations a large training data set is necessary that represents typical
-    meteorological conditions at a measurement site well. Regression models in
-    general are only as good as the data they were trained with and
+    situations a large training data set is necessary that represents the
+    relationship which is to be approximated well.  Regression models in
+    general are only as good as the data they are trained with and
     extrapolations to states not included in the training data are prone to
     errors and have no guarantee of physical reasonability
-    \cite[authoryears][Cimini2006,Turner2007,Chan2010]. This behavior is one
-    of the factors that limit the transferability of a trained regression model
-    between different radiometer sites others being different altitudes of the
-    measurement site or different channels used by different radiometers
-    \cite[authoryears][Turner2007].
+    \cite[authoryears][Cimini2006,Turner2007,Chan2010]. This behavior is one of
+    the factors limiting the transferability of a trained regression model
+    between different radiometer sites.
 
     The set of basis functions and the number of training data pairs both
     affect if a model is in danger of overfitting. A model is overfitted if it
     performs well for the training data but makes poor predictions for any
-    other data. Common practice is to have an independent test data set on
-    which model performance is evaluated or to use cross validation techniques.
-    So called regularization is used in linear regression to control
-    overfitting during training. It is preferrable to the addition of noise to
-    predictors during training as some authors have done
+    other reasonable input data. It is common practice is to have a
+    test data set independent of the training data for the evaluation of model
+    performance or to use cross validation techniques.
+    Overfitting of a linear regression model can be controlled by
+    regularization. This is preferrable to the addition of noise to predictors
+    during training like some authors have done
     \cite[alternative=authoryears,left={(e.g.  }][Churnside1994,Frate1998,Lohnert2004]
-    since it is mathematically cleaner, works also with small data sets and is
-    deterministic. In the following derivation of Bayesian linear regression
-    regularization will appear naturally from the prior of the model
+    since it works also with small data sets and is mathematically more elegant
+    and deterministic. In the following derivation of Bayesian linear
+    regression regularization will appear naturally from the prior of the model
     parameters.
 
     Due to their simplicity linear regression models are commonly used.
-    Statistical evaluations: rmse of ... K in the boundary layer. Performance
-    of generally decreasing with height. This is mainly due to limited
-    information content of radiometers which are usually most sensible to
-    temperature and humidity at lower levels. The regression model then has to
-    infer the upper level atmospheric state based on its correlation with
-    the lower levels resulting in smooth profiles that have the quality of a
-    climatological average. In terms of atmospheric structures it has been
-    observed that predictions by linear regression models are rather smooth and
-    models are able to resolve at most the lowest inversion of many
+    Statistical evaluation of linear regression models used for retrievals
+    of temperature and humidity have shown that their accurracy generally
+    decreases with increasing altitude
+    \cite[alternative=authoryears,left={(e.g. }][Solheim1998].  This is mainly
+    due to the information content of radiometer observations which is lower
+    at greater heights (see section \in[ch:weightingfuns]).  Atmospheric
+    structures predicted by linear regression models are often much smoother
+    than the actual structures and models have been found to be able to resolve
+    at most the lowest temperature inversion of many
     \cite[authoryears][Crewell2007]. Studies with other regression models, most
     notably neural networks, suggest that these aspects might be improved upon
-    by models better able to approximate the non-linear inversion problem
-    \cite[alternative=authoryears,left={(see also section
+    by models better able to approximate the non-linearity of the inversion
+    problem \cite[alternative=authoryears,left={(see also section
     \in[ch:otherretrievals] or }][Churnside1994].
 
     The classical approach to linear regression is the least squares framework
-    but the Bayesian framework provides an equivalent derivation presented
-    here. In the subsequent derivation $x$ is a component of the atmospheric
-    state vector and $\VECY$ is a  simultaneous radiometer measurement.
-
-    Consider a model $f$ of a linear combination of $n$ fixed basis functions
+    but the Bayesian framework provides an equivalent derivation. It is
+    presented here based on the book by \cite[Bishop2006]. Let $x$ be
+    a component of the atmospheric state vector and $\VECY \in \REALS^d$
+    a vector containing a radiometer observation. Consider a model $f$,
+    a linear combination of $n$ fixed basis functions
     $\VECPHI = \startpmatrix[n=3] \NC \phi_1 \NC \dots \NC \phi_n \NR
-    \stoppmatrix$ (a row vector) approximating a scalar
-    function $t$ of an input $\VECY \in \REALS^d$
+    \stoppmatrix$, approximating a scalar function $t$ of the input $\VECY$
 
     \startformula
         t(\VECY) \approx f(\VECY, \VECW) = w_0 + \sum_{i=1}^n w_i \phi_i(\VECY)
-            = \sum_{i=0}^n w_i \phi_i(\VECY) = \VECPHI(\VECY) \VECW
+            = \sum_{i=0}^n w_i \phi_i(\VECY) = \VECPHI(\VECY) \VECW \EQCOMMA
     \stopformula
 
-    where an additional constant basis function $\phi_0(\VECY) = 1$ is
-    introduced to $\VECPHI$ for modelling the constant term without the need to
-    explicitly consider it in the following derivations. A common choice for
-    basis functions in retrievals are indentity functions for individual
-    components, i.e. $n = d$ and
+    where $\VECW \in \REALS^n$ and an additional constant basis function
+    $\phi_0(\VECY) = 1$ is introduced in the third step to account for constant
+    term $w_0$ without the need to explicitly consider it in the following
+    derivations. A common choice for basis functions in retrievals are
+    indentity functions for individual components, i.e. $n = d$ and
 
     \startformula
-        \phi_0(\VECY) = 1,~ \phi_1(\VECY) = y_1, ~ \dots, \phi_d = y_d
+        \phi_0(\VECY) = 1,~ \phi_1(\VECY) = y_1, ~ \dots, \phi_d(\VECY) = y_d
     \stopformula
 
-    with $\VECY^\top = \startpmatrix[n=3] \NC y_1 \NC \dots \NC y_d \NR \stoppmatrix$,
-    but basis is not restricted to linear functions. The objective of
-    regression is to find a a parameter vector $\VECW$ from a given set of
-    $(t(\VECY), \VECY)$ pairs that is in some sense optimal. The Bayesian
-    approach even results in an entire probability distribution for $\VECW$
-    although it will be shown that the usefulness of this distribution is
-    limited.
+    with $\VECY^\top = \startpmatrix[n=3] \NC y_1 \NC \dots \NC y_d \NR
+    \stoppmatrix$, but in general any set of linear and non-linear functions
+    can be chosen. The objective when fitting the regression model is to find
+    a parameter vector $\VECW$ from a given set of $(t(\VECY), \VECY)$
+    pairs that results in a good approximation of $t$ by $f$.
+    optimal. The Bayesian approach provides a distribution for these
+    parameters.
 
-    As usual, the assumption is that the deviations between the true function
-    $t$ and its approximation $f$ follows a Gaussian distribution with zero
-    mean and covariance $\BETAI$
+    In order to obtain an analytical result for the distribution of $\VECW$
+    deviations between the true function $t$ and its approximation $f$ are
+    assumed to follow a Gaussian distribution with zero mean and covariance
+    $\BETAI$
 
     \placeformula
     \startformula
@@ -1069,18 +1064,17 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    where $x = t(\VECY)$ is now understood as the target variable and its
-    dependence on $\VECY$ is implied by the conditional variables of the
-    probability distribution. Under the assumption that data pairs from
-    corresponding datasets $\SETY = \{ \VECY_1, \dots, \VECY_m \}$ and $\SETX
-    = \{ x_1, \dots, x_m \}$ are independent, the likelihood function of
-    is given by
+    where $x = t(\VECY)$ is the so-called target variable and its
+    dependency on $\VECY$ is implied by the conditioning of its probability
+    distribution. If data from pairwise corresponding datasets $\SETY = \{
+    \VECY_1, \dots, \VECY_m \}$ and $\SETX = \{ x_1, \dots, x_m \}$ are
+    independent, the likelihood function of the target variables is given by
 
     \startformula
         \RLIKELIHOOD = \prod_{i=1}^{m} \GAUSS{x_i}{\VECPHI(\VECY_i) \VECW}{\BETAI}
     \stopformula
     
-    using \ineq{reg_indlikelihood} or alternatively by
+    using \ineq{reg_indlikelihood} or equivalently by
 
     \startformula
         \RLIKELIHOOD = \GAUSS{\VECX}{\MATPHI \VECW}{\BETAI \MATID}
@@ -1102,29 +1096,28 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
     
     In order to use Bayes' theorem to obtain the probability distribution of
-    $\VECW$ given the data pairs, a prior assumption for the parameter vector
-    is necessary. One could just assume that any value of $\VECW$ is equally
-    likely since no information about $\VECW$ are available at this point,
-    resulting in a maximum likelihood solution.  However, experience shows that
-    it is useful to make the regression favor smaller values of $\VECW$ in
-    order to obtain a model that is less prone to overfitting and numerically
-    more stable. An isotropic Gaussian with mean $\VECZERO$ is therefore
-    considered
+    $\VECW$ given the training data pairs, a prior for the parameter vector is
+    necessary. It is possible to assume that any value of $\VECW$ is equally
+    likely since no information about $\VECW$ is available at this point.
+    Experience shows however that it is benfical to make the regression favor
+    values of $\VECW$ close to $\VECZERO$ as this results in a model less prone
+    to overfitting and with better numerically stability. An isotropic Gaussian
+    with mean $\VECZERO$ is therefore considered
 
     \placeformula[eq:reg_prior]
     \startformula
         \RPRIOR = \GAUSS{\VECW}{\VECZERO}{\ALPHAI \MATID}
     \stopformula
 
-    where $\alpha$ governs the covariance of the distribution. With likelihood
-    function and prior determined, Bayes' theorem reads
+    where $\alpha > 0$ governs the covariance of the prior distribution. With
+    likelihood function and prior determined, Bayes' theorem can be written
+    down:
 
     \startformula
         \RPOSTERIOR = \frac{\RLIKELIHOOD \, \RPRIOR}{\RNORMALIZATION} \EQSTOP
     \stopformula
 
-    The denominator is only a constant normalization, applying the result
-    \ineq{gaussbayespost} with substitutions
+    Application of the result \ineq{gaussbayespost} with the substitutions
 
     \startformula
         \{ \VECX \rightarrow \VECW,~
@@ -1134,11 +1127,11 @@ introduction to Bayesian statistics is additionally influenced by
             \MATB \rightarrow \MATPHI,~
             \VECB \rightarrow \VECZERO,~
             \MATQ \rightarrow \beta \MATID
-            \} \EQCOMMA
+            \}
     \stopformula
 
-    identified from \ineq{gaussbayesinit}, yields the desired posterior
-    probability distribution for the parameter vector:
+    identified from \ineq{gaussbayesinit} yields the desired posterior
+    probability distribution for the parameter vector $\VECW$:
 
     \startsubformulas[eq:reg_posterior]
     \placesubformula
@@ -1151,8 +1144,9 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
     \stopsubformulas
 
-    Once the regression model is trained predictions for new measurements
-    $\VECY$ are made by evaluating the predictive distribution
+    This concludes the training of the regression model. Predictions of
+    a target $x$ based on a new input $\VECY$ are obtained from the predictive
+    distribution
 
     \startformula
     \startalign[n=2,align={right,left}]
@@ -1167,8 +1161,10 @@ introduction to Bayesian statistics is additionally influenced by
     
     which is the likelihood of the measurement given the model
     \ineq{reg_indlikelihood}, marginalized with respect to the posterior
-    parameter vector distribution \ineq{reg_posterior_gauss}. With the
-    substitution
+    parameter vector distribution \ineq{reg_posterior_gauss}. Result
+    \ineq{gaussbayesnorm} is applicable \footnote{The reduction in dimension in
+    \ineq{gaussbayesinityx} does not invalidate the result. The distribution's
+    mean is still linear.} with the substitution
 
     \startformula
         \{ \VECX \rightarrow \VECW,~
@@ -1180,128 +1176,126 @@ introduction to Bayesian statistics is additionally influenced by
             \MATQ \rightarrow \beta \}
     \stopformula
 
-    result \ineq{gaussbayesnorm} is applicable\footnote{The reduction in
-    dimension in \ineq{gaussbayesinityx} does not invalidate the result as the
-    dependece of the conditional distribution's mean is still linear.},
     yielding
 
     \startformula
         \RPREDICT = \GAUSS{x}{\VECPHI(\VECY) \MEANVEC}{\BETAI + \VECPHI(\VECY) \COVMAT \VECPHIT(\VECY)}
     \stopformula
 
-    as the predictive distribution. The prediction mean and therefore most
-    probable value is the sum of products between the basis functions evaluated
-    for the predictors and the the parameter vector's MAP solution, a result
-    that is consistent with the expectation from a non-Bayesian approach to
-    linear regression. The covariance of the predicted value is a combination
-    of the uncertainty inherent in the target variable and uncertainty in the
-    model parameters.
+    for the predictive distribution. The predicted mean is the sum of products
+    between the basis functions evaluated for the predictors and the the
+    parameter vector's MAP solution. This result is consistent with the
+    expectation of a prediction from a non-Bayesian approach to linear
+    regression. The covariance of the predicted value is a combination of the
+    uncertainty inherent in the target variable and uncertainty in the model
+    parameters.
 
     \placefigure[top][fig:bayesian_regression]
         {Predictive distributions of Bayesian regression models trained on 12
         data points obtained from a sine signal with added Gaussian noise of
-        standard deviation 0.2 (circles). The line is the mean of the
+        standard deviation 0.2 (circles). The black line is the mean of the
         predictive distribution, the gray and light gray shaded areas mark
-        one and three standard deviations around this mean. The left and center
+        ± one and three standard deviations around this mean. The left and center
         models are fifth and first order polynomials respectively, the right
-        model uses seven Gaussian basis functions centered between -3 and 3.}
+        model uses seven Gaussian basis functions located between -3 and 3.}
         {\externalfigure[bayesian_regression][width=\textwidth]}
 
-    On first sight, a full description of the predictive distribution seems
-    useful for the estimation of uncertainty in predictions.  But care has to
+    At first sight, a full description of the predictive distribution seems
+    useful for error estimates of predictions.  But care has to
     be taken in its interpretation because the distribution describes
-    uncertainty in the model parameters but not the choice of model itself,
-    i.e. the choice of basis functions. The uncertainty obtained from the
-    predictive distribution is just one term in the overall error estimate and
-    on its own only really useful if the chosen model can accurately describe
-    the variability in the data.  Figure \in[fig:bayesian_regression]
-    illustrates how the choice of basis functions affects the predictive
-    distribution. The model shown in the left frame is a polynomial able
-    to describe the variability of the data and gives a good fit inside the
-    data domain and an appropriate uncertainty range outside the domain. The
-    model in the middle is a line with just slope and offset as parameters. It
-    is not only a bad fit for the data in- and outside the domain but the
-    predictive distribution massively overstates its accuracy. For the given
-    model this is a good fit and the parameters can be determined with high
-    accuracy but considering all possible models it is a bad fit because the
-    model cannot express variability sufficiently. On the right seven Gaussian
-    basis functions are used, giving a good fit inside the data domain with
-    appropriate uncertainty estimates. Because the basis functions are
-    localized, the error estimate from the predictive distribution however
-    reduces to the inherent uncertainty of the target data and no contribution
-    from the model exists anymore (the covariance is dominated by $\BETAI$
-    since $\VECPHI(\VECY)$ vanishes away from the basis functions).
+    uncertainty of the model parameters but not of the choice of model itself,
+    i.e. the choice of basis functions. Uncertainty obtained from the
+    predictive distribution is just one term in the overall error estimate of
+    predictions and on its own only useful if the chosen model can
+    accurately reproduce the variability of the target data. Figure
+    \in[fig:bayesian_regression] illustrates how the choice of basis functions
+    affects the predictive distribution with a constructed example in one
+    dimension. The model shown in the left frame is a polynomial of order five
+    and able to describe the variability of the target data well. It
+    gives a good fit inside the data domain and an appropriate uncertainty
+    range outside the domain can be derived from the predictive distribution.
+    The model in the middle is a line with ony slope and offset as parameters.
+    Not only is it a bad fit for the data inside the domain but the predictive
+    distribution massively overstates the model's accuracy. For a line
+    the fit is good and the parameters can be determined with high
+    accuracy but considering all possible models it is a bad fit because a line
+    cannot express variability of the target data sufficiently. On the right,
+    seven Gaussian basis functions are used in a linear regression model,
+    resulting in a good fit inside the data domain with appropriate uncertainty
+    estimates. However, the error estimate derived from the predictive
+    distribution reduces to the inherent uncertainty of the target data outside
+    the traingin domain. No contribution to the estimate from the model exists
+    anymore due to the localized bases functions (the covariance is dominated
+    by $\BETAI$ since $\VECPHI(\VECY)$ vanishes). As for the line model, this
+    obviously does not represent the true uncertainty of the model predictions.
 
-    The treatment so far only considered multiple predictors but only a scalar
-    target. For the retrieval of an atmospheric profile from radiometer
-    measurements, each atmospheric layer is a target variable resulting in a
-    one dimensional target vector. The common approach in this situation is to
-    use the same basis functions for each target component and derive a
-    parameter matrix instead of a parameter vector $\VECW$. In the derivation
-    of this matrix it becomes apparent that the problem decouples into
-    independent, scalar regression problems for each target component
-    \cite[Bishop2006]. The results from above are therefore directly applicable
-    to multiple targets if the assumption holds that the errors of each target
-    variable are identically and independently distributed, an assumption that
-    is reasonable for the random errors of the sensors of a radiosonde.
+    The treatment of linear regression so far considered multiple
+    predictors but was restricted to a scalar target. For the retrieval of an
+    atmospheric profile from radiometer measurements, each atmospheric layer is
+    a target variable resulting in a one dimensional target vector. The common
+    approach in this situation is to use the same basis functions for each
+    target component and derive a parameter matrix instead of a parameter
+    vector $\VECW$. During the derivation of this matrix it becomes apparent
+    that the problem decouples into independent, scalar regression problems for
+    each target component \cite[authoryears][Bishop2006]. The results from
+    above are therefore directly applicable to multiple targets.
 
 \stopsection
 
 
 \startsection[title={Other Retrieval Techniques},reference=ch:otherretrievals]
 
-    The optimal estimation method is the apparent standard of physical
-    retrievals. It has proven to be very flexible and extensible. For example,
-    the integrated profiling technique by \cite[Lohnert2004] combines data from
-    a microwave radiometer, a cloud radar, a lidar-ceilometer, radiosonde
-    ascents and results from a microphysical cloud model into the optimal
-    estimation framework. \cite[Lopez2006] used observations from
-    a ground-based microwave radiometer in a 2D-VAR scheme together with
-    a cloud radar to assimilate cloud liquid water. Recent efforts by
-    \cite[DeAngelis2016] aim at the direct assimilation of observed brightness
-    temperatures in a 4D-VAR scheme of a numerical weather prediction model.
+    The optimal estimation method has been the starting point for integrated
+    approaches, that combine observations from multiple instruments.
+    For example, the integrated profiling technique by \cite[Lohnert2004]
+    applies optimal estimation to combine data from a microwave radiometer,
+    a cloud radar, a lidar-ceilometer, radiosonde ascents and results from
+    a microphysical cloud model. \cite[Lopez2006] used observations from
+    a ground-based microwave radiometer in a two-dimensional variational
+    scheme together with a cloud radar to retrieve cloud liquid water content.
+    Recent efforts by \cite[DeAngelis2016] aim at the direct use of brightness
+    temperature observations in a 4D-VAR assimilation scheme of a numerical
+    weather prediction model.
 
-    Besides linear regression models, neural networks have a history of use
-    in retrieval. Non-linear in its parameters, theoretically able to
-    approximate any complex function. Training phase is computationally more
-    expensive than that of linear regression but evaluation is again cheap once
-    the model parameters have been found. Most neural networks for the
-    retrieval of thermodynamic profiles are rather simple, typically with one
-    hidden layer and only a single type of activation function. The overall
-    performance of neural networks in terms of the root mean square error has
-    not been found to be consistently better than that of linear regression.
-    There are indications that retrieval performance is better in
-    meteorological extremes such as inversion cases despite worse root mean
-    square errors overall \cite[authoryears][Churnside1994]. Non-linear
-    regression models have been found to react stronger to a bias
+    Besides linear regression models, neural networks are used frequently to
+    retrieve vertical profiles of thermodynamic variables from radiometer
+    observations \cite[alternative=authoryears,left={(e.g. }][Churnside1994,Solheim1998,Xu2015].
+    Neural networks are non-linear models. Their training phase is more
+    complicated than that of linear regression models but evaluation is easy
+    once the model parameters have been found. Most neural networks for
+    retrieval applications are rather simple, typically with a single hidden
+    layer and one type of activation function. Their overall performance in
+    terms of the root mean square error has not been found to be consistently
+    better than that of linear regression models. There are indications
+    that retrieval performance is better in terms of the representation of
+    atmospheric structures such as temperature inversions despite worse root
+    mean square errors overall \cite[authoryears][Churnside1994]. However,
+    non-linear regression models have been found to react stronger to a bias
     \cite[authoryears][Martinet2015] and noise \cite[authoryears][Cimini2006]
-    in the input data.  Research has been focused on linear regression and
-    neural networks so far but many other regression models exist and have not
-    been used yet.  All regression models are generally easy to use but
-    measures have to be taken to avoid overfitting. They often lack methods to
-    estimate uncertainty and, as shown for the case of linear regression
+    in the input data.  Many other regression models exist that have not been
+    used for retrievals yet. All regression models are generally easy to use
+    but measures have to be taken to avoid overfitting. They often lack methods
+    to estimate uncertainty and, as shown for the case of linear regression
     (Figure \in[fig:bayesian_regression]), even if an uncertainty estimate can
-    be derived it might have very limited information content. In contrast to
-    optimal estimation retrievals which explicitly use a forward model,
-    profiles determined by regression methods need not be consistent with the
-    observed brightness temperatures they are retrieved from.
+    be derived, its information content has to be studied carefully. In
+    contrast to optimal estimation retrievals which explicitly use a forward
+    model, atmospheric states determined by regression methods are in general
+    not consistent with the brightness temperatures they are derived from.
 
-    Individual components of the retrieval can be tweaked parallel to the
-    method itself. \cite[Frate1998,Tan2011] have used principal component
-    analysis (PCA)/empirical orthogonal functions (EOF) to reduce the
-    dimensionality of the retrieval problem. This is possible because
-    simultaneous measurements from different radiometer channels are correlated
-    and contain less independent pieces of information than the number of
-    channels REF. It is also possible to use dimension reduction techniques on
-    the atmospheric state or to apply variable transformations. The choice of
-    variables that quantify the atmospheric state is generally of importance.
-    While regression techniques are able to retrieve temperature, humidity or
-    liquid water isolated from one another, optimal estimation techniques are
-    more restricted. This is discussed further in section \in[ch:statevector].
-    Regression methods are able to retrieve only partial profiles, while
-    optimal estimation is dependent on a forward model which often needs
-    a comprehensive description of the atmospheric state in order to make
-    accurate predictions.
+    Individual components of the retrieval can be tweaked nest to the method
+    itself. \cite[Frate1998,Tan2011] have used principal component
+    analysis/empirical orthogonal functions to reduce the dimensionality of
+    the retrieval problem. Such dimensionality reducing techniques can be
+    applied to the radiometer measurements or the atmospheric state vector.
+    It can also be benefitial for the retrieval accuracy to apply variable
+    transformations, e.g. to enforce postitivity. The choice of variables that
+    quantifying the atmospheric state is of importance too.  While regression
+    model are able to retrieve temperature, humidity or liquid water isolated
+    from one another, optimal estimation techniques are more restricted. This
+    is discussed further in section \in[ch:statevector]. Regression methods are
+    also able to retrieve only partial profiles, while optimal estimation is
+    dependent on a forward model which often requires a comprehensive
+    description of the atmospheric state in order to be accurate.
 
 \stopsection
 
@@ -1309,41 +1303,45 @@ introduction to Bayesian statistics is additionally influenced by
 \startsection[title={Priors and Training Data Sets}]
 
     The performance of optimal estimation and regression methods strongly
-    depends on the data that drive it. Error estimates and the prior
-    distribution in optimal estimation are important for uncertainty assessment
-    and constrain the ill-posed inversion problem of retrieval. The first
-    guess for the iteration is also often derived from the prior distribution.
-    The information contained in an observation of a ground-based radiometer
-    originates mainly from the lower atmosphere
-    \cite[authoryears][Cadeddu2013,Cimini2006,Lohnert2012], therefore the prior
-    governs the retrieval performance at upper atmospheric levels. This makes
-    NWP forecasts a good source of priors as these are generally more accurate
-    at higher levels (where larger scales dominate the atmospheric state) than
-    in the boundary layer, providing complementary information to the
-    radiometer's. Additionally, the retrieval profits from all information
-    included in the assimilation of the NWP model
-    \cite[authoryears][Cimini2015]. The result is good accuracy throughout the
-    entire troposphere \cite[alternative=authoryears,left={(see e.g. results
-    from }][Cimini2011]. The covariance of a NWP model prior is often directly
-    provided by its assimilation procedure or can be obtained from a comparison
-    of radiosonde ascents and previous forecasts. In complex terrain where
-    the model topography can significantly differ from the actual topography,
-    additional processing is necessary before model output can be used in an
+    depends on the data that drive them. Error estimates and the prior
+    distribution used in optimal estimation are important for the uncertainty
+    assessment of the retrieved atmospheric state and constrain the ill-posed
+    inversion problem of retrieval. A first guess for the iteration procedure
+    can be derived from the prior distribution. The information on the
+    atmospheric state contained in an observation of a ground-based microwave
+    radiometer originates mainly from the lower troposphere
+    \cite[authoryears][Cadeddu2013,Cimini2006,Lohnert2012]. The prior therefore
+    governs the retrieval performance at higher altitudes. This makes numerical
+    weather forecasts a good source of prior information as these are generally
+    more accurate at higher levels where larger scales of high short-term
+    predictability dominate the atmospheric state than in the boundary layer.
+    Thus, a NWP model prior provides complementary information to the
+    radiometer observation and the retrieval additionally benefits from all
+    data sources assimilated into the NWP model \cite[authoryears][Cimini2015].
+    The result is good accuracy throughout the entire troposphere
+    \cite[alternative=authoryears,left={(see e.g. results from }][Cimini2011].
+    The covariance of a NWP model prior can be extracted from the model's
+    assimilation procedure or be obtained from a comparison of radiosonde
+    ascents with previous forecasts. In complex terrain where the model
+    topography often significantly differs from the actual topography,
+    additional processing is required before model output can be used in an
     optimal estimation framework.
 
     Priors may also be determined directly from a radiosonde climatology. This
-    generally leads to distributions with a large uncertainty as the
-    atmospheric state can vary greatly over the course of a year at a given
-    location. In order to still find the appropriate atmospheric state during
-    iteration a good first guess should be chosen. A possible choice can be
-    a profile retrieved by a simple regression model in a first step. Then it
-    might be worthwhile to consider using the regression retrievals to
-    construct the prior distribution as well as this likely yields a smaller
-    uncertainty. A disadvantage of this approach is that for the independent
-    estimation of the regression model parameters and the prior covariance
-    a large data set is needed. The covariance of a data-based prior can
-    further be reduced by categorization of the data and subsequent calculation
-    of specialized priors. It is possible to specialize on seasons
+    generally leads to distributions with a large uncertainty because the
+    atmospheric state can vary greatly over the course of a year at a fixed
+    location. The atmospheric state space accessible to the optimal estimation
+    procedure is therefore only weakly constrained and a good first guess
+    should be chosen to ensure convergence on an appropriate state.
+    A possible choice is are profiles retrieved by a regression model in
+    a first step. It is worthwhile to consider using regression retrievals also
+    for the construction of the prior distribution. This likely yields
+    a smaller uncertainty compared to the climatology. A disadvantage of this
+    approach is that the independent estimation of the regression model
+    parameters and the prior covariance requires a large climatological data
+    set. The covariance of a data-based prior can further be reduced by
+    categorization of the data and subsequent calculation of specialized
+    priors. It is possible to specialize on seasons
     \cite[alternative=authoryears,left={(e.g. }][Peckham2000,Chan2010,Tan2011,Massaro2015],
     months \cite[alternative=authoryears,left={(e.g. }][Turner2007],
     time of day \cite[alternative=authoryears,left={(e.g. }][Massaro2015] or on
@@ -1353,86 +1351,85 @@ introduction to Bayesian statistics is additionally influenced by
     prior to the retrieval.
 
     Regression models relate brightness temperature measurements to atmospheric
-    states based on data pairs that were used to train the model before the
-    retrieval. The entire information about the relationship is derived from
-    this training data set. Its representativity of actual atmospheric states
-    is therefore of highest importance as the extrapolation behavior of
-    a regression model is not guaranteed to be physically meaningful. If
-    certain meteorological situation are overrepresented in the data set, the
-    resulting model will have a bias towards these situations
-    \cite[authoryears][Cadeddu2002]. In practice, training data are usually
-    a climatology of radiosonde ascents and brightness temperature measurements
-    simulated by a radiative transfer model from these ascents.
+    states based on the data pairs that were used for the training of the
+    model. The representativity of actual atmospheric states of a training data
+    set is of high importance because the extrapolation behavior of
+    a regression model is not guaranteed to be physically reasonable.
+    A model can become bias toward a certain meteorological situation if it is
+    overrepresented in the data set which has to be considered when collecting
+    training data \cite[authoryears][Cadeddu2002]. A climatology of radiosonde
+    ascents and brightness temperature measurements simulated by a radiative
+    transfer model from these ascents are commonly used for training.
     \cite[Frate1998] used an entirely synthetic training data set from an
-    atmospheric profile generator.  Few sites have radiometer measurements over
+    atmospheric profile generator. Few sites have radiometer measurements over
     a long enough time period to allow measurement-based regression, i.e.
     training with collocated and simultaneous measurements by ballon and
-    radiometer.  \cite[Guldner2013,Cimini2006] found that measurement-based
-    retrievals have significantly less bias due to the bias of the radiative
-    transfer model being absent. Where radiosonde data are not available,
-    weather prediction model output can be used alternatively
-    \cite[authoryears][Guldner2013].  Regression models based on specialized
-    training data sets may exhibit jumps in the the time evolution of retrieved
-    profiles is a transition procedure is missing
-    \cite[authoryears][Massaro2015]. In section \in[ch:linear_regression] it
-    was mentioned that regression models are not arbitrarily tranferable due to
-    measurement sites at different altitudes or of different climate. Most
-    authors therefore use data only directly from or very near to the site of
-    the radiometer to train their models. An exception is a study by
-    \cite[Sanchez2013], who combined radiosonde ascents from Denver (USA),
-    Madrid and Coruña (both Spain) as these stations are located at similar
-    latitude and altitude.
+    radiometer. \cite[Guldner2001,Cimini2006] found that measurement-based
+    regression models have significantly less bias due to the absent bias of
+    the radiative transfer model. Where radiosonde data are not available,
+    numerical weather prediction model output can be used alternatively
+    \cite[authoryears][Guldner2013]. Regression models based on specialized
+    training data sets may exhibit \quote{jumps} in the the time evolution of
+    retrieved profiles when a procedure managing the transition between
+    categories is missing \cite[authoryears][Massaro2015]. In section
+    \in[ch:linear_regression] it was mentioned that regression models are not
+    arbitrarily tranferable due to the dange of extrapolation. Models for
+    measurement sites at different altitudes or in different climates must
+    therefore be trained with different data sets. Most authors only use
+    data directly from the radiometer site to train their models. An exception
+    is a study by \cite[Sanchez2013], who combined radiosonde ascents from
+    Denver (USA), Madrid and Coruña (both Spain) which are stations located at
+    similar latitude and altitude.
 
 \stopsection
 
 \startsection[title={Inclusion of Additional Information},reference=ch:additionalinfo]
 
-    Current and important topic of research. Many sites that operate
-    a radiometer also operate other instruments such as infrared
-    spectrometers, ceilometers, cloud radars or surface in-situ sensors.
-    Radiosonde climatologies and NWP forecasts discussed in the previous
-    section are also information not obtained by the radiometer that are added
-    to the retrieval. Most radiometers have built in pressure, humidity and
-    temperature sensors.  Naturally there is a desire to use information from
-    other instruments to improve the retrieval based on radiometer
-    observations.
+    Many sites that operate a microwave radiometer also operate other
+    instruments such as infrared spectrometers, ceilometers, cloud radars or
+    surface in-situ sensors. Radiosonde climatologies and NWP model forecasts
+    can provide external information for retrievals. How best to include
+    such sources of additional information into retrieval methods is a current
+    and important topic of research.
 
-    Regression methods make it easy to include such measurements as additional
-    regressors but the retrieved atmospheric state is not necessarily
-    constrained to conform to additional information. While additional
-    information have an obvious place in the prior of optimal estimation
-    retrievals it generally not that obvious how the prior should be set up
-    to accomodate various kinds of additional information. A NWP forecast
-    directly provides a complete profile as needed for the prior but a cloud
-    base height or surface measurement does not directly lead to an entire
-    profile from which a prior can be determined. Such isolated measurements
-    may be included as fixed points of the prior by modifying its mean and
-    covariance matrix explicitly \cite[authoryears][Bleisch2012]. In-situ
-    measurements of the atmospheric state can be directly used to set a value
-    of the prior while cloud base heights may be translated to a saturated
-    layer and cloud radar observations can be used to explicity prescribe the
-    vertical distribution of liquid water
-    \cite[authoryears][Lohnert2004,Turner2007]. Modification of the prior is
-    generally not trivial and care has to be taken not to make the covariance
-    matrix singular. If there is no easy way to include additional information
-    into the prior it might be sufficient to use them for the first guess of
-    the optimal estimation iterative procedure in order to encourage
+    Regression methods make it easy to include other data as additional
+    regressors. Most regression models however do not consider the
+    uncertainties of their predictors and additional information about the
+    atmospheric state may not be used optimally. A high number of regressors
+    also increases the possibility of overfitting.
+
+    While additional information should contribute to the prior of optimal
+    estimation retrievals, it is often not immediately obvious how exactly the
+    prior should has to be set up to accomodate various kinds of such
+    information. A NWP forecast provides complete profiles of atmospheric
+    variables which can be used directly in a prior. A cloud base height or
+    surface measurement does not lead to an entire profile from which a prior
+    can be determined. Such isolated measurements may be included as fixed
+    points of the prior by modifying the mean and covariance matrix
+    \cite[authoryears][Bleisch2012]. In-situ measurements of the atmospheric
+    state can be used to explicitly set a value of the prior whereas a cloud
+    base height may be translated to a saturated layer and cloud radar
+    observations can be used to prescribe the vertical distribution of liquid
+    water \cite[authoryears][Lohnert2004,Turner2007]. When modifying the prior,
+    care has to be taken not to make the covariance matrix singular. If no easy
+    way of including an additional information into the prior distribution can
+    be found, it might be sufficient to use such information for the first
+    guess of the optimal estimation iterative procedure in order to encourage
     convergence to a profile that is consistent with the additional knowledge.
-    A similar effect has the use of regularization terms as discussed in
-    section \in[ch:costfunction]. Profiles known to be cloud-free may be
-    retrieved with a penalty on cloud liquid water or superadiabatic layers may
-    be supressed by lapse rate penalties.
+    Using regularization terms as discussed in section \in[ch:costfunction],
+    has a similar effect.
 
-    For instruments from which entire atmospheric profiles can be retrieved
-    and for which numerical forward models exists, multiple Bayesian updates
-    in the optimal estimation framework are the possible. These updates can
-    either be performed sequentially one model after the other or
-    simulateously. The latter case is treated by \cite[Rodgers2000] in chapter
-    4.1.1 where a general way to construct the posterior {\PDF} $\POSTERIOR$
-    from multiple measurements is given. If $n$ measurements $\VECY_i$ are
-    available that can be related to the state vector by forward models
-    $\FWD_i$ and the forward model errors are pairwise independent, then Bayes'
-    theorem takes the form
+    Instruments from which entire atmospheric profiles can be retrieved
+    and for which numerical forward models exists can be included in the
+    optimal estimation framework by multiple Bayesian updates. These updates
+    can either be performed sequentially one model after the other or
+    simultaneously. The latter case is discussed in the book by
+    \cite[Rodgers2000] in chapter 4.1.1. He presents a general approach for the
+    determination of the posterior PDF from multiple measurements with
+    associated forward models. If $n$ observations $\VECY_i$ are available that
+    can be related to the state vector by forward models $\FWD_i$ and the
+    forward model errors are pairwise independent, then Bayes' theorem takes
+    the form
 
     \startformula
     \startalign[n=2,align={right,left}]
@@ -1444,27 +1441,20 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    where the independence property of the forward model errors has been
-    used for the second identity. With this formulation, any measurements
-    that give information on the state vector can be included in the
-    optimal estimation procedure. This includes the a-priori knowledge,
-    which might be interpreted as a \quotation{virtual measurement} having
-    the identity function as a forward model and the prior state
-    uncertainties as errors. In this interpretation, no prior knowledge
-    is explicitly included in the model ($\PRIOR$ is constant) and the
-    maximum a-posteriori solution is equivalent to a maximum likelihood
-    solution.
+    where the independence of forward model errors is used for the second
+    identity.
 
     There is some controversy regarding the usefulness of surface observations
-    with some authors claiming they are too heavily influenced by inhomogeneous
-    surface layer processes and are not representative of the air volume that
-    is responsible for the radiometer observations
-    \cite[authoryears][Crewell2007]. Research in Innsbruck has been focused on
-    the inclusion of in-situ measurements from surface stations at different
-    altitudes as they are available in mountainous locations and found that
-    these do have a positive effect as additional regressors in a linear model
-    despite not directly probing the volume that affects the radiometer
-    \cite[authoryears][Massaro2013,Meyer2016].
+    as additional information. Some authors claim these are too strongly
+    influenced by surface layer processes and not representative of the air
+    volume responsible for the radiometer observations
+    \cite[alternative=authoryears,left={(e.g. }][Crewell2007]. Research in
+    Innsbruck has been focused on the inclusion of in-situ measurements from
+    surface stations at different altitudes as they are available in
+    mountainous locations. \cite[Massaro2013,Meyer2016] found that such
+    observations have a positive effect on the retrieval accuracy if included
+    as additional regressors in a linear regression model despite not directly
+    probing the volume that affects the radiometer.
 
 \stopsection
 
