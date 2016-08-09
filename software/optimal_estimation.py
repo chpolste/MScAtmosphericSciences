@@ -88,7 +88,7 @@ class OptimalEstimationRetrieval:
 
     def iterate(self, only=None, calculate_measures="all"):
         """Levenberg-Marquard step with 5.36 from Rodgers (2000).
-        
+
         The 'only' parameter is just for test purposes. Use the specialized
         Virtual HATPROs instead.
         """
@@ -193,7 +193,7 @@ class VirtualHATPRO:
         jac = np.vstack(jac)
         return fwd if only_forward else (fwd, jac)
 
-    def retrieve(self, y, p0, μ0, prior, max_iterations=15, only=None):
+    def retrieve(self, y, p0, μ0, prior, iterations=0, only=None):
         optest = OptimalEstimationRetrieval(
                 model=self.simulate, params=self.params,
                 y=y, p0=p0, μ0=μ0,
@@ -205,21 +205,69 @@ class VirtualHATPRO:
 
 
 class VirtualHATPRO_Kband(VirtualHATPRO):
-    
+
     absorptions = faps[:7]
     backgrounds = bgs[:7]
     angles = [0.]
 
     def __init__(self, z_retrieval, z_model, error, params, scanning=()):
-        super().__init__(z_retrieval, z_model, error, params, scanning) 
+        super().__init__(z_retrieval, z_model, error, params, scanning)
 
 
 class VirtualHATPRO_Vband(VirtualHATPRO):
-    
+
     absorptions = faps[7:]
     backgrounds = bgs[7:]
 
     def __init__(self, z_retrieval, z_model, error, params, scanning=None):
         super().__init__(z_retrieval, z_model, error, params,
                 scanning=(3, 4, 5, 6))
+
+
+def iterate_to_convergence(ret, max_iterations=20, debug=False):
+    min_cost, min_cost_at = 1.0e50, 0
+    last_cost, current_cost = 1.0e50, 1.0e50
+    cost_diff_counter = 0
+    counter = 0
+
+    if debug: print("Start")
+    while counter < 20:
+        counter += 1
+        if debug: print("Next iteration. Counter at {}.".format(counter))
+        ret.iterate()
+        current_cost = ret.costs[-1]
+
+        # Convergence condition: relative cost function change
+        #   If cost function decreases by less than 2 % or increases: increase a counter
+        #   If cost function decreases by more than 2 %: reset the counter
+        # Cost function is always positive, no abs necessary
+        relative_cost_diff = (
+                (last_cost - current_cost)
+                / ((current_cost + last_cost) / 2)
+                )
+        if relative_cost_diff * 100 <= 2:
+            cost_diff_counter += 1
+        else:
+            cost_diff_counter = 0
+
+        if debug: print("    Current cost: {:10.3f}".format(current_cost))
+        if debug: print("    Relative difference of {:5.2f} %".format(relative_cost_diff*100))
+
+        # New cost minimum found?
+        if current_cost < min_cost:
+            min_cost = current_cost
+            min_cost_at = counter
+
+        # If convergence condition counter is at 3: stop iteration
+        if cost_diff_counter > 2:
+            # Convergence, use state at min_cost
+            if debug: print("Converged, cost minimum at {}".format(min_cost_at))
+            # min_cost_at indexes ret.μs which has one element more than
+            # ret.costs i.e. the minimum of ret.costs is at min_cost_at - 1
+            return True, min_cost_at
+
+        last_cost = current_cost
+
+    if debug: print("No convergence after {} iterations".format(counter))
+    return False, min_cost_at
 
