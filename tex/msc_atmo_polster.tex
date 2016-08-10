@@ -1,9 +1,9 @@
 \usecolors[xwi]
 \usemodule[chart]
 
-\define\DocTitleFooter{Bayesian Retrieval of Thermodynamic Atmospheric Profiles from a Ground-based MWR}
+\define\DocTitleFooter{Bayesian Retrieval of Thermodynamic Atmospheric Profiles from Ground-based MWR Data}
 \define\Author{Christopher Polster}
-\define\DateOfCompletion{2016-07-??} % TODO
+\define\DateOfCompletion{2016-08-12} % TODO
 
 \input mycommands
 
@@ -26,7 +26,7 @@
         contrastcolor=black,
         style=,
         focus=standard,
-        title={Bayesian Retrieval of Thermodynamic Atmospheric Profiles from a Ground-based Microwave Radiometer},
+        title={Bayesian Retrieval of Thermodynamic Atmospheric Profiles from Ground-based Microwave Radiometer Data},
         subtitle={Masters's Thesis, 2016},
         author={Christopher Polster},
         ]
@@ -44,6 +44,7 @@
 \definebodyfontenvironment[11pt][a=12pt,b=13pt,c=14pt,d=20pt]
 
 % Headings etc. are sans-serif
+\definefontfamily[titlefont][sans][dejavusans]
 \definefont[CoverHeadingFont][dejavusans at 19pt]
 \definefont[AbstractHeadingFont][dejavusans at 11pt]
 \definefont[ChapterFont][dejavusans at 19pt]
@@ -140,6 +141,7 @@
 \definesectionblock[CoverSectionBlock][,]
 \setupsectionblock[CoverSectionBlock][page=right]
 \startsectionblockenvironment[CoverSectionBlock]
+    \switchtobodyfont[titlefont,10pt]
     \setupinterlinespace[line=14pt]
     \setupwhitespace[medium]
     \raggedcenter
@@ -224,21 +226,21 @@
 \startsectionblock[CoverSectionBlock]
 
     \dontleavehmode
-    \blank[5mm]
-    \dontleavehmode
-    \externalfigure[acinn_logo][height=15mm] % TODO: find high-resolution logo
     \blank[2mm]
+    \dontleavehmode
+    \externalfigure[uibk_logo.pdf][height=35mm]
+    \blank[5mm]
     University of Innsbruck \break
     Institute of Atmospheric and Cryospheric Sciences
-    \blank[20mm]
+    \blank[10mm]
     \dontleavehmode
-    \blackrule[width=5cm,height=0.5mm]
+    \blackrule[width=15cm,height=0.5mm]
     \blank[20mm]
 
     {\CoverHeadingFont \strut 
-    Bayesian Retrieval of Thermodynamic\blank[5mm]
-    Atmospheric Profiles from a \blank[5mm]
-    Ground-based Microwave Radiometer
+    Bayesian \thinspace Retrieval \thinspace of \thinspace Thermodynamic\blank[6mm]
+    Atmospheric \thinspace Profiles \thinspace from \thinspace Ground-based \blank[6mm]
+    Microwave \thinspace Radiometer \thinspace Data
     \strut}
 
     %{\CoverHeadingFont \strut \DocSubtitle \strut}
@@ -246,9 +248,9 @@
     \blank[20mm]
 
     \dontleavehmode
-    \blackrule[width=5cm,height=0.5mm]
+    \blackrule[width=15cm,height=0.5mm]
 
-    \blank[20mm]
+    \blank[10mm]
 
     {\bold Master's Thesis in Atmospheric Sciences}
 
@@ -271,26 +273,6 @@
 \stopsectionblock
 
 \startsectionblock[AbstractSectionBlock]
-
-    \dontleavehmode
-    \startsubject[title=Declaration]
-    I confirm that this is my own work and the use of all material from other
-    sources has been properly and fully acknowledged.
-        \dontleavehmode
-        \blank[1mm]
-
-        Innsbruck, \DateOfCompletion
-
-        \vfill
-
-        \hbox{\Author}
-        
-        %\hbox{student number}
-
-        %\hbox{Email}
-    \stopsubject
-
-    \page[right]
 
     \dontleavehmode
     \blank[10mm]
@@ -347,7 +329,7 @@
         \input ch_radiative_transfer
     \stopchapter
 
-    \startchapter[title={Instrument, Data and Methodology}]
+    \startchapter[title={Data and Methodology}]
         \input ch_instrument
     \stopchapter
 
@@ -374,5 +356,34 @@
     \page[left]
 
 \stopbackmatter
+
+\startsectionblock[AbstractSectionBlock]
+
+    \dontleavehmode
+    \startsubject[title=Eidesstattliche Erklärung]
+    Ich erkläre hiermit an Eides statt durch meine eigenhändige Unterschrift,
+    dass ich die vorliegende Arbeit selbständig verfasst und keine anderen als
+    die angegebenen Quellen und Hilfsmittel verwendet habe. Alle Stellen, die
+    wörtlich oder inhaltlich den angegebenen Quellen entnommen wurden, sind als
+    solche kenntlich gemacht.
+
+    \setuplines[align=paragraph]
+
+    Die vorliegende Arbeit wurde bisher in gleicher oder ähnlicher Form noch nicht als\break
+    Magister-/Master-/Diplomarbeit/Dissertation eingereicht. 
+
+    \dontleavehmode
+    \blank[1mm]
+
+    Innsbruck, \DateOfCompletion
+
+    \blank[20mm]
+
+    \blackrule[width=9cm,height=0.2mm]
+    \hbox{\raise2mm\hbox{\small Christopher Polster}}
+
+    \stopsubject
+
+\stopsectionblock
 
 \stoptext
