@@ -9,21 +9,49 @@ profiles forcasted by a numerical weather prediction model. Figure
 all data sources.
 
 
-\startsection[title={Review of the Retrieval Implementation}]
+\startsection[title={Retrieval Setup}]
 
-    
+    Regression models for temperature use V band channels, surface pressure
+    and surface temperature as regressors.
+    Regression models for humidity use K band channels, surface pressure
+    and surface humidity as regressors.
+    Regularization found to be important to avoid overfitting.
+
+    MWRTM used as reference TB data set. But 0.5 K std random noise added to
+    all channels before any retrievals to recreate instrument noise.
+
+    Model covariance from MWRTM/FAP vs
+    ROSENKRANZ comparison with additional 0.5 K uncorrelated instrument
+    error.
+
+    Levenberg-Marquardt method as given by Rodgers equation 5.36:
+
+    \startformula
+        ((1 + \gamma) \COVMATA^{-1} + \ITER{\FWDJAC}{i}^\top \COVMATERR^{-1} \ITER{\FWDJAC}{i}) \,
+        (\ITER{\MEANVEC}{i+1} - \ITER{\MEANVEC}{i})
+            = \ITER{\FWDJAC}{i}^\top \COVMATERR^{-1} (\VECY - \FWD(\ITER{\MEANVEC}{i}) - \MEANVECERR)
+                - \COVMATA^{-1} (\ITER{\MEANVEC}{i} - \MEANVECA)
+    \stopformula
+
+    $\gamma$ is initially set to 3000 and is halved if the cost function
+    decreased in an iteration and multiplied by 5 if the cost function
+    increased. This is not the ideal way to update...
+
+    Convergence determined with the cost function too. If the cost function
+    does not decrease by more than 2 \% over 3 iterations, the iteration with
+    the smallest cost function value is returned as the retrieval result. If no
+    convergence is reached after 20 iterations, the iteration with the smallest
+    cost function value is still returned.
 
 \stopsection
 
 
 \placefigure[top][fig:map_ibk]
-        {Data locations in the Inn-valley around Innsbruck. 1: Innsbruck
-        Airport (577 m), radiosonde launch location. 2: HATPRO location with
-        elevation scanning direction (612 m). 3: COSMO7 model grid point.
-        4 - 7: Nordkette slope stations Alpenzoo (710 m), Hungerburg (920 m),
-        Rastlboden (1220 m) and Hafelekar (2270 m). Map source:
-        http://www.basemap.at}
-        {\externalfigure[map][width=\textwidth]}
+    {Data locations in the Inn-valley around Innsbruck. 1: Innsbruck
+    Airport (577 m), radiosonde launch location. 2: HATPRO location with
+    approximate elevation scanning direction (612 m). 3: COSMO-7 model grid
+    point. Map source: http://www.basemap.at}
+    {\externalfigure[map][width=\textwidth]}
 
 
 \startsection[title={Radiosonde Climatology},reference=ch:rasoclim]
@@ -72,9 +100,9 @@ all data sources.
 
     \placefigure[top][fig:raso_prior]
             {The radiosonde climatology of temperature (left) and total water
-            content (vapor and liquid water) derived from radiosondings from
-            Innsbruck airport. The black lines indicate the climatological
-            mean value, grey shadings mark the one (dark) and two (light)
+            content (vapor and liquid water) derived from soundings launched
+            at Innsbruck airport. The black lines indicate the climatological
+            mean values, grey shadings mark the one (dark) and two (light)
             standard deviation interals obtained from sampling the
             distribution.
             }
@@ -139,16 +167,16 @@ all data sources.
     outside the boundary layer. Uncertainty increases above 6 km only in the
     tropopause region. The water content uncertainty is approximately constant
     up to 5 km above which it is decrasing toward zero. The example profile
-    shows that COSMO-7 is able to simulate temperature inversions in the lower
-    atmosphere.
+    indicates that COSMO-7 is able to simulate temperature inversions in the
+    lower atmosphere.
 
     \placefigure[top][fig:cosmo7_prior]
-            {A COSMO7 prior distribution of temperature (left) and specific
-            humidity (right) for the lower half of the troposphere, valid at
-            2015-02-06 03:02 UTC. The means (black lines) are interpolated from
-            lead times +00 and +06 of the 2015-02-06 00:00 UTC run. The grey
-            shadings show the one (dark) and two (light) standard deviation
-            intervals obtained by sampling.
+            {A COSMO-7 prior distribution of temperature (left) and total water
+            content humidity (right) valid at 2015-02-06 03:02 UTC. The means
+            (black lines) are interpolated from lead times +00 and +06 of the
+            2015-02-06 00:00 UTC run. The grey shadings show the one (dark) and
+            two (light) standard deviation intervals obtained by sampling.
+            Shown is the lower half of the troposphere.
             }
             {\externalfigure[cosmo7_prior][width=\textwidth]}
 
@@ -157,40 +185,41 @@ all data sources.
 
 \startsection[title=HATPRO Observations,reference=ch:hatpro]
 
-    The Institute of Atmospheric and Cryospheric Sciences at the University of
-    Innsbruck operates a passive microwave radiometer on the roof of one of the
-    university's buildings as part of the Innsbruck Box project. The instrument
-    is a Humidity and Temperature Profiler (HATPRO), built by the Radiometer
-    Physics GmbH \cite[authoryears][Rose2005]. It obtains brightness
-    temperatures at 14 channels with a resolution of 1 s. The receiver antenna
-    can be rotated to allow elevation scanning. Additionally, HATPRO measures
-    environmental pressure, temperature and humidity.
+    The microwave radiometer operated by the The Institute of Atmospheric and
+    Cryospheric Sciences at the University of Innsbruck is a Humidity and
+    Temperature Profiler (HATPRO), built by the Radiometer Physics GmbH
+    \cite[authoryears][Rose2005]. It records brightness temperatures in 14
+    channels with a temporal resolution of 1 s. Channels in the K band
+    correspond to frequencies of 22.24, 23.04, 23.84, 25.44, 26.24, 27.84 and
+    31.40 GHz. Channels in the V band correspond to frequencies of 51.26,
+    52.28, 53.86, 54.94, 56.66, 57.30 and 58.00 GHz. These are marked with
+    arrows in Figure \in[fig:absorption]. The receiver antenna can be rotated
+    to perform elevation scans. Environmental pressure, temperature and
+    humidity are additionaly measured by the instrument and it has
+    a precipitation sensor which is translated to a rain/no rain flag in the
+    output data.
 
-    Distance airport to university is approximately 2.5 km.
-    Radiosond launches 577 m.
+    The radiometer is set up on the roof of a university building at an
+    altitude of 612 m above sea level. Figure \in[fig:map_ibk] shows the
+    location of the radiometer site in the Inn Valley (marker 2). The distance
+    to the radiosonde launch site at Innsbruck airport (marker 1) is
+    approximately 2.5 km. The height difference between these sites is 35 m
+    with the HATPRO located higher. The elevation scan direction (indicated by
+    the triangle) is downvalley, in the opposite direction of the airport.
 
-    View downvalley in opposite direction of airport.
-    
-    Frequencies in water vapor band (K-band): 22.24, 23.04, 23.84, 25.44,
-    26.24, 27.84, 31.40 GHz.
-    Frequencies in oxygen band (V-band): 51.26, 52.28, 53.86, 54.94, 56.66,
-    57.30, 58.00 GHz.
+    Data from the instrument are available in the timespan from August to
+    October 2015. In this period, HATPRO was configured to perform boundary
+    layer scans every 10 minutes with averaging times of approximately 30 s
+    each at zenith angles of 0°, 60°, 70.8°, 75.6°, 78.6°, 81.6°, 83.4°.
+    HATPRO observations were matched to 26 radiosonde launches by taking the
+    closest boundary layer scan with at most 30 minutes time difference to the
+    launch of the radiosonde.
 
-    TODO: channel selection for optimal estimation: fulfilment of Gaussian
-    assumption \cite[Martinet2015].
-
-    Boundary layer scans every 10 minutes, otherwise zenith measurements.
-    Angles of boundary layer scans (deviation from zenith): 0°, 60°, 70.8°,
-    75.6°, 78.6°, 81.6°, 83.4°.
-
-    Raw data available from 07-2015 to 10-2015 (???), this period provides
-    little data gaps and maximum overlap with other data sources. Averaging in
-    ?? min intervals of zenith measurements. Bias (wrt to numerical model)
-    correction by comparison with radiosonde climatology. This means that
-    measurements are not independent of referenc data anymore but else too
-    little data are available. In operational applications one might do rolling
-    updates to the bias correction as well. Profits non-verifiable data during
-    the day.
+    Bias (wrt to numerical model) correction by comparison with radiosonde
+    climatology. This means that measurements are not independent of referenc
+    data anymore but else too little data are available. In operational
+    applications one might do rolling updates to the bias correction as well.
+    Profits non-verifiable data during the day.
 
 \stopsection
 

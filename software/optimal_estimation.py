@@ -94,7 +94,7 @@ class OptimalEstimationRetrieval:
         μ = self.μs[-1]
         Fμ, jac = self.model(μ, self.p0)
         rhs = (jac.T @ self.obserr.covi @ (self.y - Fμ - self.obserr.mean)
-                + self.prior.covi @ (μ - self.prior.mean))
+                - self.prior.covi @ (μ - self.prior.mean))
         covi = self.prior.covi + jac.T @ self.obserr.covi @ jac
         lhs = covi + γ * self.prior.covi
         diff = np.linalg.solve(lhs, rhs)

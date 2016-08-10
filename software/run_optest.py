@@ -27,10 +27,10 @@ if __name__ == "__main__":
     _, obs_cov_v = split_bands(obs_cov)
     obs_cov_z = get_zenith(obs_cov)
 
-    # Add 0.5 K uncorrelated instrument noise
-    obs_cov = obs_cov + 0.5*np.eye(obs_cov.shape[0])
-    obs_cov_v = obs_cov_v + 0.5*np.eye(obs_cov_v.shape[0])
-    obs_cov_z = obs_cov_z + 0.5*np.eye(obs_cov_z.shape[0])
+    # Add 0.5 K uncorrelated instrument noise (0.5 K std = 0.25 K² cov)
+    obs_cov = obs_cov + 0.25*np.eye(obs_cov.shape[0])
+    obs_cov_v = obs_cov_v + 0.25*np.eye(obs_cov_v.shape[0])
+    obs_cov_z = obs_cov_z + 0.25*np.eye(obs_cov_z.shape[0])
 
     obs_error = Gaussian(np.zeros(obs_cov.shape[0]), obs_cov)
     obs_error_v = Gaussian(np.zeros(obs_cov_v.shape[0]), obs_cov_v)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
         i += 1
 
-        #if i > 5: break
+        #if i > 20: break
 
     valids = pd.Series(valids, name="valid")
     pd.DataFrame(np.vstack([convergeds, iterations]).T, columns=["converged", "iterations"],
