@@ -1,0 +1,293 @@
+The optimal estimation and linear regression methods are used for retrievals of
+temperature and humidity profiles based on data collected in Innsbruck.
+A radiosonde climatology provides reference profiles for the evaluation of
+the performance of the retrieval techniques based on simulated brightness
+temperatures and actual radiometer data. Additional prior information is
+provided by forecasts and analyses of a regional numerical weather prediction
+model. Figure \in[fig:map_ibk] gives an overview of the Innsbruck region and
+the locations of these data sources.
+
+
+\startsection[title={Radiosonde Climatology},reference=ch:rasoclim]
+
+    Radiosondes are launched regularly once per day from Innsbruck airport
+    at the location of marker 1 in Figure \in[fig:map_ibk]. Launch time is
+    usually between 01:00 and 04:00 UTC, which corresponds to 02:00 to 05:00
+    local time in winter and 03:00 to 06:00 local time during daylight saving
+    time. Here, the climatological dataset of temperature, humidity and
+    pressure spanning the years 1999 to 2005 and 2009 to 2012, previously used
+    by \cite[Massaro2013] and \cite[Meyer2016], is extended with profiles
+    obtained between 2013 and 2016.  In total, data from 3561 radiosonde are
+    available which are separated into a training data set of 3296 profiles and
+    a test data set of 265 profiles which contains all data between February
+    2015 and January 2016. This partitioning results in the largest overlap of
+    test data with other data sources.
+
+    Because liquid water content is not measured by any instrument during
+    a balloon sounding, cloud water content is calculated by the empirical
+    cloud model of \cite[Karstens1994] based on humidity and temperature
+    information. This model is frequently used for microwave radiometer
+    retrieval studies, e.g. by \cite[Lohnert2012,Martinet2015]. After
+    application of the model, 52 \% of all training profiles and 53 \% of all
+    test profiles have at least one layer with cloud water content larger than
+    zero and are therefore categorized as cloudy.
+
+    The profiles of pressure, temperature, humidity and liquid water content
+    are linearly interpolated to the 50 levels of the retrieval grid. Figure
+    \in[fig:raso_prior] shows the climatology's mean profile of temperature and
+    total water content together with intervals of ±1 and ±2 standard
+    deviation. Temperature variability is almost constant throughout the
+    troposphere, while water variability is greater near the surface and
+    vanishes at the mean height of the tropopause. The latter is due to the
+    small water vapor content in the upper atmosphere. Total water content
+    uncertainty intervals are asymmetric because the underlying distribution is
+    a Gaussian in logarithmic space (see section \in[ch:statevector]).
+
+    Whenever the accuracy of a retrieval method is evaluated in subsequent
+    sections, these radiosonde data are the reference that retrieved profiles
+    are compared to. It must be noted that radiosondes provide point
+    measurements, are affected by horizontal drift and take a substantial amout
+    of time to reach their final height. These properties of balloon-bourne
+    sensors raise concerns regarding the representativity of the measured
+    vertical profiles for a fixed location. Only 4 \% of all radiosonde
+    profiles were obtained during day time. However, because the test data set
+    only consists of nighttime soundings this bias of climatology should not be
+    noticeable in the subsequent performance assessments of retrieval methods
+    based on the training set of radiosonde profiles.
+
+
+\stopsection
+
+\placefigure[top][fig:map_ibk]
+    {Data locations in the Inn-valley around Innsbruck. 1: Innsbruck
+    Airport (577 m), radiosonde launch location. 2: HATPRO location with
+    approximate elevation scanning direction (612 m). 3: COSMO-7 model grid
+    point. Map source: http://www.basemap.at}
+    {\externalfigure[map][width=\textwidth]}
+
+
+\startsection[title=COSMO-7 Simulated Soundings]
+
+    COSMO-7 is a regional weather prediction model for western and central
+    Europe operated by MeteoSwiss. Its terrain-following grid has a
+    horizontal mesh size of 6.6 km and 60 vertical levels up to 21453
+    m altitude. Vertical profiles of temperature, humidity and cloud water
+    content for a gridpoint near Innsbruck (marker 3 in Figure
+    \in[fig:map_ibk]) have been obtained for the timespan 2015-02-06 to
+    2016-01-20 from forecasts initiated at 00 UTC. Liquid water content
+    $\QLIQ$ is extracted from the total cloud water content $\QCLOUD$ based on
+    the temperature $T$ of the cloud according to the formula
+
+    \startformula
+        \QLIQ = \QCLOUD \startcases
+            \NC 0 \MC 233.15 \, \KELVIN \le \TEMP \NR
+            \NC \frac{\TEMP - 233.15 \, \KELVIN}{40 \, \KELVIN}
+                \MC 233.15 \, \KELVIN \lt \TEMP \lt 273.15 \, \KELVIN \EQSTOP \NR
+            \NC 1 \MC 273.15 \, \KELVIN \le \TEMP \NR
+        \stopcases
+    \stopformula
+
+    Forecasts are available in 6 h steps and up to +30 h. Profiles are linearly
+    interpolated to match any given time of retrieval between two lead times.
+
+\placefigure[top][fig:raso_prior]
+        {The radiosonde climatology of temperature (left) and total water
+        content (vapor and liquid water) derived from soundings launched
+        at Innsbruck airport. The black lines indicate the climatological
+        mean values, grey shadings mark the one (dark) and two (light)
+        standard deviation interals obtained from sampling the
+        distribution.
+        }
+        {\externalfigure[raso_prior][width=\textwidth]}
+
+    Because the surface at the gridpoint near Innsbruck is located in the model
+    topography more than 400 m too high at an altitude of 1093 m, the COSMO-7
+    profiles have to be extrapolated to the true surface height. At first it was
+    considered to simply connect the lowest level of the COSMO-7 profile to
+    actual surface measurements of temperature and humidity. This however
+    disregards information from the boundary layer processes resolved by the
+    model which would then be elevated features. Instead, profiles are
+    stretched to the ground by replacing the original height grid of COSMO-7
+    by one that ends at the same altitude but starts at the true surface.
+
+    The new grid is chosen such that lower levels are streched more than
+    upper levels but the overall relative spacing of the model levels is
+    approximately preserved. Because this procedure does not take temperature
+    gradients into account the resulting profiles likely have a significant
+    bias relative to the true atmospheric state. To counter this, the mean
+    bias of the model profiles with respect to the radiosondes from Innsbruck
+    airport is removed from the dataset. Because there are only 253 times
+    where a radiosounding exists parallel to a COSMO-7 forecast this bias is
+    determined from the entire data set. An important implication of this
+    choice is that COSMO-7 profiles used for the retrieval are not independent
+    of the radiosonde reference data set. This inconvenience is accepted in
+    favor of a more robust bias determination based on a larger data set.
+
+    In order to use the COSMO-7 forecasts as a prior for optimal estimation
+    retrievals a covariance matrix quantifying the model's uncertainty must
+    be known. As for the bias, this matrix is calculated from a comparison
+    with the reference radiosonde profiles. Figure \in[fig:cosmo7_prior]
+    shows the uncertainty range of a model profile attached to a forecast
+    interpolated to 2015-09-11 03:48 UTC in the lower half of the troposphere.
+    Temperature uncertainty is highest in the lower troposphere, but smaller
+    outside the boundary layer. Uncertainty increases above 6 km only in the
+    tropopause region. The water content uncertainty is approximately constant
+    up to 5 km above which it is decrasing toward zero. The example profile
+    indicates that COSMO-7 is able to simulate temperature inversions in the
+    lower atmosphere.
+
+    \placefigure[top][fig:cosmo7_prior]
+            {A COSMO-7 prior distribution of temperature (left) and total water
+            content humidity (right) valid at 2015-02-06 03:02 UTC. The means
+            (black lines) are interpolated from lead times +00 and +06 of the
+            2015-02-06 00:00 UTC run. The grey shadings show the one (dark) and
+            two (light) standard deviation intervals obtained by sampling.
+            Shown is the lower half of the troposphere.
+            }
+            {\externalfigure[cosmo7_prior][width=\textwidth]}
+
+\stopsection
+
+
+\startsection[title=HATPRO Observations,reference=ch:hatpro]
+
+    The microwave radiometer operated by the The Institute of Atmospheric and
+    Cryospheric Sciences at the University of Innsbruck is a Humidity and
+    Temperature Profiler (HATPRO), built by the Radiometer Physics GmbH
+    \cite[authoryears][Rose2005]. It records brightness temperatures in 14
+    channels with a temporal resolution of 1 s. Channels in the K band
+    correspond to frequencies of 22.24, 23.04, 23.84, 25.44, 26.24, 27.84 and
+    31.40 GHz. Channels in the V band correspond to frequencies of 51.26,
+    52.28, 53.86, 54.94, 56.66, 57.30 and 58.00 GHz. These are marked with
+    arrows in Figure \in[fig:absorption]. The receiver antenna can be rotated
+    to perform elevation scans. Environmental pressure, temperature and
+    humidity are additionaly measured by the instrument and it has
+    a precipitation sensor which is translated to a rain/no rain flag in the
+    output data.
+
+    The radiometer is set up on the roof of a university building at an
+    altitude of 612 m above sea level. Figure \in[fig:map_ibk] shows the
+    location of the radiometer site in the Inn Valley (marker 2). The distance
+    to the radiosonde launch site at Innsbruck airport (marker 1) is
+    approximately 2.5 km. The height difference between these sites is 35 m
+    with the HATPRO located higher. The elevation scan direction (indicated by
+    the triangle) is downvalley, in the opposite direction of the airport.
+
+    Data from the instrument are available in the timespan from August to
+    October 2015. In this period, HATPRO was configured to perform boundary
+    layer scans every 10 minutes with averaging times of approximately 30 s
+    each at zenith angles of 0°, 60°, 70.8°, 75.6°, 78.6°, 81.6°, 83.4°.
+    HATPRO observations were matched to 26 radiosonde launches by taking the
+    closest boundary layer scan with at most 30 minutes time difference to the
+    launch of the radiosonde.
+
+    \placefigure[top][fig:model_bias]
+            {Radiative transfer model biases relative to HATPRO observations
+            determined from 10 clear sky cases of matching radiometer and
+            radiosonde measurements. Compared are simulations of MonoRTM
+            \cite[authoryears][Clough2005] and MWRTM (section \in[ch:mwrtm])
+            with (MWRTM/FAP) and without a fast absorption predictor.
+            }
+            {\externalfigure[model_bias][width=\textwidth]}
+
+    Mean and covariance of the error distribution \ineq{optimalest_errpdf} are
+    governed by the bias and uncertainty of forward model error and
+    instrumental noise. Because no observation-based estimate of the
+    instrumental noise was available for the ACINN HATPRO, a radiometric
+    accuracy of 0.5 K standard deviation is assumed for all channels. This
+    value is likely too high for the instrumental error alone considering that
+    \cite[Rose2005] claim at most 0.4 K error for 1 s integration times but
+    fluctuations of temperature and humidity in the atmosphere cause
+    measurement noise as well. In any case, a conservative estimate of the
+    instrumental noise is certainly favorable to an underestimation. The bias
+    of radative transfer models with respect to the HATPRO observations is
+    determined from clear sky observations matched to radiosonde ascents.
+    Unfortunately, only 11 profiles were classified as clear-sky from the
+    radiosonde data and webcam pictures of the Inn valley revealed that only 10
+    of these profiles were actually cloud free. Bias values calculated from
+    this rather poor set of data are shown in Figure \in[fig:model_bias].
+
+    MWRTM has the largest bias values in the K band channels and simulates
+    brightness temperatures systematically warmer than measurements. This
+    behavior was also found by \cite[Cimini2004] for a model based on the
+    \cite[Liebe1993] absorption description. In the V band, MWRTM with and
+    without the fast absorption predictor is closer to the HATPRO observations
+    than MonoRTM for the transparent channels. Biases of both models are very
+    similar and small in the opaque V band channels. The depicted bias values
+    are used for the mean of the error distribution \ineq{optimalest_errpdf}
+    in optimal estimation retrievals based on HATPRO observations.
+
+\stopsection
+
+
+\startsection[title={Retrieval Setup}]
+
+    Synthetic brightness temperature data used as input for retrievals
+    and the training of regression models are simulated with MWRTM using the
+    full \cite[Liebe1993] and \cite[Turner2016] absorption models based on
+    high-resolution radiosonde data. Zero-mean random noise with a standard
+    deviation of 0.5 K is added to all brightness temperature simulations used
+    as input for retrievals when assessing the synthetic performance of optimal
+    estimation and regression methods but not for regression training data
+    (regularization is used instead). This is effective for the detection of
+    overfitted regression models and is supposed to recreate the uncertainty of
+    real measurements from a radiometer in order to increase the significance
+    and representative value of synthetic retrieval performance assessments. As
+    dicussed in section \in[ch:elevation_scanning], off-zenith data are only
+    used from the four most opaque V band channels (54.94, 56.66, 57.30, 58.00
+    GHz).
+
+    The optimal estimation scheme uses MWRTM with fast absorption predictors
+    for the forward and Jacobian calculations. The observation error covariance
+    $\COVMATERR$ is determined from a comparison of MWRTM simulations with
+    values from the Rosenkranz model from section \in[ch:model_comparison].
+    Additionally, an uncorrelated instrument error of 0.5 K standard deviation
+    is added to the observation error covariance consistent with the noise
+    added to brightness temperature input data from MWRTM and the instrumental
+    error assumed for HATPRO observations in section \in[ch:hatpro].
+
+    The optimal estimation scheme is implemented with a Levenberg-Marquardt
+    minimization scheme adapted from a form given by \cite[Rodgers2000]
+    (equation 5.3.6)
+
+    \startformula
+        ((1 + \gamma) \COVMATA^{-1} + \ITER{\FWDJAC}{i}^\top \COVMATERR^{-1} \ITER{\FWDJAC}{i}) \,
+        (\ITER{\MEANVEC}{i+1} - \ITER{\MEANVEC}{i})
+            = \ITER{\FWDJAC}{i}^\top \COVMATERR^{-1} (\VECY - \FWD(\ITER{\MEANVEC}{i}) - \MEANVECERR)
+                - \COVMATA^{-1} (\ITER{\MEANVEC}{i} - \MEANVECA) \EQSTOP
+    \stopformula
+
+    This equation is solved with a linear algebra routine for the difference
+    $(\ITER{\MEANVEC}{i+1} - \ITER{\MEANVEC}{i})$ which is then used to
+    determine $\ITER{\MEANVEC}{i+1}$, the new mean of the atmospheric state
+    vector distribtion.
+
+    $\gamma \ge 0$ is a parameter controlling the step size taken with each
+    iteration. The inital value of $\gamma$ is set to 3000 and is then adapted
+    after each iteration based on the change of the cost function
+    \ineq{itercostfun}. If the cost function increases, $\gamma$ is increased
+    by a factor of 5, if the cost function decreases $\gamma$ is halved. This
+    strategy is not optimal but has been found to work well for retrievals here
+    and was also used by \cite[Schneebeli2009].
+
+    Convergence is determined from the change of the cost function
+    \ineq{itercostfun}. If the cost function does not decrease by more than
+    2 \% over 3 iterations, the iteration state with the smallest cost function
+    value is returned as the retrieval result.  If no convergence is reached
+    after 20 iterations, the iteration with the smallest cost function value is
+    still returned but a quality flag is set indicating that the corresponding
+    profile did not converge properly. The threshold of 2 \% was chosen
+    subjectively based on experiences during experimentation.
+
+    The basis functions chosen for all regression models are identity functions
+    for the regressors and a constant function as shown in
+    \ineq{regression_basis}. The regressors for temperature retrievals are
+    brightness temperatures from V band channels, surface pressure and surface
+    temperature. Specific water content retrievals use brightness temperatures
+    from K band channels, surface pressure and surface specific humidity as
+    regressors. Regularization was found to be important during training in
+    order to avoid overfitting. The chosen regularization maximizes the
+    performance of the regression models on the test data set.
+
+\stopsection
+
