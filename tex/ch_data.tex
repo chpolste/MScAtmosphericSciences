@@ -220,7 +220,7 @@ the locations of these data sources.
 \stopsection
 
 
-\startsection[title={Retrieval Setup}]
+\startsection[title={Retrieval and Radiative Transfer Setup}]
 
     Synthetic brightness temperature data used as input for retrievals
     and the training of regression models are simulated with MWRTM using the
@@ -240,11 +240,18 @@ the locations of these data sources.
     The optimal estimation scheme uses MWRTM with fast absorption predictors
     for the forward and Jacobian calculations. The observation error covariance
     $\COVMATERR$ is determined from a comparison of MWRTM simulations with
-    values from the Rosenkranz model from section \in[ch:model_comparison].
-    Additionally, an uncorrelated instrument error of 0.5 K standard deviation
-    is added to the observation error covariance consistent with the noise
-    added to brightness temperature input data from MWRTM and the instrumental
-    error assumed for HATPRO observations in section \in[ch:hatpro].
+    values from the \cite[Rosenkranz1998] model from section
+    \in[ch:model_comparison]. Because the Rosenkranz data are based on high
+    resolution radiosonde data, use no fast absorption predictor and are based
+    on slightly different assumptions about the state of the upper atmosphere
+    and liquid water content, the determined covariance matrix should include
+    contributions from most forward model uncertainties described in section
+    \in[ch:rtm_errors] and a detailed assessment of each individual term as
+    done by \cite[Hewison2006] is passed on. An uncorrelated instrument error
+    of 0.5 K standard deviation is added to the thus determined observation
+    error covariance, consistent with the noise added to brightness temperature
+    input data from MWRTM and the instrumental error assumed for HATPRO
+    observations in section \in[ch:hatpro].
 
     The optimal estimation scheme is implemented with a Levenberg-Marquardt
     minimization scheme adapted from a form given by \cite[Rodgers2000]

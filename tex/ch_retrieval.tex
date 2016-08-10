@@ -833,18 +833,27 @@ introduction to Bayesian statistics is additionally influenced by
 
 \startsubsection[title={Convergence Testing}]
 
-    Considering the magnitude of expected errors of a retrieval, it is
-    unnecessary to iterate until the atmospheric state vector has beed
-    determined to machine precision. Therefore, a criterion is required which
-    indicates determines that the state vector has been determined with
-    sufficient accuracy. \cite[Rodgers2000] presents multiple possibilities
-    which are repeated here.
+    Considering the magnitude of errors expected from a retrieval, it is
+    unnecessary to iterate until the atmospheric state vector has been
+    determined with machine precision. Therefore, a criterion which indicates
+    if the state vector has been determined with sufficient accuracy is
+    required. \cite[Rodgers2000] presents multiple possibilities which are
+    repeated here.
 
-    One possibility is to assess convergence directly from the value of
-    the posterior distribution $-2 \ln(\POSTERIOR)$ whose extremum is
-    determined by the iterative procedure. The value of the gradient
+    One possibility is to assess convergence directly with the value of the
+    posterior distribution \ineq{optimalest_posterior} evaluated in logarithmic
+    space (the cost function)
+
+    \placeformula[eq:itercostfun]
+    \startformula
+        \GAUSSEXP{\VECY}{\FWD(\ITER{\MEANVEC}{i}) - \MEANVECERR}{\COVMATERR^{-1}}
+        + \GAUSSEXP{\ITER{\MEANVEC}{i}}{\MEANVECA}{\COVMATA^{-1}} + \CONST \EQSTOP
+    \stopformula
+
+    The constant term arising from the normalization can safely be ignored for
+    the purposes of convergence detection. The value of the gradient
     \ineq{gaussminimization} can be incorporated in this criterion too
-    \cite[authoryears][Hewison2006]. More commonly used are criteria based on
+    \cite[authoryears][Hewison2006]. Also used are criteria based on the
     change between two iteration steps measured in observation or state space.
     It is important to scale such measures to account for the naturally
     different magnitudes of the elements of the observation or state vector.
@@ -1037,6 +1046,7 @@ introduction to Bayesian statistics is additionally influenced by
     derivations. A common choice for basis functions in retrievals are
     indentity functions for individual components, i.e. $n = d$ and
 
+    \placeformula[eq:regression_basis]
     \startformula
         \phi_0(\VECY) = 1,~ \phi_1(\VECY) = y_1, ~ \dots, \phi_d(\VECY) = y_d
     \stopformula

@@ -258,10 +258,9 @@ with the presentation of a numerical model implementation.
         }
         {\externalfigure[gauss_verification][width=\textwidth]}
 
-    Reducing specific humidity and liquid water content to a combined total
-    water content \footnote{Total water content is meant to be specific to
-    a unit mass of air similar to specific humidity. For brevity this is not
-    explicity written out but always implied throughout this text.} variable is
+    Reducing specific humidity and liquid water content to a combined specific
+    water content \footnote{Specific water content is meant to be specific to
+    a unit mass of air similar to specific humidity.} variable is
     practical in multiple ways. In terms of the distribution functions the
     asymmetry found for liquid water content is even worse than for water vapor
     since many atmospheric profiles are cloud-free resulting in a second mode
@@ -277,7 +276,7 @@ with the presentation of a numerical model implementation.
     sensible if there is a way to separate the components again for the
     calculation of the absorption coefficients. The effect of ice on microwave
     radiative transfer is negligible (see section \in[ch:extinction]) therefore
-    it is sufficient to only include water vapor and liquid in the total water
+    it is sufficient to only include water vapor and liquid water in the specific water
     content. The governing quantity of the partitioning scheme for these
     components is the saturation vapor pressure of air over water as it
     determines when the capabilities of the gaseous water content are exceeded
@@ -308,10 +307,10 @@ with the presentation of a numerical model implementation.
         \RHL = \frac{\QTOT}{\QSAT} = \frac{\QVAP + \QLIQ}{\QSAT}
     \stopformula
 
-    is the fraction of total water content to water content at saturation,
-    a generalization of relative humidity that includes liquid water.
-    Integration yields the desired expressions for liquid water content and
-    specific humidity
+    is the fraction of specific water content to specific water content at
+    saturation, a generalization of relative humidity that includes liquid
+    water. Integration yields the desired expressions for liquid water content
+    and specific humidity
 
     \placeformula
     \startformula
@@ -384,7 +383,7 @@ with the presentation of a numerical model implementation.
 \stopsection
 
 
-\startsection[title={Retrieval Information Content and Weighting Functions}]
+\startsection[title={Retrieval Information Content and Weighting Functions},reference={ch:weightingfuns}]
 
     Two important properties associated with atmospheric absorption govern the
     frequencies of channels which a microwave radiometer observes in order
@@ -595,7 +594,7 @@ with the presentation of a numerical model implementation.
 \stopsection
 
 
-\startsection[title={Characterization of Errors},reference={ch:rtm_errors}]
+\startsection[title={Error Characterization},reference={ch:rtm_errors}]
 
     The likelihood function \ineq{optimalest_likelihood} requires an error
     estimate which is a combination of instrumental error and forward model
@@ -608,7 +607,7 @@ with the presentation of a numerical model implementation.
     be considered stationary. \cite[Hewison2006] determined radiometric noise
     from observations of a black body reference target but many authors simply
     assume uncorrelated errors between 0.2 and 0.5 K for the radiometer
-    channels.  \cite[alternative=authoryears,left={(e.g.
+    channels \cite[alternative=authoryears,left={(e.g.
     }][Churnside1994,Frate1998,Lohnert2004,Martinet2015]. Additional
     instrumental errors can occur from misaligned angles during elevation scans
     and radio frequency interference caused by sources of microwave radiation
@@ -628,9 +627,8 @@ with the presentation of a numerical model implementation.
     significantly contribute to errors in simulated brightness temperatures.
     Absorption model errors can be separated into a contribution from
     uncertainties in the description of absorption processes and a contribution
-    from mathematical simplifications which are often made to speed up
-    radiative transfer calculations \cite[alternative=authoryears,left={(e.g.
-    }][Lohnert2004].
+    from mathematical simplifications which are sometimes made to speed up
+    radiative transfer calculations.
 
     Uncertainties related to implementation choices like the number of levels
     of the retrieval grid, the restriction of radiative transfer to
@@ -719,7 +717,7 @@ with the presentation of a numerical model implementation.
     In order to obtain numerically accurate results the radiative transfer
     model has to operate internally with a much finer discretization than that
     of typical retrievals grids. The input profiles of pressure, temperature
-    and total water content must therefore be interpolated to the internal
+    and specific water content must therefore be interpolated to the internal
     model grid. The model provides a linear interpolation scheme for this task.
     Absorption coefficients are then calculated on the finder model grid where
     the numerical integration also takes place. A first implementation
@@ -812,7 +810,7 @@ with the presentation of a numerical model implementation.
 
     Following the choice of state vector variables from section
     \in[ch:statevector], the predictors of the regression models are chosen to
-    be pressure, temperature and the natural logarithm of total water content.
+    be pressure, temperature and the natural logarithm of specific water content.
     A first implementation modelled both gaseous and cloud absorption together
     with a polynomial of the state vector variables. But even for polynomials
     of degree five including all interaction terms, large errors were found in
@@ -824,7 +822,7 @@ with the presentation of a numerical model implementation.
 
     Instead of fitting a polynomial to the combined gaseous and cloud
     absorption, the components are approximated separately after separation of
-    the total water content of the state vector into vapor and liquid
+    the specific water content of the state vector into vapor and liquid
     components according to \ineq{qliq} and \ineq{qvap}. Specific cloud
     absorption following \cite[Turner2016] is only a function of temperature
     and modelled by the FAP as a 5th order polynomial. Gaseous absorption
@@ -852,12 +850,13 @@ with the presentation of a numerical model implementation.
 
     As discussed in section \in[ch:retrievalgrid], it is important to consider
     contributions from the tropopause and lower stratosphere to brightness
-    temperatures measured by a radiometer at the ground. With the retrieval
-    grid ending at 12 km, the radiative transfer model must account for the
-    emission and absorption in the upper atmosphere in order to make accurate
-    predictions particularly for the more transparent V band oxygen channels.
-    The transparent K band channels are not significantly affected by the upper
-    atmosphere because water vapor concentrations are low and emission is weak.
+    temperatures measured by a radiometer at the ground in transparent
+    channels. With the retrieval grid ending at 12 km, the radiative transfer
+    model must account for the emission and absorption in the upper atmosphere
+    in order to make accurate predictions particularly for the more transparent
+    V band oxygen channels.  The transparent K band channels are not
+    significantly affected by the upper atmosphere because water vapor
+    concentrations are low and emission is weak.
 
     MWRTM provides the possiblility to correct for missing parts of the profile
     by adjusting the cosmic background temperature to account for the emission
@@ -868,114 +867,105 @@ with the presentation of a numerical model implementation.
 
 \stopsubsection
 
-\startsubsection[title={Model Intercomparison},reference={ch:model_comparison}]
+\startsubsection[title={Model Intercomparison and Verification},reference={ch:model_comparison}]
 
-    The model should be compared to established radiative transfer models to
-    ensure its correctness. A model comparison also allows a quantification of
-    spectroscopy errors which are an important part of the forward model error
-    covariance (section \in[]) \cite[authoryears][Hewison2006]. Brightness
-    temperature simulations from two other models are available for the
-    evaluation: MonoRTM version 5.2 \cite[authoryears][Clough2005] and a model
-    using gas absorption according to \cite[Rosenkranz1998] previously used by
-    \cite[Massaro2015]. The test data set is made up of 1568 radiosonde
-    profiles from Innsbruck. Because the data from \cite[Massaro2015] use
-    a slightly different cloud liquid water parameterization than this thesis
-    does (see section \in[ch:???]) and only spectroscopic errors should be
-    assessed here all profiles of the test data set are clear sky cases.
+    The implemented model should be compared to established radiative transfer
+    models to ensure correctness and to quantify its spectroscopy errors which
+    are an important part of the forward model error covariance (section
+    \in[ch:rtm_errors]). Brightness temperature simulations from two other
+    models are available for the evaluation: MonoRTM version 5.2
+    \cite[authoryears][Clough2005] and a model using gas absorption according
+    to \cite[Rosenkranz1998] previously used by \cite[Massaro2015].  The latter
+    is not available as an executable computer program but calculated values of
+    brightness temperatures are.
+
+    The test data set for the intercomparison is made up of 1568 radiosonde
+    profiles from Innsbruck airport. Because the data from \cite[Massaro2015]
+    use a slightly different parameterization to determine cloud liquid water
+    from radiosonde ascents than the one described in sections
+    \in[ch:statevector] and \in[ch:rasoclim] and the aim of this
+    intercomparison is to quantify differences due to the radiative transfer
+    model formulation, all profiles of the test data set are clear sky cases.
 
     \placefigure[top][fig:model_comparison]
-        {Mean difference (saturated) and covariance (pale) of brightness
-        temperatures calculated by the model implemented in section
-        \in[ch:mwrtm] (MWRTM), MonoRTM 5.2 and a model based on absorption
-        as described by \cite[Rosenkranz1998] for over 1000 radiosonde ascents
-        and zenith view. The covariances are sampled from the full covariance
-        matrices.
+        {Mean (top) and standard deviation (bottom) of brightness temperature
+        differences from three different radiative transfer models. High
+        resolution simulations by MWRTM provide the reference state to which
+        the differences are calculated. Version 5.2 of MonoRTM (dark grey) is
+        used and Rosenkranz (light grey) is a model used by \cite[Massaro2015]
+        based on gaseous absorption according to \cite[Rosenkranz1998].
+        MWRTM/FAP (white) is a variant of MWRTM with a coarser vertical
+        discretization than the reference and uses a fast absorption predictor.
+        The test data set are 1581 clear sky profiles derived from radiosondes
+        launched at Innsbruck airport. All models simulate a zenith view and
+        the standard deviations are obtained by sampling the full covariance
+        matrices of each model pair. 
         }
         {\externalfigure[model_comparison][width=\textwidth]}
 
     Figure \in[fig:model_comparison] shows the results of the model comparison
-    in terms of mean and standard deviation of model differences. As noticed
-    before by \cite[Westwater2004] and \cite[Cimini2004], the absorption models
-    agree best in opaque spectral regions. Biases change sign between V and
-    K band and their magnitude in the more transparent V band channels is
-    generally higher than in the K band channels. Overall, MWRTM agrees better
-    with MonoRTM than with Rosenkranz and MonoRTM and Rosenkranz agree better
-    with each other than with MWRTM.
+    in terms of means and standard deviations of model differences for each
+    channel of a HATPRO radiometer (section \in[ch:hatpro]). The radiative
+    transfer models agree best in opaque spectral regions, which was also
+    found in studies by \cite[Westwater2004] and \cite[Cimini2004]. Biases
+    change sign between V and K band and are very small in the opaque channels
+    of the V band. MonoRTM and the \cite[Rosenkranz1998] model agree better
+    in the K band than in the transparent V band channels. As found before by
+    \cite[Cimini2004], the \cite[Liebe1993] absorption model used by MWRTM
+    gives brightness temperature systematically warmer than other models in
+    the K band. MWRTM is closer to MonoRTM for all water vapor channels but
+    closer to the \cite[Rosenkranz1998] model in the oxygen channels.
 
-    Magnitudes of the bias values can be compared to a study by
-    \cite[Cimini2004] who evaluated four absorption models including all of the
-    ones used here (although they used an older version of MonoRTM).  Overall
-    bias values on the order of 1 - 2 K are found in their comparison as well.
-    In the K band their implementation of a RTM using \cite[Rosenkranz1998]
-    absorption also showed better agreement with MonoRTM than with the
-    \cite[Liebe1993] model. In the V band however agreement between absorption
-    by \cite[Rosenkranz1998] and \cite[Liebe1993] is better than seen in Figure
-    \in[fig:model_comparison] with a significantly smaller bias in the more
-    transparent channels.
+    Magnitudes of the model biases overall are similar to those from
+    a comparison by \cite[Cimini2004] who evaluated four absorption models
+    including all of the ones used here, at similar frequencies but with an
+    older version of MonoRTM. Looking at individual channels there are however
+    some differences that should be addressed. The magnitude of the mean
+    differences between MWRTM and Rosenkranz in channels 52.28 and 53.85 GHz
+    are much smaller in the comparison by \cite[Cimini2004] than here. Further
+    investigation of this issue revealed that the differences in the more
+    transparent V band channels are strongly dependent on the chosen profile
+    extension described in section \in[ch:missing_profile]. It is likely that
+    the model used by \cite[Massaro2015] makes a different assumption about the
+    state of the upper atmosphere than MWRTM, resulting in larger differences
+    here. In a comparison carried out between absorption models according to
+    Rosenkranz and Liebe by \cite[Lohnert2004], mean brightness temperature
+    differences at frequencies 51.8 and 52.8 GHz were around 0.6 - 0.8 K. These
+    values are closer to ones from the transparent channels of the V band here
+    (this comparison assumes that the bias is a mostly continuous function of
+    frequency). A second discrepancy in comparions between these two models is
+    found in the 22.24 GHz channel which shows good agreement between MWRTM and
+    Rosenkranz here but a bias value of about 2.5 K in the study by
+    \cite[Cimini2004] and 1.7 K in the comparison by \cite[Lohnert2004]. It was
+    not possible to determine where this discrepancy originates from.
 
-    TODO:
-    Bias in transparent oxygen channels very sensitive to choice of highest
-    level of retrieval grid and method of accounting for missing parts of
-    atmosphere. This kind of error is mostly a bias which has no influcence
-    when evaluating synthetic retrieval performance and will be corrected for
-    when using actual radiometer observations.
-
-    \cite[Liebe1993] absorption verified by comparison to routines from
-    \hyphenatedurl{http://reef.atmos.colostate.edu/~odell/at622/assignments/project1/codes/},
-    no difference if exact absorption of FAP is used, no difference if internal
-    model resolution is changed.
-    Bias does not appear to scale with transparency of channel and changes sign
-    between K and V band.
-    Since comparison results are from zenith refraction cannot be cause of
-    differences either.
-
-    Standard deviation higher for more transparent channels.
-
-    Also compare with \cite[Lohnert2004], figure 2.
-
-    Elevation scanning. TODO:
-    This is also confirmed by a comparison of simulations with results from the
-    reference model from section \in[ch:model_comparison] which shows
-    differences considerably lower than the noise level of the radiometer.
-
-
-    The spectroscopic error covariance matrix is assembled from the comparison
-    with the model used by \cite[Massaro2015].
-
-\stopsubsection
-
+    For evaluations of retrieval accuracy with simulated brightness
+    temperatures model biases are negligible because they affect simulated
+    observations, training data for a regression model and the radiative
+    transfer calculations during optimal estimation equally. When working with
+    actual radiometer data model biases are explicitly accounted for and
+    therefore of little importance.
     
-\startsubsection[title={Achievements and Shortcomings}]
+    Standard deviations are larger for the more transparent channels but
+    generally not significantly higher than values expected for instrument
+    uncertainties (section \in[ch:rtm_errors]).
 
-    The implementation of MWRTM's automatic differentiation is rather crude and
-    not extremely efficient. Nevertheless it showcases that the method is
-    applicable to radiative transfer modelling and even though barely any
-    performance optimizations were done, calculation of Jacobians is
-    significantly faster than by finite differences. Future developments with
-    automatic differentiation should apply one of the many available code
-    generators, which make it easy to use backward-mode differentiation and
-    exploit compiler optimizations for high efficiency.
+    The low resolution variant of MWRTM with fast absorption predictors shows
+    significant mean values and standard deviations of brightness temperature
+    differences only in the transparent V band channels. These are again
+    strongly dependent on the assumed state of the upper atmosphere. MWRTM uses
+    the entire radiosonde profiles while MWRTM/FAP cuts profiles at 12 km,
+    which is the highest altitude of the retrieval grid and then assumes a
+    US standard atmosphere profile above. With this in mind the FAP accuracy
+    is adequate for retrieval use.
 
-    This discrepancy might require more investigation if
-    the MWRTM is developed further but for the rest of this thesis it is still
-    the model used for all retrievals. This is justified by the following
-    arguments: Since there is no bias between the MWRTM and other models in
-    the more opaque channels of the V band and the standard deviation between
-    models is less than 1 K even for the transparent channels, it is unlikely
-    that the source of this discrepancy is a fundamental error in the
-    implementation of the \cite[Liebe1993] absorption model. A more likely
-    source are different discretization, interpolation and numerical quadrature
-    schemes between the model implementations or differences in the test data
-    sets (the test data set of \cite[Cimini2004] contained only 34 profiles).
-    In practice, when assessing the performance of synthetic retrievals,
-    a model bias is irrelevant as long as the entire retrieval is affected by
-    the same bias. In applications involving real radiometer measurements model
-    biases are determined by a comparison between matching observations and
-    model calculations and subsequently accounted for. The observed discrepancy
-    will therefore have no effect on the retrieval performance investigated
-    here.
-
-    Compare exact Jacobian with brute force Jacobian.
+    As claimed in section \in[ch:elevation_scanning], errors due to missing
+    refraction in MWRTM for simulations at off-zenith angles were found to be
+    small in the opaque V band channels based on a comparison between MWRTM and
+    the Rosenkranz model (not shown). Weighting functions calculated from the
+    automatic differentiation scheme were validated by finite difference
+    approximations and not a model comparison. Overall, the performance of
+    MWRTM is found to be good enough for retrieval applications.
 
 \stopsubsection
 
