@@ -47,7 +47,7 @@ introduction to Bayesian statistics is additionally influenced by
     false, 1 stands for the absolute certainty that it is true and values
     between 0 and 1 express certainties in between these extremes.
 
-    A probablity always has an associated probability density function, also
+    Every probability has an associated probability density function, also
     called probability distribution, probability mass function or just PDF.
     Let $x \in U$ be a continuous variable. Its probability distribution is
     a function $U \rightarrow \REALS$ which is non-negative almost everywhere.
@@ -73,7 +73,7 @@ introduction to Bayesian statistics is additionally influenced by
     conditional probabilities of $x$ and $y$ are written as $\PROB{x, y}$ (read
     $x$ and $y$) and $\PROB{x \GIVEN y}$ (read $x$ given $y$) or $\PROB{y
     \GIVEN x}$, respectively. It is possible to extract the probability
-    distribution of a variable from a joint distribtion by integrating
+    distribution of a variable from a joint distribution by integrating
     over all possible values of the other variables. For example:
 
     \startformula
@@ -108,7 +108,7 @@ introduction to Bayesian statistics is additionally influenced by
             \sim \PROB{y \GIVEN x} \, \PROB{x} \EQSTOP
     \stopformula
 
-    Because all probability distributions fulfil \ineq{probaint}, the
+    Because all probability distributions fulfill \ineq{probaint}, the
     denominator acts as merely as a normalization and often does not need to be
     determined explicitly. Bayes' theorem allows to change the conditioning
     of a probability distribution from $\PROB{y \GIVEN x}$ to $\PROB{x \GIVEN
@@ -119,7 +119,7 @@ introduction to Bayesian statistics is additionally influenced by
     \cite[authoryears][Downey2013]. At first only $\PROB{x}$ is known,
     containing a-priori knowledge of $x$. This PDF is called prior of x. Then,
     some new data $y$ is observed and $\PROB{y \GIVEN x}$ expresses the
-    likelihood of this observation under consideration of prior knowlege of
+    likelihood of this observation under consideration of prior knowledge of
     $x$.  Multiplying prior and likelihood and normalizing the result with
     $\PROB{y}$ yields the so called posterior distribution $\PROB{x \GIVEN y}$,
     which is the now updated distribution of $x$ after having observed $y$. By
@@ -175,7 +175,7 @@ introduction to Bayesian statistics is additionally influenced by
     parameters leads to the same solution in the Bayesian framework as the
     classical approach of minimizing the sum of squared residuals with an $L^2$
     regularization term. The equivalence of solutions implies that both methods
-    rely on the same assumptions. In the Bayesian framework they ar explicit
+    rely on the same assumptions. In the Bayesian framework they are explicit
     and exposed and the extension to different assumptions is obvious. The
     classical approach hides these assumptions behind a sum of squares whose
     connection to the Gaussian distribution is not directly obvious. If a user
@@ -188,7 +188,7 @@ introduction to Bayesian statistics is additionally influenced by
 
 \startsection[title=The Multivariate Gaussian Distribution]
 
-    For theoretical derivations in the Bayesian framework it is desireable to
+    For theoretical derivations in the Bayesian framework it is desirable to
     work with probability distributions for which analytic solutions to common
     problems exist. The most prominent example of such a distribution is the
     Gaussian distribution
@@ -277,7 +277,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     i.e. the product of all individual likelihood functions. This product of
     Gaussians is again Gaussian and its mean can be found at its maximum
-    or equivalently at the minimum of its negative naturam logarithm.
+    or equivalently at the minimum of its negative natural logarithm.
     Determination of the covariance matrix is more involved as it has to be
     symmetric and positive definite. The resulting ML estimates are
 
@@ -558,10 +558,10 @@ introduction to Bayesian statistics is additionally influenced by
     these are the blocks that interact with $\VECX$ exclusively while the
     off-diagonal blocks of $\MATRI$ result in interaction of $\VECX$ and
     $\VECY$. It seems reasonable that the blocks interacting exclusively with
-    $\VECX$ are the only ones neccesary to describe the (marginalized)
+    $\VECX$ are the only ones necessary to describe the (marginalized)
     distribution with respect to $\VECX$ alone. The same idea leads to the
     expectation that the lower left block of $\MATRI$ and the lower block of
-    $\MEANVEC$ are the only ones neccessary to describe the (marginalized)
+    $\MEANVEC$ are the only ones necessary to describe the (marginalized)
     distribution with respect to $\VECY$ only. For symmetry, $\NORMALIZATION$
     should therefore be given by
     
@@ -595,7 +595,7 @@ introduction to Bayesian statistics is additionally influenced by
     Due to the requirements of error estimates and a forward model, the optimal
     estimation method is more complex to set up than regression techniques
     and more expensive in terms of computational time. However, the
-    computational cost has been offset by increasing hardware capabilites and
+    computational cost has been offset by increasing hardware capabilities and
     retrievals with a frequency suitable for real-time operational use are
     possible with any modern desktop computer. Setup can be simplified by
     software such as Qpack \cite[authoryears][Eriksson2005]
@@ -607,7 +607,7 @@ introduction to Bayesian statistics is additionally influenced by
     weather prediction models \cite[alternative=authoryears,right={ and
     references therein)}][Cimini2014]. \cite[Martinet2015] employed a two step
     assimilation procedure: vertical atmospheric profiles are retrieved
-    from radiometer observations first and then assimiliated into a weather
+    from radiometer observations first and then assimilated into a weather
     prediction model in a second step. \cite[DeAngelis2016] recently presented
     a new radiative transfer model called RTTOV-gb providing the capability to
     assimilate radiometer observations directly into an NWP model fields.
@@ -650,7 +650,7 @@ introduction to Bayesian statistics is additionally influenced by
     arising from measurement noise, inaccuracies of the forward model,
     discretization errors and possibly other terms (see section
     \in[ch:rtm_errors]. The distribution of the error term is Gaussian,
-    centered around a systematic bias $\MEANVECERR$ with a convariance matrix
+    centered around a systematic bias $\MEANVECERR$ with a covariance matrix
     $\COVMATERR$
 
     \placeformula[eq:optimalest_errpdf]
@@ -797,7 +797,7 @@ introduction to Bayesian statistics is additionally influenced by
     these problems are simpler to implement (e.g. Newton's method for finding
     the root of a function requires the Hessian, which is often expensive to
     calculate). \cite[Rodgers2000] shows resulting iterative schemes for the
-    Gauss-Newton method and a more robust variant, the Levenberg-Marquard
+    Gauss-Newton method and a more robust variant, the Levenberg-Marquardt
     iteration. With the identity
 
     \startformula
@@ -817,7 +817,7 @@ introduction to Bayesian statistics is additionally influenced by
     \placefigure[top][fig:iteralgo]
             {Visualization of the iterative retrieval algorithm. Missing
             is the forward model error distribution, which is used in the
-            Levenberg-Marquard step. Square boxes represent numerical
+            Levenberg-Marquardt step. Square boxes represent numerical
             calculations, rounded boxes data input and octagonal boxes
             data being produced during the retrieval.}
             {\FLOWchart[flow:iteralgo]}
@@ -896,7 +896,7 @@ introduction to Bayesian statistics is additionally influenced by
     of the iteration procedure also influences the convergence properties.
     Different strategies can be applied to increase the rate and likelihood of
     convergence.  \cite[Cimini2011] found that retrieving temperature first and
-    then humidity in a second step improved convergence efficency.
+    then humidity in a second step improved convergence efficiency.
     \cite[Hewison2006] relaxed the chosen criterion after the first 10
     iterations to encourage convergence. \cite[Turner2014] additionally coupled
     the criterion to a fixed sequence of parameters that controlling their
@@ -941,7 +941,7 @@ introduction to Bayesian statistics is additionally influenced by
     distributions may not permit an analytic form of the posterior.
 
     Regularization is a powerful tool for the inclusion of additional knowledge
-    but penalities more complex than quadratic forms generally violate the
+    but penalties more complex than quadratic forms generally violate the
     Gaussian assumptions leading to inaccurate uncertainty estimates. For many
     end users a more accurately retrieved mean profile is more valuable than a
     theoretically consistent uncertainty assessment and such errors are
@@ -1002,7 +1002,7 @@ introduction to Bayesian statistics is additionally influenced by
     test data set independent of the training data for the evaluation of model
     performance or to use cross validation techniques.
     Overfitting of a linear regression model can be controlled by
-    regularization. This is preferrable to the addition of noise to predictors
+    regularization. This is preferable to the addition of noise to predictors
     during training like some authors have done
     \cite[alternative=authoryears,left={(e.g.  }][Churnside1994,Frate1998,Lohnert2004]
     since it works also with small data sets and is mathematically more elegant
@@ -1012,7 +1012,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     Due to their simplicity linear regression models are commonly used.
     Statistical evaluation of linear regression models used for retrievals
-    of temperature and humidity have shown that their accurracy generally
+    of temperature and humidity have shown that their accuracy generally
     decreases with increasing altitude
     \cite[alternative=authoryears,left={(e.g. }][Solheim1998].  This is mainly
     due to the information content of radiometer observations which is lower
@@ -1109,7 +1109,7 @@ introduction to Bayesian statistics is additionally influenced by
     $\VECW$ given the training data pairs, a prior for the parameter vector is
     necessary. It is possible to assume that any value of $\VECW$ is equally
     likely since no information about $\VECW$ is available at this point.
-    Experience shows however that it is benfical to make the regression favor
+    Experience shows however that it is benefical to make the regression favor
     values of $\VECW$ close to $\VECZERO$ as this results in a model less prone
     to overfitting and with better numerically stability. An isotropic Gaussian
     with mean $\VECZERO$ is therefore considered
@@ -1224,7 +1224,7 @@ introduction to Bayesian statistics is additionally influenced by
     and able to describe the variability of the target data well. It
     gives a good fit inside the data domain and an appropriate uncertainty
     range outside the domain can be derived from the predictive distribution.
-    The model in the middle is a line with ony slope and offset as parameters.
+    The model in the middle is a line with only slope and offset as parameters.
     Not only is it a bad fit for the data inside the domain but the predictive
     distribution massively overstates the model's accuracy. For a line
     the fit is good and the parameters can be determined with high
@@ -1234,7 +1234,7 @@ introduction to Bayesian statistics is additionally influenced by
     resulting in a good fit inside the data domain with appropriate uncertainty
     estimates. However, the error estimate derived from the predictive
     distribution reduces to the inherent uncertainty of the target data outside
-    the traingin domain. No contribution to the estimate from the model exists
+    the training domain. No contribution to the estimate from the model exists
     anymore due to the localized bases functions (the covariance is dominated
     by $\BETAI$ since $\VECPHI(\VECY)$ vanishes). As for the line model, this
     obviously does not represent the true uncertainty of the model predictions.
@@ -1297,8 +1297,8 @@ introduction to Bayesian statistics is additionally influenced by
     analysis/empirical orthogonal functions to reduce the dimensionality of
     the retrieval problem. Such dimensionality reducing techniques can be
     applied to the radiometer measurements or the atmospheric state vector.
-    It can also be benefitial for the retrieval accuracy to apply variable
-    transformations, e.g. to enforce postitivity. The choice of variables that
+    It can also be beneficial for the retrieval accuracy to apply variable
+    transformations, e.g. to enforce positivity. The choice of variables that
     quantifying the atmospheric state is of importance too.  While regression
     model are able to retrieve temperature, humidity or liquid water isolated
     from one another, optimal estimation techniques are more restricted. This
@@ -1373,7 +1373,7 @@ introduction to Bayesian statistics is additionally influenced by
     \cite[Frate1998] used an entirely synthetic training data set from an
     atmospheric profile generator. Few sites have radiometer measurements over
     a long enough time period to allow measurement-based regression, i.e.
-    training with collocated and simultaneous measurements by ballon and
+    training with collocated and simultaneous measurements by balloon and
     radiometer. \cite[Guldner2001,Cimini2006] found that measurement-based
     regression models have significantly less bias due to the absent bias of
     the radiative transfer model. Where radiosonde data are not available,
@@ -1383,7 +1383,7 @@ introduction to Bayesian statistics is additionally influenced by
     retrieved profiles when a procedure managing the transition between
     categories is missing \cite[authoryears][Massaro2015]. In section
     \in[ch:linear_regression] it was mentioned that regression models are not
-    arbitrarily tranferable due to the dange of extrapolation. Models for
+    arbitrarily transferable due to the danger of extrapolation. Models for
     measurement sites at different altitudes or in different climates must
     therefore be trained with different data sets. Most authors only use
     data directly from the radiometer site to train their models. An exception
@@ -1410,7 +1410,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     While additional information should contribute to the prior of optimal
     estimation retrievals, it is often not immediately obvious how exactly the
-    prior should has to be set up to accomodate various kinds of such
+    prior should has to be set up to accommodate various kinds of such
     information. A NWP forecast provides complete profiles of atmospheric
     variables which can be used directly in a prior. A cloud base height or
     surface measurement does not lead to an entire profile from which a prior

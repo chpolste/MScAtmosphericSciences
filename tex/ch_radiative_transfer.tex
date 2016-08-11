@@ -35,7 +35,7 @@ with the presentation of a numerical model implementation.
         F = \epsilon \, B_\nu(T)
     \stopformula
 
-    where $\epsilon$ is the emission coefficient of the grey body and
+    where $\epsilon$ is the emission coefficient of the gray body and
     $B_\nu(T)$ is the Planck function describing the emitted spectral radiance
     of a black body at a given temperature $T$. The emission coefficient
     quantifies the difference of the medium to a perfect black body as
@@ -54,7 +54,7 @@ with the presentation of a numerical model implementation.
         \DERIV{I_\nu}{s} = - \ABSCOEF(I_\nu - B_\nu(T)) \EQSTOP
     \stopformula
 
-    For temperatures occuring in the atmosphere and the spectral region of
+    For temperatures occurring in the atmosphere and the spectral region of
     microwave radiation the Planck function $B_\nu (T)$ is approximated
     well by the Rayleigh-Jeans approximation which relates the spectral
     radiance at a given frequency linearly to temperature $T$
@@ -66,7 +66,7 @@ with the presentation of a numerical model implementation.
     where $c$ is the speed of light and $k$ is the Boltzmann constant.
     Microwave radiometers measure brightness temperatures instead of spectral
     radiances. Brightness temperature $\BT$ is the temperature of a black body
-    that emits the same spectral radiance as an observed grey body. In the
+    that emits the same spectral radiance as an observed gray body. In the
     Rayleigh-Jeans limit the relationship between temperature and brightness
     temperature is particularly simple: $\BT = \epsilon \, T$. Expressing
     observed spectral radiance in terms of Planck emission and again
@@ -90,7 +90,7 @@ with the presentation of a numerical model implementation.
 
     Because $T = T(s)$, analytical solutions of equation \ineq{rte_radiometer}
     can only be found in a few special cases and numerical solutions have to
-    be seeked in general.
+    be sought in general.
 
 \stopsection
 
@@ -189,7 +189,7 @@ with the presentation of a numerical model implementation.
     clouds there is absorption by water droplets. Due to the
     size-wavelength-ratio of droplets in non-precipitating clouds and microwave
     radiation, scattering can be neglected and the Rayleigh-approximation is
-    apropriate for the description of absorption of radiation by liquid water.
+    appropriate for the description of absorption of radiation by liquid water.
     Absorption and scattering by snow and ice in the atmosphere has negligible
     effect on radiation in the K and V bands \cite[authoryears][Sanchez2013].
     During rain events however scattering of microwave radiation by
@@ -230,7 +230,7 @@ with the presentation of a numerical model implementation.
 
     The emission and absorption properties of the atmosphere depend on its
     state which has to be represented in some form for the retrieval. Directly
-    using the quantites that are to be retrieved (temperature, humidity, liquid
+    using the quantities that are to be retrieved (temperature, humidity, liquid
     water content) as state vector variables works well for regression
     retrievals. Any method that makes the assumption of Gaussian distributed
     state vector variables however possibly requires variable transformations
@@ -282,7 +282,7 @@ with the presentation of a numerical model implementation.
     determines when the capabilities of the gaseous water content are exceeded
     and cloud droplets start to form\footnote{The possibility of supersaturated
     air complicates this relation as other factors such as cloud condensation
-    nuclei become important. This is neglected here.}. Becuase saturation vapor
+    nuclei become important. This is neglected here.}. Because saturation vapor
     pressure is a function of temperature and temperature is included in the
     retrieved state vector the water separation threshold can be calculated
     during the retrieval. The chosen partition function should be
@@ -339,7 +339,7 @@ with the presentation of a numerical model implementation.
 
     It is important to note that because temperature is critical for
     determination of the saturation pressure of water vapor the introduction of
-    such a partion of water content results in a strong dependency of the
+    such a partition of water content results in a strong dependency of the
     humidity retrieval on the temperature retrieval
     \cite[authoryears][Bleisch2012]. It is therefore impossible to retrieve
     humidity independently of temperature and the direct connection between
@@ -543,7 +543,7 @@ with the presentation of a numerical model implementation.
         (right) for different zenith angles simulated by the radiative transfer
         model introduced in section \in[ch:mwrtm]. The 0° weighting function
         (upward looking) is the blue line, angles 60°, 65°, 70°, 75°, 80°, 85°
-        are the gray lines, with lighter colors refering to larger zenith
+        are the gray lines, with lighter colors referring to larger zenith
         angles. The atmospheric profile and radiometer altitude are the same as
         in Figure \in[fig:jacobian_frequency].
         }
@@ -636,7 +636,7 @@ with the presentation of a numerical model implementation.
     easily quantified from a comparison of model simulation with and without
     the evaluated component. Uncertainties related to the description of
     absorption are harder to assess because a reference absorption model does
-    not exist and modelled brightness temperatures are not easily comparable to
+    not exist and modeled brightness temperatures are not easily comparable to
     ones measured by a radiometer. \cite[Hewison2006] compared simulations of
     two radiative transfer models with different descriptions of absorption
     in order to quantify this error term.
@@ -740,7 +740,7 @@ with the presentation of a numerical model implementation.
     algorithms requiring such information. Automatic differentiation is
     established as the standard approach to this problem. The necessity of
     efficiently calculating Jacobians of numerical models (often called adjoint
-    modelling) is also a problem often encountered in atmospheric sciences.
+    modeling) is also a problem often encountered in atmospheric sciences.
     Data assimilation for numerical weather prediction models was one of the
     first applications of automatic differentiation
     \cite[authoryears][Griewank2012]. However, the technique was mentioned only
@@ -768,7 +768,7 @@ with the presentation of a numerical model implementation.
     by the direction in which the computational graph is traversed. The
     forward-mode moves from the input nodes towards the output, computing
     derivatives with respect to each input variable along the way.
-    Implementations of forward-mode automatic differentation are easy in
+    Implementations of forward-mode automatic differentiation are easy in
     programming languages supporting dispatch on types. Only minor or
     no changes to the program are necessary aside from replacing
     numeric variables with instances of custom types that carry the derivatives
@@ -800,10 +800,10 @@ with the presentation of a numerical model implementation.
 
     The radiative transfer model spends the majority of its time calculating
     absorption coefficients. Although the models of \cite[Liebe1993] and
-    \cite[Turner2016] are faily simple, it is convenient to replace them by
+    \cite[Turner2016] are fairly simple, it is convenient to replace them by
     a fast absorption predictor (FAP) in order to reduce the overall model
     computation time. FAPs are regression models approximating the absorption
-    coefficients as a funcion of the state vector. A FAP is trained
+    coefficients as a function of the state vector. A FAP is trained
     specifically for each simulated frequency based on data representing
     typical atmospheric conditions. Fast absorption predictors have previously
     been used by \cite[Lohnert2004], \cite[Hewison2006] and others.
@@ -811,7 +811,7 @@ with the presentation of a numerical model implementation.
     Following the choice of state vector variables from section
     \in[ch:statevector], the predictors of the regression models are chosen to
     be pressure, temperature and the natural logarithm of specific water content.
-    A first implementation modelled both gaseous and cloud absorption together
+    A first implementation modeled both gaseous and cloud absorption together
     with a polynomial of the state vector variables. But even for polynomials
     of degree five including all interaction terms, large errors were found in
     the approximated absorption coefficients. Investigation of this issue
@@ -825,7 +825,7 @@ with the presentation of a numerical model implementation.
     the specific water content of the state vector into vapor and liquid
     components according to \ineq{qliq} and \ineq{qvap}. Specific cloud
     absorption following \cite[Turner2016] is only a function of temperature
-    and modelled by the FAP as a 5th order polynomial. Gaseous absorption
+    and modeled by the FAP as a 5th order polynomial. Gaseous absorption
     depends on $p$, $T$ and $\QVAP$. \cite[Lohnert2004] and \cite[Hewison2006]
     used third order polynomials without interaction terms as FAPs for gaseous
     absorption and claimed good accuracy. Here it the necessity was found to
@@ -833,7 +833,7 @@ with the presentation of a numerical model implementation.
     all interaction terms for V band frequencies and third order polynomials
     including interactions terms up to second order for K band frequencies else
     the FAPs were inaccurate at low pressures particularly in the more opaque
-    channels of the K band. Modelling the logarithm of the absorption
+    channels of the K band. Modeling the logarithm of the absorption
     coefficient to enforce its positivity was tested but found to negatively
     affect the accuracy, likely due to the stronger non-linearity introduced by
     the transformation.
@@ -858,7 +858,7 @@ with the presentation of a numerical model implementation.
     significantly affected by the upper atmosphere because water vapor
     concentrations are low and emission is weak.
 
-    MWRTM provides the possiblility to correct for missing parts of the profile
+    MWRTM provides the possibility to correct for missing parts of the profile
     by adjusting the cosmic background temperature to account for the emission
     and opacity properties of the upper atmosphere. This is a static correction
     based on a reference profile of pressure, temperature and humidity. Here,
@@ -891,8 +891,8 @@ with the presentation of a numerical model implementation.
         {Mean (top) and standard deviation (bottom) of brightness temperature
         differences from three different radiative transfer models. High
         resolution simulations by MWRTM provide the reference state to which
-        the differences are calculated. Version 5.2 of MonoRTM (dark grey) is
-        used and Rosenkranz (light grey) is a model used by \cite[Massaro2015]
+        the differences are calculated. Version 5.2 of MonoRTM (dark gray) is
+        used and Rosenkranz (light gray) is a model used by \cite[Massaro2015]
         based on gaseous absorption according to \cite[Rosenkranz1998].
         MWRTM/FAP (white) is a variant of MWRTM with a coarser vertical
         discretization than the reference and uses a fast absorption predictor.
@@ -933,7 +933,7 @@ with the presentation of a numerical model implementation.
     differences at frequencies 51.8 and 52.8 GHz were around 0.6 - 0.8 K. These
     values are closer to ones from the transparent channels of the V band here
     (this comparison assumes that the bias is a mostly continuous function of
-    frequency). A second discrepancy in comparions between these two models is
+    frequency). A second discrepancy in comparisons between these two models is
     found in the 22.24 GHz channel which shows good agreement between MWRTM and
     Rosenkranz here but a bias value of about 2.5 K in the study by
     \cite[Cimini2004] and 1.7 K in the comparison by \cite[Lohnert2004]. It was

@@ -36,7 +36,7 @@ treated together as the specific water content of the atmosphere.
     linearly up to 5 km above which it appears to asymptotically approach zero.
     This behavior is mostly governed by the generally with height decreasing
     temperature in the tropopause which causes the saturation water vapor
-    pressure to decrease exponentiall so that less and less water can be
+    pressure to decrease exponentially so that less and less water can be
     contained by the air at greater heights. The persistence forecast strategy
     has a fairly constant temperature accuracy of a little more than
     3 K throughout the troposphere It has better water content accuracy than
@@ -48,7 +48,7 @@ treated together as the specific water content of the atmosphere.
     than 1.5 K for all levels above 1 km height above the ground. The shorter
     +00+06 forecasts reach less than 1 K standard deviation error in the middle
     and upper troposphere while the +24+30 forecasts are not as accurate.
-    Water contente forecasts from COSMO-7 do not vary in accuracy between the
+    Water content forecasts from COSMO-7 do not vary in accuracy between the
     the two lead times evaluated here. They have a standard deviation of 1 g/kg
     at the surface which decreases approximately linearly with height. It is
     overall substantially smaller than the variability of the climatology.
@@ -119,7 +119,7 @@ treated together as the specific water content of the atmosphere.
     The regression retrievals of temperature have no significant bias in the
     lowest 1 km of the atmosphere where their standard deviations are less than
     1 K. Accuracy decreases to 2 K at 4 km height and increases further with
-    height troughout the rest of the troposphere. The accuracies found by
+    height throughout the rest of the troposphere. The accuracies found by
     \cite[Massaro2015,Meyer2016] for linear regression models used with
     Innsbruck data were of similar magnitude although the decrease of accuracy
     of their regression models was not as high as the one observed here.
@@ -132,7 +132,7 @@ treated together as the specific water content of the atmosphere.
     model at higher levels. If a regression model is trained with clear sky
     cases only, it shows better accuracy in the lowest 2 km of the atmosphere
     than an all-sky trained model when evaluated on clear sky cases only but
-    the specialized model has an increased bias. Specializing on cloudyness for
+    the specialized model has an increased bias. Specializing on cloudiness for
     temperature models caused no change of accuracy of bias of the retrieved
     profiles.
 
@@ -145,7 +145,7 @@ treated together as the specific water content of the atmosphere.
     the atmospheric state variables. Retrievals with all brightness temperature
     information were found to converge 96 \% of the time with an average of
     11.9 iterations. Retrieval calculations took between 8 and 15 seconds on a
-    modern multicore processor showing that MWRTM simulations are fast enough
+    modern multi core processor showing that MWRTM simulations are fast enough
     for operational retrieval applications.
 
     \placefigure[top][fig:ret_optest]
@@ -164,7 +164,7 @@ treated together as the specific water content of the atmosphere.
     The accuracy of temperature profiles obtained from this method is less than
     1 K throughout the troposphere with the exception of a few layers at 3 km
     height above ground. Comparison with the COSMO-7 performance shows that
-    the optimal estimation scheme relies on the temperature forcast of the NWP
+    the optimal estimation scheme relies on the temperature forecast of the NWP
     model forecast for all levels above 2.5 km. The radiometer information
     however improve accuracy compared to the model output substantially in the
     lower levels. The use of zenith observations alone reduces the temperature
@@ -180,7 +180,7 @@ treated together as the specific water content of the atmosphere.
     \cite[Cimini2011,Martinet2015] who used optimal estimation techniques
     together with analyses and forecasts from a regional NWP model
     respectively. An accuracy of 1 K and better was found in both studies for
-    the troposphere. The highest standard deviaton is located around 2 km
+    the troposphere. The highest standard deviation is located around 2 km
     height in the evaluation of \cite[Cimini2011] and around 1.7 km height
     in the study of \cite[Martinet2015] similar to the results shown here. 
 
@@ -235,7 +235,7 @@ treated together as the specific water content of the atmosphere.
         (right) using either prior distributions from COSMO-7 forecasts and
         a first guess determined from a regression model (black) or a prior
         constructed from a set of linear regression model retrievals and
-        a COSMO-7 forecast as the first guess (grey). The green model is
+        a COSMO-7 forecast as the first guess (gray). The green model is
         a linear regression model using COSMO-7 forecasted temperatures from
         the 2104, 2694, 3448, 4415, 5651, 7235, 9262 and 11857 m levels or
         specific water content from the 612, 783, 1003, 1284, 1644 levels as
@@ -266,7 +266,7 @@ treated together as the specific water content of the atmosphere.
 
     \placefigure[top][fig:ret_hatpro]
         {Performance evaluation of linear regression (green) and optimal
-        estimation (blue, grey) retrievals of temperature and specific water
+        estimation (blue, gray) retrievals of temperature and specific water
         content based on brightness temperature measurements from a radiometer
         (HATPRO). The test data set are 26 radiosonde ascents with simultaneous
         radiometer observations. COSMO-7 forecasts are used as the prior and
@@ -274,13 +274,13 @@ treated together as the specific water content of the atmosphere.
         use brightness temperatures and surface pressure and
         temperature/humidity observations as regressors. The bias between MWRTM
         and HATPRO determined in section \in[ch:hatpro] has been corrected for
-        the green and blue models but not for the grey.  The lower panels are
+        the green and blue models but not for the gray.  The lower panels are
         enlarged views of the shaded regions in the upper panels.
         }
         {\externalfigure[retrieval_hatpro][width=\textwidth]}
 
     Bias values of the statistical temperature and water content comparison
-    are high, particularly those of temperature in the lowest 2 km. The grey
+    are high, particularly those of temperature in the lowest 2 km. The gray
     curve shows that the bias correction determined in section \in[ch:hatpro]
     affects temperature retrievals strongest in the lowest 500 m of the
     atmosphere and reduces the bias of water content retrievals by up to 0.5
@@ -292,7 +292,7 @@ treated together as the specific water content of the atmosphere.
     It is interesting to see that the temperature accuracy in the lowest 400 m
     of the atmosphere is substantially worse when using the 
     Nocturnal boundary seems to differ substantially between Innsbruck airport
-    where the radiosondes launch and Innsbruch university where the radiometer
+    where the radiosondes launch and Innsbruck university where the radiometer
     is. Substantially increased standard deviation in lowest 500 m. Could be
     due to slightly different altitudes of sites and boundary layer
     inhomogeneity.
@@ -327,7 +327,7 @@ HATPRO data.
     A ground-based temperature inversion of 5 K strength was measured during a
     radiosonde ascent started on the 2015-10-28 at 02:15:05 UTC. Aside from
     some cirrus no liquid clouds existed that night at Innsbruck\footnote{These
-    information are based on webcam pictures found at
+    information are based on web cam pictures found at
     \hyphenatedurl{http://www.foto-webcam.eu/webcam/innsbruck/}}.
 
     \placefigure[top][fig:ret_case1]
@@ -391,37 +391,37 @@ HATPRO data.
 
     The second case of interest is an elevated temperature inversion of 2 K
     magnitude measured by a radiosonde launched on 2015-09-11 at 03:48:00 UTC
-    at Innsbruck airport. Webcam pictures of the night show low-level clouds
+    at Innsbruck airport. Web cam pictures of the night show low-level clouds
     forming and dissolving at the height of this inversion but a full stratus
     deck is never built up. The radiosonde profile was classified as cloudy
-    based its measured humidity values at the inversion height.
+    based on its measured humidity values at the inversion height.
 
     \placefigure[top][fig:ret_elevated]
         {Optimal estimation retrievals of temperature for an elevated boundary
         layer inversion case from 2015-09-11 at 03:48:00 UTC (time of
         radiosonde launch). The right panel shows the temperature profile
         (blue) retrieved default the model setup with a prior and first guess
-        from a COSMO-7 forecast (grey) as well as a retrieval from a linear
+        from a COSMO-7 forecast (gray) as well as a retrieval from a linear
         regression model (green). The middle panel shows an optimal estimation
-        retrieval (blue) with the same COSMO-7 prior (now light grey) but
+        retrieval (blue) with the same COSMO-7 prior (now light gray) but
         a first guess that has been modified to include an elevated temperature
-        inversion of 1 K strength (dark grey). The right panel shows an optimal
+        inversion of 1 K strength (dark gray). The right panel shows an optimal
         estimation retrieval (blue) with a prior that has its covariance from
         the COSMO-7 forecast but whose mean is the first guess from the middle
-        panel (dark grey) which is also the first guess here.
+        panel (dark gray) which is also the first guess here.
         }
         {\externalfigure[retrieval_elevated][width=\textwidth]}
 
     The left panel of Figure \in[fig:ret_elevated] shows that the COSMO-7 prior
     mean does not have an elevated inversion but much warmer temperatures in
     the lowest 500 m above the ground. The optimal estimation retrieval is able
-    to derive an elevated inversion at the approriate height from this first
+    to derive an elevated inversion at the appropriate height from this first
     guess but fails to adequately capture its magnitude. A regression retrieval
     also indicates an elevated inversion with its smoothed out S-shape but
     the magnitude is even weaker than that of the optimal estimation profile.
 
     If it were known that an elevated temperature inversion exists, e.g.
-    by seeing that a parital low stratus deck has formed on webcam pictures,
+    by seeing that a partial low stratus deck has formed on web cam pictures,
     the first guess for the optimal estimation could be modified to include
     such an inversion. This has been done in the center panel of Figure
     \in[fig:ret_elevated]: the COSMO-7 prior mean was disturbed by + 0.5 K
@@ -429,7 +429,7 @@ HATPRO data.
     This profile has been used as the first guess for the shown optimal
     estimation retrieval. No improvement in the depiction of the inversion
     results from this change. If however the prior mean is changed together
-    with the first guess, the elvated inversion is captured much better by
+    with the first guess, the elevated inversion is captured much better by
     the optimal estimation method (right panel). This shows that the prior
     distribution is important even at low levels where the retrieved profile
     is governed mostly by the radiometer observations. It also shows that
@@ -448,7 +448,7 @@ HATPRO data.
     observations of 10 minute resolution. Instead of using a COSMO-7 prior
     and first guess, the scheme starts with the radiosonde profile from
     2015-10-28 02:15:05 UTC and retrieves temperature from each HATPRO
-    observation starting from the atmosperic state retrieved from the previous
+    observation starting from the atmospheric state retrieved from the previous
     measurement. Because a covariance for the prior is needed and cannot be
     sampled from any available data, the COSMO-7 covariance is chosen as the
     best available alternative. Such a continuous retrieval scheme could be

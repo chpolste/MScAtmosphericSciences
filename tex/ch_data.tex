@@ -46,8 +46,8 @@ the locations of these data sources.
     Whenever the accuracy of a retrieval method is evaluated in subsequent
     sections, these radiosonde data are the reference that retrieved profiles
     are compared to. It must be noted that radiosondes provide point
-    measurements, are affected by horizontal drift and take a substantial amout
-    of time to reach their final height. These properties of balloon-bourne
+    measurements, are affected by horizontal drift and take a substantial amount
+    of time to reach their final height. These properties of balloon-borne
     sensors raise concerns regarding the representativity of the measured
     vertical profiles for a fixed location. Only 4 \% of all radiosonde
     profiles were obtained during day time. However, because the test data set
@@ -72,7 +72,7 @@ the locations of these data sources.
     Europe operated by MeteoSwiss. Its terrain-following grid has a
     horizontal mesh size of 6.6 km and 60 vertical levels up to 21453
     m altitude. Vertical profiles of temperature, humidity and cloud water
-    content for a gridpoint near Innsbruck (marker 3 in Figure
+    content for a grid point near Innsbruck (marker 3 in Figure
     \in[fig:map_ibk]) have been obtained for the timespan 2015-02-06 to
     2016-01-20 from forecasts initiated at 00 UTC. Liquid water content
     $\QLIQ$ is extracted from the total cloud water content $\QCLOUD$ based on
@@ -94,13 +94,13 @@ the locations of these data sources.
         {The radiosonde climatology of temperature (left) and total water
         content (vapor and liquid water) derived from soundings launched
         at Innsbruck airport. The black lines indicate the climatological
-        mean values, grey shadings mark the one (dark) and two (light)
-        standard deviation interals obtained from sampling the
+        mean values, gray shadings mark the one (dark) and two (light)
+        standard deviation intervals obtained from sampling the
         distribution.
         }
         {\externalfigure[raso_prior][width=\textwidth]}
 
-    Because the surface at the gridpoint near Innsbruck is located in the model
+    Because the surface at the grid point near Innsbruck is located in the model
     topography more than 400 m too high at an altitude of 1093 m, the COSMO-7
     profiles have to be extrapolated to the true surface height. At first it was
     considered to simply connect the lowest level of the COSMO-7 profile to
@@ -110,7 +110,7 @@ the locations of these data sources.
     stretched to the ground by replacing the original height grid of COSMO-7
     by one that ends at the same altitude but starts at the true surface.
 
-    The new grid is chosen such that lower levels are streched more than
+    The new grid is chosen such that lower levels are stretched more than
     upper levels but the overall relative spacing of the model levels is
     approximately preserved. Because this procedure does not take temperature
     gradients into account the resulting profiles likely have a significant
@@ -132,7 +132,7 @@ the locations of these data sources.
     Temperature uncertainty is highest in the lower troposphere, but smaller
     outside the boundary layer. Uncertainty increases above 6 km only in the
     tropopause region. The water content uncertainty is approximately constant
-    up to 5 km above which it is decrasing toward zero. The example profile
+    up to 5 km above which it is decreasing toward zero. The example profile
     indicates that COSMO-7 is able to simulate temperature inversions in the
     lower atmosphere.
 
@@ -140,7 +140,7 @@ the locations of these data sources.
             {A COSMO-7 prior distribution of temperature (left) and total water
             content humidity (right) valid at 2015-02-06 03:02 UTC. The means
             (black lines) are interpolated from lead times +00 and +06 of the
-            2015-02-06 00:00 UTC run. The grey shadings show the one (dark) and
+            2015-02-06 00:00 UTC run. The gray shadings show the one (dark) and
             two (light) standard deviation intervals obtained by sampling.
             Shown is the lower half of the troposphere.
             }
@@ -161,7 +161,7 @@ the locations of these data sources.
     52.28, 53.86, 54.94, 56.66, 57.30 and 58.00 GHz. These are marked with
     arrows in Figure \in[fig:absorption]. The receiver antenna can be rotated
     to perform elevation scans. Environmental pressure, temperature and
-    humidity are additionaly measured by the instrument and it has
+    humidity are additionally measured by the instrument and it has
     a precipitation sensor which is translated to a rain/no rain flag in the
     output data.
 
@@ -171,7 +171,7 @@ the locations of these data sources.
     to the radiosonde launch site at Innsbruck airport (marker 1) is
     approximately 2.5 km. The height difference between these sites is 35 m
     with the HATPRO located higher. The elevation scan direction (indicated by
-    the triangle) is downvalley, in the opposite direction of the airport.
+    the triangle) is down-valley, in the opposite direction of the airport.
 
     Data from the instrument are available in the timespan from August to
     October 2015. In this period, HATPRO was configured to perform boundary
@@ -200,10 +200,10 @@ the locations of these data sources.
     fluctuations of temperature and humidity in the atmosphere cause
     measurement noise as well. In any case, a conservative estimate of the
     instrumental noise is certainly favorable to an underestimation. The bias
-    of radative transfer models with respect to the HATPRO observations is
+    of radiative transfer models with respect to the HATPRO observations is
     determined from clear sky observations matched to radiosonde ascents.
     Unfortunately, only 11 profiles were classified as clear-sky from the
-    radiosonde data and webcam pictures of the Inn valley revealed that only 10
+    radiosonde data and web cam pictures of the Inn valley revealed that only 10
     of these profiles were actually cloud free. Bias values calculated from
     this rather poor set of data are shown in Figure \in[fig:model_bias].
 
@@ -267,10 +267,10 @@ the locations of these data sources.
     This equation is solved with a linear algebra routine for the difference
     $(\ITER{\MEANVEC}{i+1} - \ITER{\MEANVEC}{i})$ which is then used to
     determine $\ITER{\MEANVEC}{i+1}$, the new mean of the atmospheric state
-    vector distribtion.
+    vector distribution.
 
     $\gamma \ge 0$ is a parameter controlling the step size taken with each
-    iteration. The inital value of $\gamma$ is set to 3000 and is then adapted
+    iteration. The initial value of $\gamma$ is set to 3000 and is then adapted
     after each iteration based on the change of the cost function
     \ineq{itercostfun}. If the cost function increases, $\gamma$ is increased
     by a factor of 5, if the cost function decreases $\gamma$ is halved. This
