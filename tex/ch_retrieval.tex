@@ -4,7 +4,7 @@ for example a vertical profile of temperature. The inherent difficulty of this
 procedure is that the required inversion of radiative transfer is an ill-posed
 problem due to the complex nature of electromagnetic wave propagation in a
 medium like air. When a passive remote sensing instrument observes atmospheric
-radiation, its measurement is the result of emission and extinction by all
+radiation, its measurement is the result of emission and extinction by many
 layers of the atmosphere. In general, multiple atmospheric states exist that
 result in very similar observations by the instrument and additional information
 is necessary to constrain the state space such that a unique solution, ideally
@@ -12,12 +12,12 @@ the true atmospheric state, exists. These constraints can be a climatology,
 a numerical forecast or measurements from other instruments.
 
 Depending on the available information and resources, different retrieval
-techniques for the inversion are be applicable. A variety of statistical
+techniques for the inversion are applicable. A variety of statistical
 regression models exists which try to directly describe the inversion problem.
 These models approximate the atmospheric state based on an observation by
 a remote sensing instrument after being trained on a data set representative of
 the relationship which the model tries to imitate. Regression methods are
-generally easy to set up if such a data set is available, but they a prone to
+generally easy to set up if such a data set is available, but they are prone to
 large errors in situations not adequately represented in the training data.
 Other retrieval methods use a numerical model of the forward problem
 to iteratively determine a solution consistent with given constraints on the
@@ -29,8 +29,8 @@ method are derived from a purely Bayesian approach to statistics. Although all
 following results have been given before, their derivations are repeated here
 in order to achieve consistent notation and discuss the benefits of operating
 in a purely Bayesian framework. The mathematics are based on the work of
-\cite[Rodgers2000], who treats all aspects of the retrieval problem of
-atmospheric sounding partially in the Bayesian framework. His results are used
+\cite[Rodgers2000], who treats many aspects of the retrieval problem of
+atmospheric sounding, partially in the Bayesian framework. His results are used
 for the derivation of the optimal estimation technique. Fundamental results
 of Bayesian statistics, properties of the Gaussian distribution and the
 Bayesian approach to linear regression are taken from \cite[Bishop2006]. The
@@ -51,7 +51,7 @@ introduction to Bayesian statistics is additionally influenced by
     called probability distribution, probability mass function or just PDF.
     Let $x \in U$ be a continuous variable. Its probability distribution is
     a function $U \rightarrow \REALS$ which is non-negative almost everywhere.
-    Integrating the PDF over a subset of $U$ yields the probability that
+    By definition, integration of the PDF over a subset of $U$ yields the probability that
     $x$ is an element of that subset. Therefore all probability distributions
     must fulfil
 
@@ -109,7 +109,7 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
 
     Because all probability distributions fulfill \ineq{probaint}, the
-    denominator acts as merely as a normalization and often does not need to be
+    denominator acts merely as a normalization and often does not need to be
     determined explicitly. Bayes' theorem allows to change the conditioning
     of a probability distribution from $\PROB{y \GIVEN x}$ to $\PROB{x \GIVEN
     y}$ which otherwise may be hard to compute directly. For retrieval
@@ -117,9 +117,9 @@ introduction to Bayesian statistics is additionally influenced by
     Bayes' theorem in which \ineq{bayes_theorem} is viewed as an update of the
     distribution of $x$ in light of some data $y$
     \cite[authoryears][Downey2013]. At first only $\PROB{x}$ is known,
-    containing a-priori knowledge of $x$. This PDF is called prior of x. Then,
+    containing a-priori knowledge of $x$. This PDF is called a prior. Then,
     some new data $y$ is observed and $\PROB{y \GIVEN x}$ expresses the
-    likelihood of this observation under consideration of prior knowledge of
+    likelihood of this observation under consideration of the prior knowledge of
     $x$.  Multiplying prior and likelihood and normalizing the result with
     $\PROB{y}$ yields the so called posterior distribution $\PROB{x \GIVEN y}$,
     which is the now updated distribution of $x$ after having observed $y$. By
@@ -148,7 +148,7 @@ introduction to Bayesian statistics is additionally influenced by
     analytical solutions to specific problems do not always exist. Such
     problems can be treated with discrete representations of the involved PDFs
     and with the use of Monte Carlo methods. \cite[Downey2013] shows that
-    these methods can work well but they suffer under the high dimensionality
+    these methods can work well, but they suffer from the high dimensionality
     of many problems which causes them to be too computationally expensive to
     be practical. Another way to deal with complicated problems in the Bayesian
     framework is by settling for a solution that is just values but still based
@@ -164,8 +164,8 @@ introduction to Bayesian statistics is additionally influenced by
     become subjective and distributions are chosen based on mathematical
     convenience or personal experience. Allowing subjectivity in a scientific
     method initially sounds like a bad idea, but here it is argued that the way
-    this issue is treated in the Bayesian framework is favorable over its
-    alternatives. The reason is not that subjectivity itself is good but that
+    this issue is treated in the Bayesian framework is favorable over the
+    alternatives. The reason is not that subjectivity itself is good, but that
     it is unavoidable. Most alternative methods starting from a non-Bayesian
     approach make the same subjective assumptions as a substitute Bayesian
     technique, only that the assumptions are often made implicitly.
@@ -258,7 +258,7 @@ introduction to Bayesian statistics is additionally influenced by
     
     To approximate a data set with the a Gaussian distribution, the mean and
     covariance parameters have to be estimated from the data.  For a given set
-    $\{\VECX_1, \dots, \VECX_N\}$ of data, whose elements are assumed to be
+    of data $\{\VECX_1, \dots, \VECX_N\}$, whose elements are assumed to be
     independent and identically distributed, appropriate values are found in
     the maximum likelihood estimators of $\MEANVEC$ and $\COVMAT$. The
     respective expressions are repeated here from the book of
@@ -330,7 +330,7 @@ introduction to Bayesian statistics is additionally influenced by
     respectively. The mean of the conditional likelihood
     \ineq{gaussbayesinityx} is a linear function of $\VECX$ but the covariance
     is independent of $\VECX$. To reduce clutter in the logarithmic forms of
-    these distributions their covariances have been specified as the inverse of
+    these distributions, their covariances have been specified as the inverse of
     matrices $\MATP$ and $\MATQ$:
 
     \startsubformulas[eq:gaussbayesinitln]
@@ -347,7 +347,7 @@ introduction to Bayesian statistics is additionally influenced by
     \stopsubformulas
 
     Terms denoted \quote{const} are containers for any constant expressions
-    independent of $\VECX$ repeatedly be used as such in following
+    independent of $\VECX$ and will be repeatedly used as such in following
     calculations. Consider Bayes' theorem in logarithmic space
 
     \placesubformula
@@ -396,7 +396,7 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    must exist. Because that the equivalence must hold for all $\VECX$, an
+    must exist. Because the equivalence must hold for all $\VECX$, an
     expression for $\COVMAT$ is found by matching quadratic terms of $\VECX$
     between both forms \ineq{gaussprodexpand} and \ineq{gausspostexpand}:
 
@@ -452,7 +452,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     and matching terms between both expressions like is was done for the
     posterior. Due to the rather complex mean and covariance of $\POSTERIOR$
-    this is tedious. Alternatively, it is possible to directly integrate the
+    this is tedious. Alternatively, it is possible to integrate the
     joint distribution with respect to $\VECX$
     
     \startformula
@@ -481,8 +481,8 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
 
-    and by matching terms with $\JOINT = \LIKELIHOOD \PRIOR$ which was
-    evaluated previously in \ineq{gaussprodexpand} $\MEANVEC$ and $\MATR$
+    and by matching terms with $\JOINT = \LIKELIHOOD \PRIOR$, which was
+    evaluated previously in \ineq{gaussprodexpand}, $\MEANVEC$ and $\MATR$
     can be determined. Again, the quadratic terms are matched to obtain the
     inverse of the covariance
 
@@ -506,7 +506,7 @@ introduction to Bayesian statistics is additionally influenced by
     \stopformula
 
     and linear terms are matched to determine the mean (here shown for the
-    transposed terms)
+    transposed terms):
 
     \startformula
     \startalign[n=2,align={right,left}]
@@ -587,19 +587,19 @@ introduction to Bayesian statistics is additionally influenced by
     \cite[alternative=authoryears,left={(e.g. }][Guldner2001,Turner2007].
     With knowledge of the uncertainties of the forward model and the prior
     information which are essential to solve the non-uniqueness problem of
-    retrieval, a atmospheric states consistent with these error characteristics
+    retrieval, atmospheric states consistent with these error characteristics
     are derived by the method \cite[authoryears][Lohnert2004]. Because
     uncertainties are propagated in a Bayesian approach, an estimate of
     the error of the retrieved state is derived as well.
 
-    Due to the requirements of error estimates and a forward model, the optimal
-    estimation method is more complex to set up than regression techniques
-    and more expensive in terms of computational time. However, the
+    The optimal estimation method is more complex to set up than regression
+    techniques and more expensive in terms of computational time due to the
+    requirements of error estimates and a forward model. However, the
     computational cost has been offset by increasing hardware capabilities and
     retrievals with a frequency suitable for real-time operational use are
     possible with any modern desktop computer. Setup can be simplified by
     software such as Qpack \cite[authoryears][Eriksson2005]
-    which providing not only a forward model (ARTS) but also the routines
+    which provides not only a forward model (ARTS) but also the routines
     necessary for the optimal estimation procedure.
 
     Recent research involving optimal estimation methods is often connected to
@@ -609,13 +609,12 @@ introduction to Bayesian statistics is additionally influenced by
     assimilation procedure: vertical atmospheric profiles are retrieved
     from radiometer observations first and then assimilated into a weather
     prediction model in a second step. \cite[DeAngelis2016] recently presented
-    a new radiative transfer model called RTTOV-gb providing the capability to
-    assimilate radiometer observations directly into an NWP model fields.
+    a new radiative transfer model called RTTOV-gb, providing the capability to
+    assimilate radiometer observations directly into NWP model fields.
 
     The standard reference for the theory behind optimal estimation
     schemes is a book by \cite[Rodgers2000]. The presentation here also follows
     this book but is restricted to a purely Bayesian approach.
-
     All probability distributions involved in the optimal estimation procedure
     are assumed to be Gaussian allowing analytical derivations. The result is
     a retrieval scheme efficient even for atmospheric state vectors of high
@@ -639,7 +638,7 @@ introduction to Bayesian statistics is additionally influenced by
     function $\LIKELIHOOD$ expresses the probability that an observation
     $\VECY$ is the result of some state $\VECX$. It is quantified with the help
     of a forward model of the radiative transfer governing the radiometer
-    observation $\VECY$
+    observation
 
     \placeformula[eq:forward_model]
     \startformula
@@ -649,7 +648,7 @@ introduction to Bayesian statistics is additionally influenced by
     where $\FWD$ is the forward model operator and $\ERR$ is an error term,
     arising from measurement noise, inaccuracies of the forward model,
     discretization errors and possibly other terms (see section
-    \in[ch:rtm_errors]. The distribution of the error term is Gaussian,
+    \in[ch:rtm_errors]). The distribution of the error term is Gaussian,
     centered around a systematic bias $\MEANVECERR$ with a covariance matrix
     $\COVMATERR$
 
@@ -690,11 +689,12 @@ introduction to Bayesian statistics is additionally influenced by
     $\POSTERIOR$ is also a Gaussian distribution and the normalization
     $\NORMALIZATION$ does not have to be determined explicitly
     but can be inferred from the product in the numerator.
+
     The results from section \in[ch:bayes_gauss] cannot be used yet with
     \ineq{optimalest_posterior}, because the forward model operator $\FWD$ is
     non-linear which is why the product of $\LIKELIHOOD$ and $\PRIOR$ cannot
-    be carried out analytically. 
-    The model operator $\FWD$ has to be linearized first resulting in an
+    be carried out analytically (in general). 
+    The model operator $\FWD$ has to be linearized first, resulting in an
     iterative approach.
 
 \startsubsection[title=Iterative Solutions]
@@ -749,9 +749,9 @@ introduction to Bayesian statistics is additionally influenced by
     \stopalign
     \stopformula
     
-    Due to the linear approximation of $\FWD$ the solution for $\MEANVEC$ and
+    Due to the linear approximation of $\FWD$, the solution for $\MEANVEC$ and
     $\COVMAT$ will not be optimal. Instead, starting from a first guess
-    $\ITER{\MEANVEC}{0}$, the optimal solution is found by fixed-point
+    $\ITER{\MEANVEC}{0}$ the optimal solution is found by fixed-point
     iteration, using the mean of the previous iteration as the linearization
     point in each step
 
@@ -810,7 +810,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     it is easily seen that \ineq{gausspostmeaniter}, the solution obtained from
     fixed point iteration with the linearized forward model, is equivalent to
-    equation 5.9 from \cite[Rodgers2000], which he obtained by applying the
+    equation 5.9 from \cite[Rodgers2000] which he obtained by applying the
     Gauss-Newton method to \ineq{gaussminimization}. This underlines the
     equivalence of the two approaches to determine the posterior mean.
 
@@ -842,7 +842,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     One possibility is to assess convergence directly with the value of the
     posterior distribution \ineq{optimalest_posterior} evaluated in logarithmic
-    space (the cost function)
+    space (the cost function):
 
     \placeformula[eq:itercostfun]
     \startformula
@@ -886,11 +886,11 @@ introduction to Bayesian statistics is additionally influenced by
         (\ITER{\VECX}{i} - \ITER{\VECX}{i+1})
     \stopformula
 
-    in state space. When these terms are sufficiently small iteration can be
+    in state space. When these terms are sufficiently small, iteration can be
     stopped and the retrieved atmospheric state returned.
 
     In practice, the issue of convergence is more complicated because not only
-    the choice of criterion affects convergence is important. The minimization
+    the choice of criterion affects convergence. The minimization
     technique, method of forward model linearization and included radiometer
     channels are all relevant components affecting convergence. The first guess
     of the iteration procedure also influences the convergence properties.
@@ -899,7 +899,7 @@ introduction to Bayesian statistics is additionally influenced by
     then humidity in a second step improved convergence efficiency.
     \cite[Hewison2006] relaxed the chosen criterion after the first 10
     iterations to encourage convergence. \cite[Turner2014] additionally coupled
-    the criterion to a fixed sequence of parameters that controlling their
+    the criterion to a fixed sequence of parameters that controlled their
     minimization algorithm.
 
 \stopsubsection
@@ -910,7 +910,7 @@ introduction to Bayesian statistics is additionally influenced by
     scheme. Instead of directly working with probability distributions, the
     retrieval problem can be set up as the minimization of the expected value
     of the retrieval error variance. This leads to the same solution as the
-    Bayesian approach assuming all variables are Gaussian-distributed.
+    Bayesian approach when assuming that all variables are Gaussian-distributed.
     Because of the minimization of a variance in the alternative approach,
     optimal estimation is also called a \quote{variational} method, often
     abbreviated as 1D-VAR, due to its application to a vertical profile
@@ -980,13 +980,13 @@ introduction to Bayesian statistics is additionally influenced by
     combined. In retrieval applications it is common to use a basis directly
     corresponding to individual brightness temperatures.
     \cite[Crewell2007,Massaro2015] also included quadratic terms to better
-    approximate the non-linear nature of the inversion. problem Because the
+    approximate the non-linear nature of the inversion problem. Because the
     coefficients affect the model only linearly they can be determined from
     a training data set in a single fitting step without the need for
     iteration.
 
     In order to obtain a model that provides good predictions in many
-    situations a large training data set is necessary that represents the
+    situations, a large training data set is necessary that represents the
     relationship which is to be approximated well.  Regression models in
     general are only as good as the data they are trained with and
     extrapolations to states not included in the training data are prone to
@@ -998,7 +998,7 @@ introduction to Bayesian statistics is additionally influenced by
     The set of basis functions and the number of training data pairs both
     affect if a model is in danger of overfitting. A model is overfitted if it
     performs well for the training data but makes poor predictions for any
-    other reasonable input data. It is common practice is to have a
+    other reasonable input data. It is common practice to have a
     test data set independent of the training data for the evaluation of model
     performance or to use cross validation techniques.
     Overfitting of a linear regression model can be controlled by
@@ -1010,8 +1010,8 @@ introduction to Bayesian statistics is additionally influenced by
     regression regularization will appear naturally from the prior of the model
     parameters.
 
-    Due to their simplicity linear regression models are commonly used.
-    Statistical evaluation of linear regression models used for retrievals
+    Due to their simplicity, linear regression models are commonly used.
+    Statistical evaluations of linear regression models used for retrievals
     of temperature and humidity have shown that their accuracy generally
     decreases with increasing altitude
     \cite[alternative=authoryears,left={(e.g. }][Solheim1998].  This is mainly
@@ -1056,10 +1056,10 @@ introduction to Bayesian statistics is additionally influenced by
     can be chosen. The objective when fitting the regression model is to find
     a parameter vector $\VECW$ from a given set of $(t(\VECY), \VECY)$
     pairs that results in a good approximation of $t$ by $f$.
-    optimal. The Bayesian approach provides a distribution for these
+    The Bayesian approach provides a distribution of these
     parameters.
 
-    In order to obtain an analytical result for the distribution of $\VECW$
+    In order to obtain an analytical result for the distribution of $\VECW$,
     deviations between the true function $t$ and its approximation $f$ are
     assumed to follow a Gaussian distribution with zero mean and covariance
     $\BETAI$
@@ -1226,9 +1226,9 @@ introduction to Bayesian statistics is additionally influenced by
     range outside the domain can be derived from the predictive distribution.
     The model in the middle is a line with only slope and offset as parameters.
     Not only is it a bad fit for the data inside the domain but the predictive
-    distribution massively overstates the model's accuracy. For a line
+    distribution massively overstates the model's accuracy. For a line,
     the fit is good and the parameters can be determined with high
-    accuracy but considering all possible models it is a bad fit because a line
+    accuracy, but considering all possible models it is a bad fit because a line
     cannot express variability of the target data sufficiently. On the right,
     seven Gaussian basis functions are used in a linear regression model,
     resulting in a good fit inside the data domain with appropriate uncertainty
@@ -1236,7 +1236,7 @@ introduction to Bayesian statistics is additionally influenced by
     distribution reduces to the inherent uncertainty of the target data outside
     the training domain. No contribution to the estimate from the model exists
     anymore due to the localized bases functions (the covariance is dominated
-    by $\BETAI$ since $\VECPHI(\VECY)$ vanishes). As for the line model, this
+    by $\BETAI$ since $\VECPHI(\VECY)$ vanishes). Like for the line model, this
     obviously does not represent the true uncertainty of the model predictions.
 
     The treatment of linear regression so far considered multiple
@@ -1292,15 +1292,15 @@ introduction to Bayesian statistics is additionally influenced by
     model, atmospheric states determined by regression methods are in general
     not consistent with the brightness temperatures they are derived from.
 
-    Individual components of the retrieval can be tweaked nest to the method
+    Individual components of the retrieval can be tweaked next to the method
     itself. \cite[Frate1998,Tan2011] have used principal component
     analysis/empirical orthogonal functions to reduce the dimensionality of
     the retrieval problem. Such dimensionality reducing techniques can be
     applied to the radiometer measurements or the atmospheric state vector.
     It can also be beneficial for the retrieval accuracy to apply variable
     transformations, e.g. to enforce positivity. The choice of variables that
-    quantifying the atmospheric state is of importance too.  While regression
-    model are able to retrieve temperature, humidity or liquid water isolated
+    quantify the atmospheric state is of importance too.  While regression
+    models are able to retrieve temperature, humidity or liquid water isolated
     from one another, optimal estimation techniques are more restricted. This
     is discussed further in section \in[ch:statevector]. Regression methods are
     also able to retrieve only partial profiles, while optimal estimation is
@@ -1310,7 +1310,7 @@ introduction to Bayesian statistics is additionally influenced by
 \stopsection
 
 
-\startsection[title={Priors and Training Data Sets}]
+\startsection[title={Priors and Training Data Sets},reference=ch:construct_prior]
 
     The performance of optimal estimation and regression methods strongly
     depends on the data that drive them. Error estimates and the prior
@@ -1323,8 +1323,8 @@ introduction to Bayesian statistics is additionally influenced by
     \cite[authoryears][Cadeddu2013,Cimini2006,Lohnert2012]. The prior therefore
     governs the retrieval performance at higher altitudes. This makes numerical
     weather forecasts a good source of prior information as these are generally
-    more accurate at higher levels where larger scales of high short-term
-    predictability dominate the atmospheric state than in the boundary layer.
+    more accurate at higher levels, where larger scales of high short-term
+    predictability dominate the atmospheric state, than in the boundary layer.
     Thus, a NWP model prior provides complementary information to the
     radiometer observation and the retrieval additionally benefits from all
     data sources assimilated into the NWP model \cite[authoryears][Cimini2015].
@@ -1332,7 +1332,7 @@ introduction to Bayesian statistics is additionally influenced by
     \cite[alternative=authoryears,left={(see e.g. results from }][Cimini2011].
     The covariance of a NWP model prior can be extracted from the model's
     assimilation procedure or be obtained from a comparison of radiosonde
-    ascents with previous forecasts. In complex terrain where the model
+    ascents with previous forecasts. In complex terrain, where the model
     topography often significantly differs from the actual topography,
     additional processing is required before model output can be used in an
     optimal estimation framework.
@@ -1343,7 +1343,7 @@ introduction to Bayesian statistics is additionally influenced by
     location. The atmospheric state space accessible to the optimal estimation
     procedure is therefore only weakly constrained and a good first guess
     should be chosen to ensure convergence on an appropriate state.
-    A possible choice is are profiles retrieved by a regression model in
+    A possible choice are profiles retrieved by a regression model in
     a first step. It is worthwhile to consider using regression retrievals also
     for the construction of the prior distribution. This likely yields
     a smaller uncertainty compared to the climatology. A disadvantage of this
@@ -1357,7 +1357,7 @@ introduction to Bayesian statistics is additionally influenced by
     time of day \cite[alternative=authoryears,left={(e.g. }][Massaro2015] or on
     meteorological situations such as a distinction between clear, cloudy and
     rainy cases or atmospheric stability \cite[authoryears][Meyer2016].
-    Meteorological categorization requires that the category can be determined
+    Categorization requires that the category can be determined
     prior to the retrieval.
 
     Regression models relate brightness temperature measurements to atmospheric
@@ -1365,9 +1365,9 @@ introduction to Bayesian statistics is additionally influenced by
     model. The representativity of actual atmospheric states of a training data
     set is of high importance because the extrapolation behavior of
     a regression model is not guaranteed to be physically reasonable.
-    A model can become bias toward a certain meteorological situation if it is
-    overrepresented in the data set which has to be considered when collecting
-    training data \cite[authoryears][Cadeddu2002]. A climatology of radiosonde
+    A model can become biased toward a certain meteorological situation if the situation is
+    overrepresented in the training data, which has to be considered when collecting
+    these \cite[authoryears][Cadeddu2002]. A climatology of radiosonde
     ascents and brightness temperature measurements simulated by a radiative
     transfer model from these ascents are commonly used for training.
     \cite[Frate1998] used an entirely synthetic training data set from an
@@ -1410,7 +1410,7 @@ introduction to Bayesian statistics is additionally influenced by
 
     While additional information should contribute to the prior of optimal
     estimation retrievals, it is often not immediately obvious how exactly the
-    prior should has to be set up to accommodate various kinds of such
+    prior has to be set up to accommodate various kinds of such
     information. A NWP forecast provides complete profiles of atmospheric
     variables which can be used directly in a prior. A cloud base height or
     surface measurement does not lead to an entire profile from which a prior

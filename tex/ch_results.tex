@@ -1,4 +1,4 @@
-In this chapter the accuracy of linear regression and optimal estimation
+In this chapter, the accuracy of linear regression and optimal estimation
 methods is assessed and the methods' behavior in selected case studies
 investigated. Performance is determined based on simulated brightness
 temperatures based on radiosonde data but also based on observations from
@@ -22,8 +22,8 @@ treated together as the specific water content of the atmosphere.
     the data these methods are based on should be assessed. Figure
     \in[fig:baseline] shows the standard deviation with respect to the
     radiosonde test data set of forecasts from the COSMO-7 numerical weather
-    prediction model, of predicting the climatological mean temperature and
-    water content in every situation and of a persistence forecast that
+    prediction model, of the climatological mean temperature and
+    water content and of a persistence forecast that
     predicts the atmospheric state at a given time as state the from the
     previous day. The COSMO-7 forecasts are available for two different lead
     times which are interpolations based on the  analysis field and a 6 hour
@@ -31,7 +31,7 @@ treated together as the specific water content of the atmosphere.
 
     The climatological standard deviation indicates that the variability of
     temperature in the troposphere above Innsbruck is almost constant with
-    height and declines at altitudes where the tropopause can be found. The
+    height and declines at altitudes where the tropopause is found. The
     variability of water content is highest near the surface and decreases
     linearly up to 5 km above which it appears to asymptotically approach zero.
     This behavior is mostly governed by the generally with height decreasing
@@ -39,7 +39,7 @@ treated together as the specific water content of the atmosphere.
     pressure to decrease exponentially so that less and less water can be
     contained by the air at greater heights. The persistence forecast strategy
     has a fairly constant temperature accuracy of a little more than
-    3 K throughout the troposphere It has better water content accuracy than
+    3 K throughout the troposphere. It has better water content accuracy than
     the climatology forecast in the lowest 4 km of the atmosphere and performs
     similar aloft.
 
@@ -50,7 +50,7 @@ treated together as the specific water content of the atmosphere.
     and upper troposphere while the +24+30 forecasts are not as accurate.
     Water content forecasts from COSMO-7 do not vary in accuracy between the
     the two lead times evaluated here. They have a standard deviation of 1 g/kg
-    at the surface which decreases approximately linearly with height. It is
+    at the surface which decreases approximately linearly with height and is
     overall substantially smaller than the variability of the climatology.
 
     As expected, the COSMO-7 NWP model provides temperature forecasts of good
@@ -87,7 +87,7 @@ treated together as the specific water content of the atmosphere.
     Figure \in[fig:reg_default] shows the statistical evaluation of linear
     regression models used to retrieve temperature and specific water content.
     These models use surface pressure and a surface value of the retrieved
-    quantity as additional regressors which have are taken from the lowest
+    quantity as additional regressors which are taken from the lowest
     level of the retrieval grid for the purposes of this synthetic performance
     evaluation.
 
@@ -122,7 +122,7 @@ treated together as the specific water content of the atmosphere.
     height throughout the rest of the troposphere. The accuracies found by
     \cite[Massaro2015,Meyer2016] for linear regression models used with
     Innsbruck data were of similar magnitude although the decrease of accuracy
-    of their regression models was not as high as the one observed here.
+    of their regression models was not as fast as the one observed here.
     Possible reasons for this discrepancy are the use of regression models with
     quadratic terms by these authors and different assumptions about noise
     added to the test data.
@@ -133,7 +133,7 @@ treated together as the specific water content of the atmosphere.
     cases only, it shows better accuracy in the lowest 2 km of the atmosphere
     than an all-sky trained model when evaluated on clear sky cases only but
     the specialized model has an increased bias. Specializing on cloudiness for
-    temperature models caused no change of accuracy of bias of the retrieved
+    temperature models caused no change of accuracy or bias of the retrieved
     profiles.
 
 \stopsubsection
@@ -165,12 +165,12 @@ treated together as the specific water content of the atmosphere.
     1 K throughout the troposphere with the exception of a few layers at 3 km
     height above ground. Comparison with the COSMO-7 performance shows that
     the optimal estimation scheme relies on the temperature forecast of the NWP
-    model forecast for all levels above 2.5 km. The radiometer information
+    model exclusively for all levels above 2.5 km. The radiometer information
     however improve accuracy compared to the model output substantially in the
     lower levels. The use of zenith observations alone reduces the temperature
     accuracy by approximately 0.2 K in the lowest 2 km which was also found
     for the linear regression model. Performance of the retrieval scheme is
-    worst in heights between 1.5 and 3 km where the radiometer information
+    worst at heights between 1.5 and 3 km where the radiometer information
     content decreases and the NWP model forecasts are not as accurate as in
     the upper troposphere. The temperature bias of the optimal estimation
     retrievals is very low. This can partially be attributed to the
@@ -205,7 +205,7 @@ treated together as the specific water content of the atmosphere.
     distribution constructed from the error characteristics of a linear
     regression model using COSMO-7 forecasts as first guesses of the iteration.
 
-    As seen in Figure \in[fig:ret_combined] on the black and gray curves
+    As seen in Figure \in[fig:ret_combined] from the black and gray curves,
     temperature accuracy is not improved in the lowest 1.5 km by either
     combined approach. The scheme using a prior distribution based on
     regression retrievals has no better accuracy than regression alone at
@@ -218,7 +218,7 @@ treated together as the specific water content of the atmosphere.
     a linear regression method using COSMO-7 forecast data from the middle and
     upper troposphere for temperature and water content data in the lower
     atmosphere. The temperature forecasts make a big difference in terms of
-    accuracy and bias for the temperature retrievals. The regression model
+    accuracy and bias for the temperature retrievals at height. The regression model
     is however not able to use the full potential of the COSMO-7 data at
     height and still has less statistical accuracy than the optimal estimation
     scheme or even the COSMO-7 forecasts by themselves. Reducing the number of
@@ -226,7 +226,7 @@ treated together as the specific water content of the atmosphere.
     issue.
 
     Because the COSMO-7 forecasts are not more accurate in the lower atmosphere
-    than linear regression retrievals of water content alone no improvement
+    than linear regression retrievals of water content alone, no improvement
     is seen when incorporating such forecasts into a linear regression model.
 
     \placefigure[top][fig:ret_combined]
@@ -253,10 +253,10 @@ treated together as the specific water content of the atmosphere.
     Retrieval results from elevation scan brightness temperature measurements
     by the HATPRO radiometer in Innsbruck are evaluated in Figure
     \in[fig:ret_hatpro]. Temperature profiles obtained from optimal estimation
-    have similar accuracy to the one determined from synthetic retrievals, with
+    have similar accuracy to the ones determined from synthetic retrievals, with
     highest standard deviations at heights around 2 km and overall accuracy
     better than 1 K almost everywhere. A notable difference from the synthetic
-    retrievals is the standard deviation maximum in the 300 m above the ground.
+    retrievals is the standard deviation maximum in the 300 m directly above the ground.
     A similar spike in standard deviation is found for the water content at
     heights up to 600 m. Considering the differing locations and altitudes of
     the radiometer site and the radiosonde launch site, it seems likely that
@@ -284,22 +284,14 @@ treated together as the specific water content of the atmosphere.
     curve shows that the bias correction determined in section \in[ch:hatpro]
     affects temperature retrievals strongest in the lowest 500 m of the
     atmosphere and reduces the bias of water content retrievals by up to 0.5
-    g/kg in the lower troposphere. A very similar behavior is found for the
+    g/kg in the lower troposphere. The same behavior is found for the
     performance of a linear regression model (not shown): if the brightness
     temperatures from HATPRO are not treated with a bias correction, water
     content retrievals are strongly biased towards higher amounts.
 
-    It is interesting to see that the temperature accuracy in the lowest 400 m
-    of the atmosphere is substantially worse when using the 
-    Nocturnal boundary seems to differ substantially between Innsbruck airport
-    where the radiosondes launch and Innsbruck university where the radiometer
-    is. Substantially increased standard deviation in lowest 500 m. Could be
-    due to slightly different altitudes of sites and boundary layer
-    inhomogeneity.
-
-    Definitive conclusions from these results cannot be drawn from these data
-    due to the small sample size. It indicates however that the retrieval
-    methods and particularly the radiative transfer model MWRTM are useful
+    Definitive conclusions from these results cannot be drawn
+    due to the small sample size of data. The results indicate however that the retrieval
+    methods, and particularly the radiative transfer model MWRTM, are useful
     when applied to actual radiometer measurements. For temperature retrievals
     comparable accuracy can be achieved to the synthetic statistical
     performance. The accuracy of water content retrievals is not as good with
@@ -360,8 +352,8 @@ HATPRO data.
     steps of the optimal estimation iterative procedure. The mean of the
     COSMO-7 prior from which the iteration starts has a ground-based
     temperature inversion which is rather weak and too close to the ground
-    compared to radiosonde profile. In the first 6 iterations the optimal
-    estimation retrieval moves this strengthens this inversion by 2 K and
+    compared to the radiosonde profile. In the first 6 iterations, the optimal
+    estimation retrieval strengthens this inversion by 2 K and
     lifts its maximum to the appropriate height. At this stage temperatures
     are significantly lower than measured by the radiosonde. The magnitude
     of the inversion is adjusted with the next 7 iterations that add another
@@ -369,9 +361,9 @@ HATPRO data.
     values similar to the radiosonde profile. Convergence is then reached at
     iteration 13.
 
-    The water content profile with a moist layer from 2 to 4 km is not captured
+    The water content profile has a moist layer from 2 to 4 km that is not captured
     by any of the methods. Both models resort to a curve that has too high
-    values of humidity in the lower levels and too low values in the higher
+    values of humidity at lower levels and too low values at higher
     levels. The moist layer is covered by the uncertainty range of the optimal
     estimation scheme but the dryer layer below falls outside the one standard
     deviation range.
@@ -391,8 +383,8 @@ HATPRO data.
 
     The second case of interest is an elevated temperature inversion of 2 K
     magnitude measured by a radiosonde launched on 2015-09-11 at 03:48:00 UTC
-    at Innsbruck airport. Web cam pictures of the night show low-level clouds
-    forming and dissolving at the height of this inversion but a full stratus
+    at Innsbruck airport. Web cam pictures of the night show patches of low-level clouds
+    at the height of this inversion but a full stratus
     deck is never built up. The radiosonde profile was classified as cloudy
     based on its measured humidity values at the inversion height.
 
@@ -413,7 +405,7 @@ HATPRO data.
         {\externalfigure[retrieval_elevated][width=\textwidth]}
 
     The left panel of Figure \in[fig:ret_elevated] shows that the COSMO-7 prior
-    mean does not have an elevated inversion but much warmer temperatures in
+    mean does not have an elevated inversion and much warmer temperatures in
     the lowest 500 m above the ground. The optimal estimation retrieval is able
     to derive an elevated inversion at the appropriate height from this first
     guess but fails to adequately capture its magnitude. A regression retrieval
@@ -443,7 +435,7 @@ HATPRO data.
 \startsubsection[title={Boundary Layer Evolution}]
 
     Starting from the ground based inversion case discussed in section
-    \in[ch_gbinv], the temperature evolution in the boundary layer has been
+    \in[ch:gbinv], the temperature evolution in the boundary layer has been
     retrieved by an optimal estimation scheme based on HATPRO elevation scan
     observations of 10 minute resolution. Instead of using a COSMO-7 prior
     and first guess, the scheme starts with the radiosonde profile from
@@ -462,7 +454,7 @@ HATPRO data.
     retrieved by a linear regression model shown in the left panel. Overall,
     the fields of both retrieval schemes are similar. The nocturnal
     ground-based inversion is dissolved around 9:00 UTC in both fields and
-    a new and inversion forms after 19:00 UTC. The radiosonde profile from
+    a new inversion forms after 19:00 UTC. The radiosonde profile from
     2015-10-29 02:15 UTC, i.e. the end of the shown timespan, has
     a ground-based temperature inversion of 5 K strength with a maximum of 285
     K at approximately 400 m height above ground (not shown). Both retrieval
@@ -485,7 +477,7 @@ HATPRO data.
 
     Because no temperature soundings exist for the day, the temperature
     evolution has to be judged qualitatively and cannot be verified
-    quantitatively. The temperature maximum at the ground around 16:00 local
+    quantitatively. A temperature maximum at the ground around 16:00 local
     time seems reasonable and both retrieval methods agree on the timing and
     value of this maximum. Based on the height of the 284 K isoline, the
     boundary layer grows by approximately 200 m in both fields although its top

@@ -14,7 +14,7 @@ troposphere and is increasingly tested in operational scenarios where such
 information is useful. Ground-based microwave radiometers are available
 commercially and projects specialized on these instruments like the Atmospheric
 Radiation Measurement Program \cite[authoryears][Cadeddu2013] and MWRnet
-(\hyphenatedurl{http://cetemps.aquila.infn.it/mwrnet/} have emerged. The
+(\hyphenatedurl{http://cetemps.aquila.infn.it/mwrnet/}) have emerged. The
 improvement of methods for the retrieval of vertical atmospheric profiles is
 a topic of current research. This thesis contributes to such efforts at the
 University of Innsbruck.
@@ -38,14 +38,14 @@ University of Innsbruck.
     scattering caused by precipitation is strong and causes retrievals to lose
     accuracy.
     
-    A radiometer is a passive remote sensing instrument. It can therefore
+    A radiometer is a passive remote sensing instrument. It can therefore safely
     be used in settlements \cite[authoryears][Kadygrov2015] and generally
     requires less maintenance and than active remote sensors
-    \cite[authoryears][Guldner2001]. It is much cheaper to operate than regular
-    launches of balloon-borne in-situ instruments and provides a much higher
+    \cite[authoryears][Guldner2001]. MWRs are much cheaper to operate than regular
+    launches of balloon-borne in-situ instruments and provide a much higher
     temporal resolution. A disadvantage of being a passive instrument is the
     need for regular calibration \cite[authoryears][Westwater2004,Kadygrov2015].
-    Common calibration methods for microwave radiometers are tipping curve
+    Common calibration methods for microwave radiometers are the tipping curve
     method and calibration with an internal black-body reference target. Both
     methods only require a rotatable antenna, can be automatically carried out
     by the instrument and are typically complemented by less frequent manual
@@ -73,7 +73,7 @@ University of Innsbruck.
     of vertical resolution \cite[authoryears][Westwater2004].  Remote sensors
     can achieve high temporal resolution depending on the need for averaging to
     reduce instrument noise. Instruments on a satellite in a polar orbit have
-    global coverage but pass a fixed location only after long intervals twice
+    global coverage but pass a fixed location twice only after long intervals
     and temperature and humidity sensors on satellites provide only coarse
     vertical resolution in the boundary layer
     \cite[authoryears][Peckham2000,Sanchez2013]. The resolution of
@@ -93,7 +93,7 @@ University of Innsbruck.
     boundary layer with numerical weather prediction (NWP) models but so far
     mesoscale models alone have not been able to fill this data gap
     \cite[authoryears][Sanchez2013]. In the contrary, the understanding of
-    boundary layer processes is essential for the development of
+    boundary layer processes is essential for the development of accurate
     convective-scale models \cite[authoryears][Martinet2015]. Current research
     is concerned with the assimilation of observations from ground-based
     microwave radiometers into NWP models which is not being done operationally
@@ -107,7 +107,7 @@ University of Innsbruck.
     Not only numerical weather prediction benefits from additional
     information about the vertical state of the atmosphere, but also other
     forms of forecasts. Most prominent are short-term severe weather forecasts
-    which strongly depend on accurate vertical profiles of temperature, humidity
+    which depend on accurate vertical profiles of temperature, humidity
     and wind \cite[authoryears][Lohnert2012]. \cite[Madhulatha2013,Cimini2015]
     used radiometer observations to derive indices of severe convective
     activity and fog. \cite[Chan2013] analyzed the fluctuations of brightness
@@ -124,7 +124,7 @@ University of Innsbruck.
     retrieval techniques. An extensive and general review of remote sensing of
     the lower troposphere including a section about radiometers has recently
     been given by \cite[Wulfmeyer2015]. Retrieval techniques are the focus of
-    a yet unpublished article by \cite[Turner2013]\footnote{ which can be obtained from
+    a yet unpublished article by \cite[Turner2013]\footnote{...which can be obtained from
     \hyphenatedurl{http://www.nssl.noaa.gov/users/dturner/public_html/metr5970/retrieval_uncertainty_paper.v4.pdf}}.
     The authors show example applications and discuss recent developments.
 
@@ -133,7 +133,7 @@ University of Innsbruck.
 
 \startsection[title={Prior Work in Innsbruck}]
 
-    The Institute of Atmospheric and Cryospheric Sciences at the University of
+    The Institute of Atmospheric and Cryospheric Sciences (ACINN) at the University of
     Innsbruck operates a passive microwave radiometer as part of the Innsbruck
     Box project, whose objective is to study boundary layer dynamics in complex
     terrain. Consequently, there have been efforts to retrieve temperature and
@@ -160,17 +160,17 @@ University of Innsbruck.
     integration of such information into a retrieval.
 
     \cite[Massaro2015] found that the linear regression retrieval performance
-    in Innsbruck is comparable performance to that of radiometers in flat
+    in Innsbruck is comparable to that of radiometers in flat
     regions. They found significant improvement in the accuracy of the
     temperature profile at heights where in-situ information is included and
-    for specialized retrievals, categorizing retrievals for example by
-    atmospheric stability and applying specifically trained regression models.
+    for specialized retrievals, categorizing the atmospheric state for example by
+    stability and applying specifically trained regression models.
     The accurate retrieval of elevated temperature inversions remained
     a challenge. \cite[Meyer2016] expanded on these results, taking into
     account a greater number of surface observations from various heights and
     distances from the radiometer. The inclusion of data from these stations
-    combined with specialized retrievals allowed even the retrieval of elevated
-    temperature inversions with satisfying accuracy.
+    combined with specialized retrievals allowed a better retrieval of elevated
+    temperature inversions.
 
 \stopsection
 
@@ -206,7 +206,7 @@ University of Innsbruck.
     a climatology. Observations from other sensors can be integrated into the
     method \cite[alternative=authoryears,left={(see e.g. },right={ who combined
     information from 5 sources with an optimal estimation method)}][Lohnert2004].
-    However computational of retrievals are higher and any data used in the
+    However, computational costs of such retrievals are higher and any data used in the
     retrieval must have well characterized errors and known systematic biases.
     This makes the setup more complicated than that of a regression method.
 

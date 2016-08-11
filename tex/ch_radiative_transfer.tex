@@ -1,7 +1,7 @@
 The only common retrieval technique that does not depend on a numerical
-radiative transfer model is measurement based regression. Time series of
+radiative transfer model is measurement based regression. But time series of
 simultaneous radiometer observations and radiosonde ascents to train the model
-with are however rare. The ability to simulate radiometer measurements
+with are rare. The ability to simulate radiometer measurements
 provides a way to generate data pairs from radiosonde climatologies or NWP
 forecasts. The optimal estimation approach directly incorporates a numerical
 radiative transfer model (RTM) into the retrieval procedure and additionally
@@ -26,8 +26,8 @@ with the presentation of a numerical model implementation.
     where $I_\nu$ is radiative power per frequency, solid angle and area in
     a specific direction (spectral radiance), $\ABSCOEF$ is the absorption
     coefficient of the medium, $F$ contains all sources of radiation and $s$ is
-    distance in beam direction.
-    \cite[alternative=authoryears,left={(e.g. }][Buehler2005]
+    distance in beam direction
+    \cite[alternative=authoryears,left={(e.g. }][Buehler2005].
     The only source term considered here is the emission of the medium itself
     in thermal equilibrium according to Plank's law
 
@@ -40,11 +40,11 @@ with the presentation of a numerical model implementation.
     of a black body at a given temperature $T$. The emission coefficient
     quantifies the difference of the medium to a perfect black body as
     described by the Planck function and dependent on the considered frequency.
-    Because thermodynamic equilibrium is assumed Kirchhoff's law allows to
+    Because thermodynamic equilibrium is assumed, Kirchhoff's law allows to
     equal the absorption and emission coefficients of the medium
 
     \startformula
-        0 \le \ABSCOEF = \epsilon \le 1
+        0 \le \ABSCOEF = \epsilon \le 1 \EQSTOP
     \stopformula
 
     Substituting the results of Plank's law and Kirchhoff's law into the
@@ -55,12 +55,12 @@ with the presentation of a numerical model implementation.
     \stopformula
 
     For temperatures occurring in the atmosphere and the spectral region of
-    microwave radiation the Planck function $B_\nu (T)$ is approximated
+    microwave radiation, the Planck function $B_\nu (T)$ is approximated
     well by the Rayleigh-Jeans approximation which relates the spectral
     radiance at a given frequency linearly to temperature $T$
 
     \startformula
-        B_\nu(T) \approx \frac{2 \nu^2 k T}{c^2}
+        B_\nu(T) \approx \frac{2 \nu^2 k T}{c^2} \EQCOMMA
     \stopformula
 
     where $c$ is the speed of light and $k$ is the Boltzmann constant.
@@ -68,8 +68,8 @@ with the presentation of a numerical model implementation.
     radiances. Brightness temperature $\BT$ is the temperature of a black body
     that emits the same spectral radiance as an observed gray body. In the
     Rayleigh-Jeans limit the relationship between temperature and brightness
-    temperature is particularly simple: $\BT = \epsilon \, T$. Expressing
-    observed spectral radiance in terms of Planck emission and again
+    temperature is particularly simple: $\BT = \epsilon \, T$. By expressing
+    observed spectral radiance in terms of Planck emission, again
     applying the Rayleigh-Jeans approximation
 
     \startformula
@@ -97,13 +97,13 @@ with the presentation of a numerical model implementation.
 
 \startsection[title={A Solution for Ground-based Radiometer Applications}]
 
-    For a radiometer looking up or at an angle to the side from the surface the
+    For a radiometer looking up from the surface or at an angle to the side, the
     absorbing and emitting medium is the atmosphere. To simulate a radiometer
     measurement by solving the radiative transfer equation, the atmospheric
     state has to be projected onto the light path observed by the radiometer.
-    Since atmospheric state is usually known as a function of altitude the
+    Since atmospheric state is usually known as a function of altitude, the
     first step towards a solution of \ineq{rte_radiometer} is a coordinate
-    transform into height coordinates
+    transformation into height coordinates
 
     \startformula
         \DERIV{s}{z} = - \frac{1}{\cos(\theta)} \EQSTOP
@@ -183,8 +183,8 @@ with the presentation of a numerical model implementation.
     a stronger band around 60 GHz (V band). Outside of the shown frequency
     range exist an oxygen absorption line at 118.75 GHz and a stronger water
     vapor line at 183.31 GHz. The wings of these lines and so called continuum
-    absorption associated with pressure broadening processes and other
-    atmospheric species also contribute to the overall absorption
+    absorption, associated with pressure broadening processes and other
+    atmospheric species, also contribute to the overall absorption
     \cite[authoryears][Liebe1993,Hewison2006]. Finally, in the presence of
     clouds there is absorption by water droplets. Due to the
     size-wavelength-ratio of droplets in non-precipitating clouds and microwave
@@ -192,17 +192,17 @@ with the presentation of a numerical model implementation.
     appropriate for the description of absorption of radiation by liquid water.
     Absorption and scattering by snow and ice in the atmosphere has negligible
     effect on radiation in the K and V bands \cite[authoryears][Sanchez2013].
-    During rain events however scattering of microwave radiation by
+    During rain events however, scattering of microwave radiation by
     precipitation cannot be neglected and rainwater accumulation on the
     radiometer's radome must be accounted for as well. Since these effects are
-    much more difficult to quantify than absorption they are usually not
+    much more difficult to quantify than absorption, they are usually not
     included in radiative transfer models and the resulting errors are accepted
     or retrievals are not performed during precipitation at all.
 
     The absorption spectrum in Figure \in[fig:absorption] was calculated by
     a model from \cite[Liebe1993] for gaseous absorption and a model from
     \cite[Turner2016] for absorption by cloud liquid water. There are other
-    of such models in use, common are a model by \cite[Rosenkranz1998], MonoRTM
+    such models in use, common are a model by \cite[Rosenkranz1998], MonoRTM
     \cite[authoryears][Clough2005] and ARTS \cite[authoryears][Buehler2005]
     (the latter two are not just absorption models but entire radiative
     transfer simulators).  These models usually account for the most important
@@ -211,17 +211,17 @@ with the presentation of a numerical model implementation.
     example describes oxygen line absorption in the microwave region by 44
     lines and water vapor by 34 lines. Cloud absorption is most often
     parameterized by a double-Debey model
-    \cite[alternative=authoryears,left={(e.g. }][Turner2016]. Instead of only
+    \cite[alternative=authoryears,left={(e.g. }][Turner2016]. Instead of exclusively
     describing atmospheric absorption, absorption models are formulated in
     terms of the more general refractivity $N$ which is the complex refractive
     index reduced by one. With knowledge of $N$, absorption can be calculated
-    by
+    from
 
     \startformula
-        \ABSCOEF = \frac{4 \pi \nu}{c}~ {\rm Im}(N)
+        \ABSCOEF = \frac{4 \pi \nu}{c}~ {\rm Im}(N) \EQCOMMA
     \stopformula
 
-    where $c$ is the speed of light and $\nu$ is frequency.
+    where $c$ is the speed of light and $\nu$ is its frequency.
 
 \stopsection
 
@@ -231,10 +231,10 @@ with the presentation of a numerical model implementation.
     The emission and absorption properties of the atmosphere depend on its
     state which has to be represented in some form for the retrieval. Directly
     using the quantities that are to be retrieved (temperature, humidity, liquid
-    water content) as state vector variables works well for regression
+    water content) as state vector variables usually works well for regression
     retrievals. Any method that makes the assumption of Gaussian distributed
-    state vector variables however possibly requires variable transformations
-    to achieve value distribution that approximately follow a Gaussian curve.
+    state vector variables however, might require variable transformations
+    to achieve value distributions that approximately follow a Gaussian curve.
     For optimal estimation retrievals it is common to combine water vapor and
     liquid water into a single quantity and then retrieve the logarithm of this
     quantity
@@ -284,7 +284,7 @@ with the presentation of a numerical model implementation.
     air complicates this relation as other factors such as cloud condensation
     nuclei become important. This is neglected here.}. Because saturation vapor
     pressure is a function of temperature and temperature is included in the
-    retrieved state vector the water separation threshold can be calculated
+    retrieved state vector, the water separation threshold can be calculated
     during the retrieval. The chosen partition function should be
     differentiable to stabilize the retrieval. \cite[Hewison2006] approached
     this problem by introducing a transition region to a function of
@@ -296,7 +296,7 @@ with the presentation of a numerical model implementation.
         \DERIV{\QLIQ}{\RHL} = \QSAT \startcases
             \NC 0 \MC s \lt 0.95 \NR
             \NC \cos \left( \frac{\RHL - 1.05}{0.1} \frac{\pi}{2} \right)^2
-                \MC 0.95 \le s \le 1.05 \NR
+                \MC 0.95 \le s \le 1.05 \EQCOMMA \NR
             \NC 1 \MC 1.05 \lt s \NR
         \stopcases
     \stopformula
@@ -333,12 +333,12 @@ with the presentation of a numerical model implementation.
         \QVAP(\RHL) = \QTOT(\RHL) - \QLIQ(\RHL) \EQSTOP
     \stopformula
 
-    It uses 95 \% relative humidity as the threshold for the introduction of
-    cloud liquid water. Saturation is reached at 105 \% relative humidity and
-    any remaining water contributes to the liquid component.
+    95 \% relative humidity is the threshold for the introduction of
+    cloud liquid water and saturation is reached at 105 \% relative humidity.
+    Any remaining water contributes to the liquid component.
 
     It is important to note that because temperature is critical for
-    determination of the saturation pressure of water vapor the introduction of
+    the determination of the saturation pressure of water vapor the introduction of
     such a partition of water content results in a strong dependency of the
     humidity retrieval on the temperature retrieval
     \cite[authoryears][Bleisch2012]. It is therefore impossible to retrieve
@@ -391,18 +391,18 @@ with the presentation of a numerical model implementation.
     information can be obtained from emission and absorption of oxygen which
     are directly proportional to local temperature and independent of mixing
     ratio because oxygen is a well mixed gas throughout the atmosphere.
-    Water vapor amounts on the other hand vary strongly with height but with
+    Water vapor amounts on the other hand vary strongly with height but
     if temperature is known, the emission of water vapor is proportional to its
-    partial density \cite[Westwater2004]. To obtain vertical profiles, channels
+    partial density \cite[authoryears][Westwater2004]. To obtain vertical profiles, channels
     along the sides of absorption bands like the K and V band are observed.
     Each channel allows to look differently far into the atmosphere due the
     different opacity of the atmosphere at each frequency
-    \cite[authoryears][Churnside1994]. Unfortunately measurements at different
+    \cite[authoryears][Churnside1994]. Unfortunately, measurements at different
     frequencies along the same absorption band are not independent of one
     another therefore the information content of observations is not
     proportional to the number of radiometer channels
     \cite[authoryears][Hewison2006]. To increase the vertical resolution
-    without the adding new channels the radiometer antenna can be pointed
+    without adding new channels, the radiometer antenna can be pointed
     away from zenith, resulting in longer attenuation
     paths which provide more information on the lower layers of the atmosphere.
     This procedure is called elevation scanning and is further discussed in 
@@ -415,16 +415,18 @@ with the presentation of a numerical model implementation.
     brightness temperature with respect to the atmospheric state vector. In the
     case of a vertically discretized atmosphere the weighting functions are the
     rows of the Jacobian of the forward model, containing the derivatives with
-    respect to each state vector element \cite[Rodgers2000]. The weighting
+    respect to each state vector element \cite[authoryears][Rodgers2000]. The weighting
     functions therefore express the linearized response of the radiative
     transfer to a change in the atmospheric state. Because weighting functions
-    have the same dimension as the atmospheric state vector they can
+    have the same dimension as the atmospheric state vector, they can
     conveniently be visualized on the retrieval grid. Their magnitude can be
     interpreted as the sensitivity of the measurement to the considered state
-    vector component at the given height. Hence weighting functions can be used
+    vector component at the given height. Hence, weighting functions can be used
     to assess from which heights in the atmosphere a radiometer channel obtains
-    its information \cite[authoryears][Martinet2015]. The optimal estimation
-    framework directly incorporates the forward model Jacobian in the inversion
+    its information \cite[authoryears][Martinet2015].
+
+    The optimal estimation
+    framework directly incorporates the forward model Jacobian into the inversion
     process. The individual weighting functions act similarly to basis
     functions which determine where and at which scales the profile can be
     modified during the retrieval. The functions' smoothness is therefore
@@ -432,7 +434,7 @@ with the presentation of a numerical model implementation.
     state which can be recovered by the retrieval from a radiometer
     observation. This highlights the importance of the first guess in the
     optimal estimation framework. Its small scale features may be fixed during
-    the retrieval if the weighting functions smooth.
+    the retrieval if the weighting functions are smooth.
 
     Derivation of the Jacobian from any numerical radiative transfer model is
     possible by finite differencing. This brute force approach is very flexible
@@ -487,15 +489,15 @@ with the presentation of a numerical model implementation.
     studies however use only around 40 to 60 vertical levels for the
     discretization of the entire tropopause
     \cite[alternative=authoryears,left={(e.g. }][Solheim1998,Hewison2006,Martinet2015].
-    Because the ability of a retrieval to resolve small scale features of the
-    atmospheric state is limited by the smoothness of the weighting functions.
     Considering the shape of the weighting functions in Figure
     \in[fig:jacobian_frequency], the retrieval grid should have a higher
-    resolution in the lower troposphere but at a certain point increases in
-    resolution will not be reflected by the retrieval performance. This was
-    confirmed by \cite[Meyer2016] who observed no improvement of accuracy
+    resolution in the lower troposphere. At a certain point increases in
+    resolution will not be reflected by the retrieval performance
+    because the ability of a retrieval to resolve small scale features of the
+    atmospheric state is limited by the smoothness of the weighting functions. This was also
+    found by \cite[Meyer2016] who observed no improvement of accuracy
     in an experiment with a retrieval grid of enhanced resolution. Practically,
-    the vertical discretization should be chosen such that it is not much finer
+    the vertical discretization is most often chosen so that it is not much finer
     than the actual vertical resolution of the radiometer since less levels
     result in higher computational performance of the retrieval technique. The
     cost of calculating the Jacobians in particular scales with the number of
@@ -532,7 +534,7 @@ with the presentation of a numerical model implementation.
     increases near the surface while decreasing higher up.
 
     \cite[Xu2014] remarked that due to the U-shape of the radomes used by many
-    microwave radiometers measurements from elevation scans are less affected
+    microwave radiometers, measurements from elevation scans are less affected
     by rainwater accumulation on the instrument than those at zenith. This
     effect was previously observed by \cite[Cimini2011] who noticed that
     off-zenith signals during precipitation were less noisy than zenith
@@ -551,7 +553,7 @@ with the presentation of a numerical model implementation.
 
     Elevation scanning puts additional demands on the instrument, retrieval and
     radiative transfer model. In order to accurately observe brightness
-    temperatures at large zenith angles, radiometers be very sensitive.
+    temperatures at large zenith angles, radiometers have to be very sensitive.
     High sensitivity is usually achieved by wide bandwidths of the channels
     used at off-zenith angles \cite[authoryears][Cadeddu2002,Crewell2007].
     Because the execution of an elevation scan requires additional time,
@@ -561,8 +563,8 @@ with the presentation of a numerical model implementation.
     adjustment must be precise \cite[authoryears][Hewison2006]. In complex
     terrain the radiometer view might intersect with a mountain and surface
     emission by the slope must be considered. Violations of the assumption of
-    horizontal homogeneity are a major problem of elevation scanning in general
-    as the likelihood that the radiometer view includes different air masses
+    horizontal homogeneity are a major problem of elevation scanning in general,
+    because the likelihood that the radiometer view includes different air masses
     rises the more horizontal it is \cite[authoryears][Cimini2006]. This is
     particularly an issue in situations of inhomogeneous cloud cover
     \cite[authoryears][Guldner2013]. Effects of inhomogeneity can be reduced by
@@ -580,14 +582,14 @@ with the presentation of a numerical model implementation.
     \cite[Crewell2007,Massaro2015] used only the most opaque channels in the
     V band at off-zenith angles for this reason. Aside from these
     considerations, subsequent retrievals in this work use only the four most
-    opaque channels in the V band due to a deficiency of the radiative transfer
+    opaque channels in the V band due effects of refraction being missing in the radiative transfer
     model. Off-zenith light paths in the atmosphere are affected by refraction
     caused by density changes of air with height and Earth's curvature must be
     taken into account as well \cite[authoryears][Hewison2006]. The radiative
     transfer model introduced in section \in[ch:mwrtm] currently does not
     adjust light paths for refraction which causes large errors in simulated
     brightness temperatures of transparent channels at off-zenith angles.
-    Paths lengths of light in the opaque region of the V band are very short
+    Paths lengths of light in the opaque region of the V band are very short however
     \cite[alternative=authoryears,left={(300 - 2000 m, }][Crewell2007] and
     refraction of light is negligible.
 
@@ -624,7 +626,7 @@ with the presentation of a numerical model implementation.
     atmospheric state is represented on the retrieval grid. As mentioned in
     section \in[ch:retrievalgrid], the assumptions made for extensions of the
     vertical profile which are not explicitly included in the state vector can
-    significantly contribute to errors in simulated brightness temperatures.
+    contribute to errors in simulated brightness temperatures too.
     Absorption model errors can be separated into a contribution from
     uncertainties in the description of absorption processes and a contribution
     from mathematical simplifications which are sometimes made to speed up
@@ -667,7 +669,7 @@ with the presentation of a numerical model implementation.
     \ineq{rte_solution} numerically.  The prototype's distinguishing features
     are its accessible implementation in a high-level, dynamic programming
     language (Python 3) and the ability to determine temperature and humidity
-    Jacobians by forward-mode automatic differentiation.  he model will
+    Jacobians by forward-mode automatic differentiation.  The model will
     subsequently be referred to as MWRTM (MicroWave Radiative Transfer Model).
 
 \startsubsection[title={Motivation}]
@@ -686,7 +688,7 @@ with the presentation of a numerical model implementation.
     specially written modules for calculating Jacobians. Automatic
     differentiation, a method with which any numerical program can be
     differentiated to machine precision without the need to explicitly write
-    code for the derivatives has proven its usefulness and efficiency for the
+    code for the derivatives has proven its usefulness for the
     efficient training of machine learning models. It is applied in the RTM
     prototype for the fast and exact calculation of weighting functions without
     the necessity of writing hand-crafted routines.
@@ -719,25 +721,25 @@ with the presentation of a numerical model implementation.
     of typical retrievals grids. The input profiles of pressure, temperature
     and specific water content must therefore be interpolated to the internal
     model grid. The model provides a linear interpolation scheme for this task.
-    Absorption coefficients are then calculated on the finder model grid where
+    Absorption coefficients are then calculated on the finer model grid where
     the numerical integration also takes place. A first implementation
     calculated absorption coefficients on the retrieval grid and then
-    interpolated for the integration. However, this resulted in large errors in
+    interpolated these for the integration. However, this resulted in large errors in
     the model output. The quadrature scheme used for integrations is the second
     order trapezoidal rule.
 
-    It was found that due to the generally greater vertical changes of
-    absorption coefficients and temperature in the lower troposphere, the
-    internal model and retrieval grids can be coarser at greater altitudes
-    without a loss of accuracy.
+    It was found that the internal model and the retrieval grid can be coarser
+    at greater altitudes without a loss of accuracy due to the generally
+    greater vertical changes of absorption coefficients and temperature in the
+    lower troposphere.
 
 \stopsubsection
 
 \startsubsection[title=Automatic Differentiation,reference=ch:autodiff]
 
     The interest in efficient and accurate computation of gradients has risen
-    immensely in recent years due to the training of many machine learning
-    algorithms requiring such information. Automatic differentiation is
+    immensely in recent years because the training of many machine learning
+    algorithms requires such information. Automatic differentiation is
     established as the standard approach to this problem. The necessity of
     efficiently calculating Jacobians of numerical models (often called adjoint
     modeling) is also a problem often encountered in atmospheric sciences.
@@ -756,7 +758,7 @@ with the presentation of a numerical model implementation.
     often requires significant effort from a human and has the problem of
     combinatorial blowup of expressions. Implementations of automatic
     differentiation are able to compute derivatives simultaneously with the
-    forward code or in a second pass by deriving each edge of
+    forward code or in a second pass, by deriving each edge of
     the computational graph individually and combining the results directly at
     each node. A decent implementation has to visit each edge of the
     computational graph only once resulting in similar complexities of forward
@@ -805,7 +807,7 @@ with the presentation of a numerical model implementation.
     computation time. FAPs are regression models approximating the absorption
     coefficients as a function of the state vector. A FAP is trained
     specifically for each simulated frequency based on data representing
-    typical atmospheric conditions. Fast absorption predictors have previously
+    typical atmospheric conditions. They have previously
     been used by \cite[Lohnert2004], \cite[Hewison2006] and others.
 
     Following the choice of state vector variables from section
@@ -817,21 +819,21 @@ with the presentation of a numerical model implementation.
     the approximated absorption coefficients. Investigation of this issue
     revealed that the polynomial was unable to adequately represent the strong
     non-linearity of absorption near the cloud threshold. Polynomials of higher
-    order are suffer from combinatorial blowup of interaction terms and
+    order suffer from combinatorial blowup of interaction terms and
     numerical stability issues, therefore a more refined approach was taken.
 
     Instead of fitting a polynomial to the combined gaseous and cloud
-    absorption, the components are approximated separately after separation of
+    absorption, the components are approximated separately after splitting
     the specific water content of the state vector into vapor and liquid
     components according to \ineq{qliq} and \ineq{qvap}. Specific cloud
     absorption following \cite[Turner2016] is only a function of temperature
     and modeled by the FAP as a 5th order polynomial. Gaseous absorption
     depends on $p$, $T$ and $\QVAP$. \cite[Lohnert2004] and \cite[Hewison2006]
     used third order polynomials without interaction terms as FAPs for gaseous
-    absorption and claimed good accuracy. Here it the necessity was found to
+    absorption and claimed good accuracy. Here the necessity was found to
     approximate absorption coefficients by third order polynomials including
     all interaction terms for V band frequencies and third order polynomials
-    including interactions terms up to second order for K band frequencies else
+    including interactions terms up to second order for K band frequencies or else
     the FAPs were inaccurate at low pressures particularly in the more opaque
     channels of the K band. Modeling the logarithm of the absorption
     coefficient to enforce its positivity was tested but found to negatively
@@ -869,20 +871,20 @@ with the presentation of a numerical model implementation.
 
 \startsubsection[title={Model Intercomparison and Verification},reference={ch:model_comparison}]
 
-    The implemented model should be compared to established radiative transfer
-    models to ensure correctness and to quantify its spectroscopy errors which
-    are an important part of the forward model error covariance (section
-    \in[ch:rtm_errors]). Brightness temperature simulations from two other
+    The implemented model should be compared to other established radiative transfer
+    models to ensure its correctness and to quantify spectroscopy errors which
+    are an important part of the forward model error covariance.
+    Brightness temperature simulations from two other
     models are available for the evaluation: MonoRTM version 5.2
     \cite[authoryears][Clough2005] and a model using gas absorption according
-    to \cite[Rosenkranz1998] previously used by \cite[Massaro2015].  The latter
+    to \cite[Rosenkranz1998], previously used by \cite[Massaro2015].  The latter
     is not available as an executable computer program but calculated values of
     brightness temperatures are.
 
     The test data set for the intercomparison is made up of 1568 radiosonde
-    profiles from Innsbruck airport. Because the data from \cite[Massaro2015]
-    use a slightly different parameterization to determine cloud liquid water
-    from radiosonde ascents than the one described in sections
+    profiles from Innsbruck airport. Because the parameterization that
+    calculates cloud liquid water content from radiosonde ascents for the data
+    of \cite[Massaro2015] is different from the one described in sections
     \in[ch:statevector] and \in[ch:rasoclim] and the aim of this
     intercomparison is to quantify differences due to the radiative transfer
     model formulation, all profiles of the test data set are clear sky cases.
@@ -905,34 +907,34 @@ with the presentation of a numerical model implementation.
 
     Figure \in[fig:model_comparison] shows the results of the model comparison
     in terms of means and standard deviations of model differences for each
-    channel of a HATPRO radiometer (section \in[ch:hatpro]). The radiative
+    channel of a HATPRO radiometer \cite[authoryears][Rose2005]. The radiative
     transfer models agree best in opaque spectral regions, which was also
     found in studies by \cite[Westwater2004] and \cite[Cimini2004]. Biases
-    change sign between V and K band and are very small in the opaque channels
+    change sign between V and K bands and are small in the opaque channels
     of the V band. MonoRTM and the \cite[Rosenkranz1998] model agree better
     in the K band than in the transparent V band channels. As found before by
     \cite[Cimini2004], the \cite[Liebe1993] absorption model used by MWRTM
-    gives brightness temperature systematically warmer than other models in
+    gives brightness temperatures systematically warmer than the other models in
     the K band. MWRTM is closer to MonoRTM for all water vapor channels but
     closer to the \cite[Rosenkranz1998] model in the oxygen channels.
 
     Magnitudes of the model biases overall are similar to those from
     a comparison by \cite[Cimini2004] who evaluated four absorption models
     including all of the ones used here, at similar frequencies but with an
-    older version of MonoRTM. Looking at individual channels there are however
+    older version of MonoRTM. Looking at individual channels, there are however
     some differences that should be addressed. The magnitude of the mean
     differences between MWRTM and Rosenkranz in channels 52.28 and 53.85 GHz
     are much smaller in the comparison by \cite[Cimini2004] than here. Further
     investigation of this issue revealed that the differences in the more
     transparent V band channels are strongly dependent on the chosen profile
-    extension described in section \in[ch:missing_profile]. It is likely that
+    extension discussed in section \in[ch:missing_profile]. It is likely that
     the model used by \cite[Massaro2015] makes a different assumption about the
     state of the upper atmosphere than MWRTM, resulting in larger differences
     here. In a comparison carried out between absorption models according to
-    Rosenkranz and Liebe by \cite[Lohnert2004], mean brightness temperature
+    \cite[Rosenkranz1998] and \cite[Liebe1993] by \cite[Lohnert2004], mean brightness temperature
     differences at frequencies 51.8 and 52.8 GHz were around 0.6 - 0.8 K. These
     values are closer to ones from the transparent channels of the V band here
-    (this comparison assumes that the bias is a mostly continuous function of
+    (this comparison assumes that the bias is a continuous function of
     frequency). A second discrepancy in comparisons between these two models is
     found in the 22.24 GHz channel which shows good agreement between MWRTM and
     Rosenkranz here but a bias value of about 2.5 K in the study by
@@ -943,21 +945,21 @@ with the presentation of a numerical model implementation.
     temperatures model biases are negligible because they affect simulated
     observations, training data for a regression model and the radiative
     transfer calculations during optimal estimation equally. When working with
-    actual radiometer data model biases are explicitly accounted for and
+    actual radiometer data, model biases are explicitly accounted for and
     therefore of little importance.
     
     Standard deviations are larger for the more transparent channels but
     generally not significantly higher than values expected for instrument
-    uncertainties (section \in[ch:rtm_errors]).
+    uncertainties.
 
     The low resolution variant of MWRTM with fast absorption predictors shows
-    significant mean values and standard deviations of brightness temperature
+    large mean values and standard deviations of brightness temperature
     differences only in the transparent V band channels. These are again
     strongly dependent on the assumed state of the upper atmosphere. MWRTM uses
     the entire radiosonde profiles while MWRTM/FAP cuts profiles at 12 km,
     which is the highest altitude of the retrieval grid and then assumes a
-    US standard atmosphere profile above. With this in mind the FAP accuracy
-    is adequate for retrieval use.
+    US standard atmosphere profile above. With this in mind, the FAP accuracy
+    is seen as adequate for retrieval use.
 
     As claimed in section \in[ch:elevation_scanning], errors due to missing
     refraction in MWRTM for simulations at off-zenith angles were found to be

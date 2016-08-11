@@ -41,7 +41,7 @@ the locations of these data sources.
     vanishes at the mean height of the tropopause. The latter is due to the
     small water vapor content in the upper atmosphere. Total water content
     uncertainty intervals are asymmetric because the underlying distribution is
-    a Gaussian in logarithmic space (see section \in[ch:statevector]).
+    a Gaussian in logarithmic space.
 
     Whenever the accuracy of a retrieval method is evaluated in subsequent
     sections, these radiosonde data are the reference that retrieved profiles
@@ -113,7 +113,7 @@ the locations of these data sources.
     The new grid is chosen such that lower levels are stretched more than
     upper levels but the overall relative spacing of the model levels is
     approximately preserved. Because this procedure does not take temperature
-    gradients into account the resulting profiles likely have a significant
+    gradients into account, the resulting profiles likely have a significant
     bias relative to the true atmospheric state. To counter this, the mean
     bias of the model profiles with respect to the radiosondes from Innsbruck
     airport is removed from the dataset. Because there are only 253 times
@@ -125,7 +125,7 @@ the locations of these data sources.
 
     In order to use the COSMO-7 forecasts as a prior for optimal estimation
     retrievals a covariance matrix quantifying the model's uncertainty must
-    be known. As for the bias, this matrix is calculated from a comparison
+    be known. Like for the bias, this matrix is calculated from a comparison
     with the reference radiosonde profiles. Figure \in[fig:cosmo7_prior]
     shows the uncertainty range of a model profile attached to a forecast
     interpolated to 2015-09-11 03:48 UTC in the lower half of the troposphere.
@@ -151,7 +151,7 @@ the locations of these data sources.
 
 \startsection[title=HATPRO Observations,reference=ch:hatpro]
 
-    The microwave radiometer operated by the The Institute of Atmospheric and
+    The microwave radiometer operated by the the Institute of Atmospheric and
     Cryospheric Sciences at the University of Innsbruck is a Humidity and
     Temperature Profiler (HATPRO), built by the Radiometer Physics GmbH
     \cite[authoryears][Rose2005]. It records brightness temperatures in 14
@@ -168,7 +168,7 @@ the locations of these data sources.
     The radiometer is set up on the roof of a university building at an
     altitude of 612 m above sea level. Figure \in[fig:map_ibk] shows the
     location of the radiometer site in the Inn Valley (marker 2). The distance
-    to the radiosonde launch site at Innsbruck airport (marker 1) is
+    to the radiosonde launch site at Innsbruck airport is
     approximately 2.5 km. The height difference between these sites is 35 m
     with the HATPRO located higher. The elevation scan direction (indicated by
     the triangle) is down-valley, in the opposite direction of the airport.
@@ -273,7 +273,7 @@ the locations of these data sources.
     iteration. The initial value of $\gamma$ is set to 3000 and is then adapted
     after each iteration based on the change of the cost function
     \ineq{itercostfun}. If the cost function increases, $\gamma$ is increased
-    by a factor of 5, if the cost function decreases $\gamma$ is halved. This
+    by a factor of 5, if the cost function decreases, $\gamma$ is halved. This
     strategy is not optimal but has been found to work well for retrievals here
     and was also used by \cite[Schneebeli2009].
 
