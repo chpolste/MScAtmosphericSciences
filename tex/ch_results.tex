@@ -176,14 +176,22 @@ treated together as the specific water content of the atmosphere.
     retrievals is very low. This can partially be attributed to the
     bias-corrected COSMO-7 priors.
 
+    The temperature retrieval accuracy can be compared to studies by
+    \cite[Cimini2011,Martinet2015] who used optimal estimation techniques
+    together with analyses and forecasts from a regional NWP model
+    respectively. An accuracy of 1 K and better was found in both studies for
+    the troposphere. The highest standard deviaton is located around 2 km
+    height in the evaluation of \cite[Cimini2011] and around 1.7 km height
+    in the study of \cite[Martinet2015] similar to the results shown here. 
+
     The radiometer observations improve the water content accuracy of COSMO-7
     forecasts by more than 0.2 g/kg in the lowest 3 km of the atmosphere when
     incorporated into the prior information by the optimal estimation technique
-    and have a positive effect up to 6 km height above ground. Bias values are
-    however higher below 2 km compared to the bias of the COSMO-7 forecasts.
-    Note that the COSMO-7 bias of water content was corrected in logarithmic
-    space during the processing of the model output and is therefore not zero
-    in a non-logarithmic atmospheric state space.
+    and have a positive effect up to 6 km height above ground. Bias values of
+    water content are however higher below 2 km compared to the bias of the
+    COSMO-7 forecasts. Note that the COSMO-7 bias of water content was
+    corrected in logarithmic space during the processing of the model output
+    and is therefore not zero in a non-logarithmic atmospheric state space.
 
 \stopsubsection
 
@@ -240,18 +248,21 @@ treated together as the specific water content of the atmosphere.
 
 \stopsubsection
 
-\startsubsection[title={Retrievals with Actual Radiometer Data}]
+\startsubsection[title={Retrievals with Real Radiometer Data},reference=ch:hatproeval]
 
-    Bias correction of HATPRO data reduce bias (but data sample very small).
-    Bias has no influence on standard deviation. Performance for the test
-    profiles better at height than with synthetic data for temperature worse
-    in lower 2 km for humidity (representativity of radiosonde for humidity?).
-
-    Nocturnal boundary seems to differ substantially between Innsbruck airport
-    where the radiosondes launch and Innsbruch university where the radiometer
-    is. Substantially increased standard deviation in lowest 500 m. Could be
-    due to slightly different altitudes of sites and boundary layer
-    inhomogeneity.
+    Retrieval results from elevation scan brightness temperature measurements
+    by the HATPRO radiometer in Innsbruck are evaluated in Figure
+    \in[fig:ret_hatpro]. Temperature profiles obtained from optimal estimation
+    have similar accuracy to the one determined from synthetic retrievals, with
+    highest standard deviations at heights around 2 km and overall accuracy
+    better than 1 K almost everywhere. A notable difference from the synthetic
+    retrievals is the standard deviation maximum in the 300 m above the ground.
+    A similar spike in standard deviation is found for the water content at
+    heights up to 600 m. Considering the differing locations and altitudes of
+    the radiometer site and the radiosonde launch site, it seems likely that
+    this is a representativity issue. The balloon probably experiences
+    a different nocturnal boundary layer profiles near the airport than the
+    radiometer which is located higher and in an urban area.
 
     \placefigure[top][fig:ret_hatpro]
         {Performance evaluation of linear regression (green) and optimal
@@ -268,6 +279,32 @@ treated together as the specific water content of the atmosphere.
         }
         {\externalfigure[retrieval_hatpro][width=\textwidth]}
 
+    Bias values of the statistical temperature and water content comparison
+    are high, particularly those of temperature in the lowest 2 km. The grey
+    curve shows that the bias correction determined in section \in[ch:hatpro]
+    affects temperature retrievals strongest in the lowest 500 m of the
+    atmosphere and reduces the bias of water content retrievals by up to 0.5
+    g/kg in the lower troposphere. A very similar behavior is found for the
+    performance of a linear regression model (not shown): if the brightness
+    temperatures from HATPRO are not treated with a bias correction, water
+    content retrievals are strongly biased towards higher amounts.
+
+    It is interesting to see that the temperature accuracy in the lowest 400 m
+    of the atmosphere is substantially worse when using the 
+    Nocturnal boundary seems to differ substantially between Innsbruck airport
+    where the radiosondes launch and Innsbruch university where the radiometer
+    is. Substantially increased standard deviation in lowest 500 m. Could be
+    due to slightly different altitudes of sites and boundary layer
+    inhomogeneity.
+
+    Definitive conclusions from these results cannot be drawn from these data
+    due to the small sample size. It indicates however that the retrieval
+    methods and particularly the radiative transfer model MWRTM are useful
+    when applied to actual radiometer measurements. For temperature retrievals
+    comparable accuracy can be achieved to the synthetic statistical
+    performance. The accuracy of water content retrievals is not as good with
+    standard deviation values of 1 g/kg in the lower troposphere.
+
 \stopsubsection
 
 \stopsection
@@ -275,13 +312,23 @@ treated together as the specific water content of the atmosphere.
 
 \startsection[title={Selected Case Studies}]
 
-Special interest in inversions and influence of prior. Selection due to
-availability of actual radiometer data and atmospheric features.
+Now that the general reasonability of retrieval results from the optimal
+estimation method has been shown, its behavior is examined for two selected
+cases: a ground-based and an elevated temperature inversion. These test
+scenarios are commonly investigated \cite[alternative=authoryears,left={(e.g.
+by }][Hewison2004,Crewell2007] and have been at the focus of research in
+Innsbruck before \cite[authoryears][Massaro2013,Meyer2016]. The presentation
+of results is concluded with a visualization of a boundary layer evolution over
+24 h as retrieved by a linear regression and optimal estimation method from
+HATPRO data.
 
-\startsubsection[title={Ground-based Temperature Inversion}]
+\startsubsection[title={Ground-based Temperature Inversion},reference={ch:gbinv}]
 
-    2015-10-28 02:15:05
-    Some cirrus clouds, no liquid clouds in lower atmosphere.
+    A ground-based temperature inversion of 5 K strength was measured during a
+    radiosonde ascent started on the 2015-10-28 at 02:15:05 UTC. Aside from
+    some cirrus no liquid clouds existed that night at Innsbruck\footnote{These
+    information are based on webcam pictures found at
+    \hyphenatedurl{http://www.foto-webcam.eu/webcam/innsbruck/}}.
 
     \placefigure[top][fig:ret_case1]
         {Retrievals of temperature (left) and specific water content (right)
@@ -296,6 +343,39 @@ availability of actual radiometer data and atmospheric features.
         }
         {\externalfigure[retrieval_case1][width=\textwidth]}
 
+    Figure \in[fig:ret_case1] shows temperature and water content retrievals
+    from a linear regression model and an optimal estimation scheme based on
+    a COSMO-7 prior. Both methods are able to retrieve a temperature inversion
+    of appropriate strength although the regression model places the maximum
+    about 100 m too high. The optimal estimation scheme is better able to
+    retrieve the temperature curve above the maximum and starts to deviate from
+    the radiosonde profile at 1.5 km height above ground while the regression
+    model is consistently about 1 K warmer than the radiosounding up to the
+    weak second inversion at 2 km which both methods fail to capture. It is
+    however included in the one standard deviation uncertainty range of the
+    optimal estimation retrieval while no uncertainty estimate is available
+    for the regression model.
+
+    Figure \in[fig:ret_iteration] shows temperature profiles from intermediate
+    steps of the optimal estimation iterative procedure. The mean of the
+    COSMO-7 prior from which the iteration starts has a ground-based
+    temperature inversion which is rather weak and too close to the ground
+    compared to radiosonde profile. In the first 6 iterations the optimal
+    estimation retrieval moves this strengthens this inversion by 2 K and
+    lifts its maximum to the appropriate height. At this stage temperatures
+    are significantly lower than measured by the radiosonde. The magnitude
+    of the inversion is adjusted with the next 7 iterations that add another
+    2 K to the maximum and adjust the temperature above the inversion to
+    values similar to the radiosonde profile. Convergence is then reached at
+    iteration 13.
+
+    The water content profile with a moist layer from 2 to 4 km is not captured
+    by any of the methods. Both models resort to a curve that has too high
+    values of humidity in the lower levels and too low values in the higher
+    levels. The moist layer is covered by the uncertainty range of the optimal
+    estimation scheme but the dryer layer below falls outside the one standard
+    deviation range.
+
     \placefigure[top][fig:ret_iteration]
         {Visualization of intermediate profiles of temperature from the
         iteration procedure of the optimal estimation retrieval from Figure
@@ -305,14 +385,16 @@ availability of actual radiometer data and atmospheric features.
         }
         {\externalfigure[retrieval_iteration][width=\textwidth]}
 
-
 \stopsubsection
 
 \startsubsection[title={Elevated Temperature Inversion}]
 
-    2015-09-11 03:48:00
-    Elevated temperature inversion, partial low status deck forming but never
-    closed.
+    The second case of interest is an elevated temperature inversion of 2 K
+    magnitude measured by a radiosonde launched on 2015-09-11 at 03:48:00 UTC
+    at Innsbruck airport. Webcam pictures of the night show low-level clouds
+    forming and dissolving at the height of this inversion but a full stratus
+    deck is never built up. The radiosonde profile was classified as cloudy
+    based its measured humidity values at the inversion height.
 
     \placefigure[top][fig:ret_elevated]
         {Optimal estimation retrievals of temperature for an elevated boundary
@@ -330,16 +412,63 @@ availability of actual radiometer data and atmospheric features.
         }
         {\externalfigure[retrieval_elevated][width=\textwidth]}
 
+    The left panel of Figure \in[fig:ret_elevated] shows that the COSMO-7 prior
+    mean does not have an elevated inversion but much warmer temperatures in
+    the lowest 500 m above the ground. The optimal estimation retrieval is able
+    to derive an elevated inversion at the approriate height from this first
+    guess but fails to adequately capture its magnitude. A regression retrieval
+    also indicates an elevated inversion with its smoothed out S-shape but
+    the magnitude is even weaker than that of the optimal estimation profile.
+
+    If it were known that an elevated temperature inversion exists, e.g.
+    by seeing that a parital low stratus deck has formed on webcam pictures,
+    the first guess for the optimal estimation could be modified to include
+    such an inversion. This has been done in the center panel of Figure
+    \in[fig:ret_elevated]: the COSMO-7 prior mean was disturbed by + 0.5 K
+    in a few layers above 400 m and by - 0.5 K in the layers below 400 m.
+    This profile has been used as the first guess for the shown optimal
+    estimation retrieval. No improvement in the depiction of the inversion
+    results from this change. If however the prior mean is changed together
+    with the first guess, the elvated inversion is captured much better by
+    the optimal estimation method (right panel). This shows that the prior
+    distribution is important even at low levels where the retrieved profile
+    is governed mostly by the radiometer observations. It also shows that
+    there is much potential for retrievals of elevated temperature inversions
+    if an appropriate prior can be found. The absolute values of the prior do
+    not seem to matter as much as the shape of its mean which should fit that
+    of the actual atmospheric state for best results.
 
 \stopsubsection
 
 \startsubsection[title={Boundary Layer Evolution}]
 
-    Start from ground based inversion case, use radiosonde as first profile
-    with cosmo-7 uncertainty (most likely to fit and no better alternative) and
-    continuously move forward in time with each previous profile as the
-    starting point of the next.
-    Then verify profile at the end.
+    Starting from the ground based inversion case discussed in section
+    \in[ch_gbinv], the temperature evolution in the boundary layer has been
+    retrieved by an optimal estimation scheme based on HATPRO elevation scan
+    observations of 10 minute resolution. Instead of using a COSMO-7 prior
+    and first guess, the scheme starts with the radiosonde profile from
+    2015-10-28 02:15:05 UTC and retrieves temperature from each HATPRO
+    observation starting from the atmosperic state retrieved from the previous
+    measurement. Because a covariance for the prior is needed and cannot be
+    sampled from any available data, the COSMO-7 covariance is chosen as the
+    best available alternative. Such a continuous retrieval scheme could be
+    used operationally when no NWP forecasts are available. It should however
+    only be used for profiling of the boundary layer because the information
+    content of the radiometer is small at mid- and upper-tropospheric levels
+    and no reasonable evolution of the profile will take place there.
+
+    The retrieved temperature field is visualized in the right panel of Figure
+    \in[fig:ret_continuous]. It can be compared to the temperature field
+    retrieved by a linear regression model shown in the left panel. Overall,
+    the fields of both retrieval schemes are similar. The nocturnal
+    ground-based inversion is dissolved around 9:00 UTC in both fields and
+    a new and inversion forms after 19:00 UTC. The radiosonde profile from
+    2015-10-29 02:15 UTC, i.e. the end of the shown timespan, has
+    a ground-based temperature inversion of 5 K strength with a maximum of 285
+    K at approximately 400 m height above ground (not shown). Both retrieval
+    schemes do not show such properties but the representativity issue
+    found in section \in[ch:hatproeval] has to be kept in mind and this
+    discrepancy might not be a failure of the retrieval methods.
 
     \placefigure[top][fig:ret_continuous]
         {Visualization of the temperature evolution as retrieved from a linear
@@ -354,6 +483,14 @@ availability of actual radiometer data and atmospheric features.
         }
         {\externalfigure[retrieval_continuous][width=\textwidth]}
 
+    Because no temperature soundings exist for the day, the temperature
+    evolution has to be judged qualitatively and cannot be verified
+    quantitatively. The temperature maximum at the ground around 16:00 local
+    time seems reasonable and both retrieval methods agree on the timing and
+    value of this maximum. Based on the height of the 284 K isoline, the
+    boundary layer grows by approximately 200 m in both fields although its top
+    is more stable in the optimal estimation retrievals. This can be seen from
+    the distance between the 284 and 281 K isolines.
 
 \stopsubsection
 
