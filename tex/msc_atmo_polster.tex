@@ -178,7 +178,7 @@
 \startsectionblockenvironment[AbstractSectionBlock]
     \setuppagenumbering[state=stop,alternative=doublesided]
     \setupinterlinespace[line=1.5em]
-    \setupwhitespace[big]
+    \setupwhitespace[medium]
     \setupnarrower[middle=10mm]
     \page[right]
 \stopsectionblockenvironment
@@ -226,16 +226,15 @@
 \startsectionblock[CoverSectionBlock]
 
     \dontleavehmode
-    \blank[2mm]
-    \dontleavehmode
-    \externalfigure[uibk_logo.pdf][height=35mm]
-    \blank[5mm]
-    University of Innsbruck \break
-    Institute of Atmospheric and Cryospheric Sciences
     \blank[10mm]
     \dontleavehmode
-    \blackrule[width=15cm,height=0.5mm]
-    \blank[20mm]
+    \externalfigure[uibk_logo.pdf][height=25mm,location=middle]
+    \enskip \enskip \enskip \enskip \enskip \enskip \enskip
+    \externalfigure[acinn_logo.pdf][height=25mm,location=middle]
+    \blank[13mm]
+    \dontleavehmode
+    \blackrule[width=8cm,height=0.5mm]
+    \blank[22mm]
 
     {\CoverHeadingFont \strut 
     Bayesian \thinspace Retrieval \thinspace of \thinspace Thermodynamic\blank[6mm]
@@ -245,12 +244,12 @@
 
     %{\CoverHeadingFont \strut \DocSubtitle \strut}
 
-    \blank[20mm]
+    \blank[22mm]
 
     \dontleavehmode
-    \blackrule[width=15cm,height=0.5mm]
+    \blackrule[width=8cm,height=0.5mm]
 
-    \blank[10mm]
+    \blank[13mm]
 
     {\bold Master's Thesis in Atmospheric Sciences}
 
@@ -265,11 +264,12 @@
 
     \blank[15mm]
 
-    Innsbruck, \DateOfCompletion
+    University of Innsbruck, \DateOfCompletion
 
     \blank[15mm]
 
     Advisor: Prof. Dr. Mathias Rotach \break
+
 \stopsectionblock
 
 \startsectionblock[AbstractSectionBlock]
@@ -279,12 +279,42 @@
     \startnarrower
         {\AbstractHeadingFont Abstract}
         
-        ...
+        Ground-based microwave radiometers are increasingly used to retrieve
+        vertical temperature, humidity and cloud information of the atmosphere.
+        Such information is valuable for boundary layer research, weather
+        forecasting and experiments have been undertaken to assimilate
+        radiometer observations into numerical weather prediction models.
+        Multiple methods exist to perform the retrieval, differing in their
+        data requirements, ease of use and flexibility to include measurements
+        from sensors other than the radiometer.
 
-        \dontleavehmode\blank[1cm]
-        {\AbstractHeadingFont Zusammenfassung}
+        A linear regression and an optimal estimation technique have been
+        derived and implemented in this thesis. Important properties of these
+        methods are discussed and their accuracy is evaluated with data from
+        radiosoundings and radiometer measurements in Innsbruck. Standard
+        deviations of temperature retrievals from an optimal estimation scheme
+        integrating forecasts from a numerical weather prediction model
+        are found be be less than 1.2 K throughout the troposphere relative to
+        reference measurements from radiosoundings. The least accurate region
+        is located between 1.5 and 3 km above ground level. There the numerical
+        forecasts are not as accurate as in the upper troposphere and the
+        information content of the radiometer has already decreased
+        substantially compared to the lower atmosphere.
 
-        ...
+        In two case studies it is found that the optimal estimation scheme
+        is promising for the retrieval of temperature inversions which have
+        been an often studied problem of microwave radiometer retrieval. The
+        quality of a-priori information, particularly its capability of
+        providing a first guess of the features that an atmospheric state
+        exhibits is, found to be a major influence on the retrieved vertical
+        profiles.
+
+        Also presented in this thesis is a prototype of a numerical radiative
+        transfer model for the microwave region. It is a minimalistic
+        implementation in a high-level programming language and able
+        to calculate linearizations of itself by automatic differentiation.
+        The model is found to be sufficiently accurate for use in retrieval
+        applications.
 
         \stopnarrower
 
@@ -353,7 +383,8 @@
         \placepublications
 
     \stopchapter
-    \page[left]
+
+    \page[left] %TODO
 
 \stopbackmatter
 

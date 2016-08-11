@@ -1,33 +1,37 @@
 This thesis was originally about the implementation of a neural network
-technique for the retrieval of temperature and humidity as an alternative to
-the linear regression method which has been used in the past at the Institute
-for Atmospheric and Cryospheric Sciences in Innsbruck. In the end it turned
-into an implementation of the optimal estimation method. This change of topic
-occured during the initial literature review. I believe that despite its
-complexity this technique provides the best approach to the retrieval problem
-currently known and hope to argue in favor of this belief with the following
-discussions and results.  I have chosen to present all derivations in the
-Bayesian framework after seeing how universally Bayes' theorem can be applied
-to the construction of machine learning models and estimation problems in the
-books by \cite[Bishop2006] and \cite[Downey2013]. Initially it was not planned
-to also implement a radiative transfer model, but after some frustration with
-the interface of MonoRTM, I decided to write a model able to provide an exact
-linearization of itself. I have been fascinated by the simple but powerful idea
-of automatic differentiation since I first read about it in the context of
-neural network training, so I decided to use it in my model. Judging from the
-short presentation of radiative transfer in most publications, I naively
-assumed that the implementation of a numerical model would be a rather simple
-task but I soon found that the devil is in the details. Getting the model right
-took a substantial amout of time, much more than I would have needed to set up
-a mature solution like ARTS, but I learned a lot in that time and that
-justifies the effort for me personally.  That actually seems to be the theme of
-this work: reinventing the wheel in order to get to know all aspects of the
-retrieval problem in depth.  While this is not best scientific practice,
-I think a Master's thesis is a good place for such an approach without wasting
-much of anyone's time except possibly mine.
+technique for the retrieval of temperature and humidity profiles but in the end
+it turned into an implementation of the optimal estimation method. This change
+of mind occurred during the initial literature review phase where I began to
+understand the limitations of regression models and started gaining more
+appreciation for the Bayesian approach that optimal estimation is based on.
+I have therefore chosen to present the theoretical work of this thesis from
+a Bayesian standpoint.
 
-Finally, I must mention that there is much more literature on retrievals and
-radiative transfer than referenced here. The plentiful citations in the
-text should however provide a decent point of origin for anyone trying to find
-more information.
+The implementation of a radiative transfer model was not part of the original
+plan for this work but the desire for an easy to use model arose after some
+frustrations with the rather antiquated user interface of an existing model.
+The simple but powerful idea of automatic differentiation had fascinated me
+since I first read about it in the context of neural network training, so
+I decided to use it in my model. Judging from the short presentation of
+radiative transfer in most publications, I naively assumed that the
+implementation of a numerical model would be a rather simple task and in terms
+of code it really is not very complicated.  But I soon found that the devil is
+in the details.  Getting the model right took a substantial amount of time,
+much more than I would have needed to set up an existing solution, but
+I learned a lot from the experience and that justifies the effort for me
+personally.
+
+This actually seems to be the theme of this work: reinventing the wheel in
+order to get to know all aspects of the retrieval problem in depth. While this
+is not best scientific practice, I think a Master's thesis provides a good
+opportunity to take such an approach without wasting much of anyone's time
+(except possibly mine).
+
+There is much more literature on retrievals and radiative transfer than
+referenced here. The plentiful citations in the text should provide a decent
+point of origin for anyone trying to find more information. The biggest
+influence on the following work was the PhD thesis of Tim \cite[Hewison2006]
+in which he describes the setup of an optimal estimation scheme for the
+retrieval of temperature and humidity from ground-based microwave radiometer
+observations with great detail.
 
