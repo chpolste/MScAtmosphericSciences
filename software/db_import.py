@@ -2,15 +2,18 @@
 
 A collection of one-time use data import scripts that assemble a unified
 database from multiple data sources. To be used as a command line program from
-the terminal. This is not optimized for efficiency and might take quite a bit
-of time and main memory to run.
+the terminal (see the db_import bash script). This is not optimized for
+efficiency and might take quite a bit of time and main memory to run. This
+whole script isn't very pretty :(
 
-size offset and pid arguments allow poor man's parallel processing by running multiple
-instances of this script and afterwards merging all output databases into the
-main one (this should have come with a db_import shell script showing the use).
-pid governs the start id for the produced rows, therefore the individual rows
-can be merged without loosing appropriate relations between profiles and
-profiledata. size and offset are used to select subsets of input files.
+size offset and pid arguments allow poor man's parallel processing by running
+multiple instances of this script and afterwards merging all output databases
+into the main one (done in the db_import bash script). pid governs the start
+id for the produced rows, therefore the individual rows can be merged without
+loosing appropriate relations between profiles and profiledata. size and offset
+are used to select subsets of input files.
+
+Available data sources:
 
 raso_fwf
     Radiosonde data from fixed width format files. These make up the
@@ -120,6 +123,7 @@ def select_files(files):
 
 def filename(path):
     return path.split("/")[-1]
+    # Yeah, yeah I should use os.pathlib... Sorry Windows-people :(
 
 
 def read_raso_fwf(pid, path):
@@ -144,6 +148,7 @@ def read_raso_fwf(pid, path):
     df["T"] = 273.15 + df["T"]
     df["Td"] = 273.15 + df["Td"]
     ps = pd.Series(np.repeat(pid, len(df)), name="profile")
+    # Calculate specific humidity and cloud water content
     qvap = fml.qvap(df["p"], df["Td"])
     qliq = fml.qliq(df["z"], df["p"], df["T"], df["Td"])
     data = pd.concat([ps, df, qvap, qliq], axis=1).as_matrix().tolist()
@@ -171,14 +176,20 @@ def read_l2e(pid, path):
 
 
 def read_bufr_group(pid, paths):
+    """Additional radiosonde profiles are available form the ertel2 archive
+    in the form of BUFR files.
+    
+    /!\ BUFRReader is very (!) slow.
+    """
     from bufr import BUFRReader
     reader = BUFRReader()
     for _, path in sorted(paths, key=lambda p: -os.path.getsize(p[1])):
-        df, metadata = reader.read(path)
-        try: df = df[["p", "z", "T", "Td"]]
+        dfs, metadata = reader.read(path)
+        try: df = dfs[-1][["p", "z", "T", "Td"]]
         except KeyError: continue
         valid = metadata["datetime"].timestamp()
         ps = pd.Series(np.repeat(pid, len(df)), name="profile")
+        # Calculate specific humidity and cloud water content
         qvap = fml.qvap(df["p"], df["Td"])
         qliq = fml.qliq(df["z"], df["p"], df["T"], df["Td"])
         data = pd.concat([ps, df, qvap, qliq], axis=1).as_matrix().tolist()
@@ -189,6 +200,8 @@ def read_bufr_group(pid, paths):
 
 
 def read_netcdf(file):
+    """Simulated HATPRO data are available from yearly netcdf files compatible
+    with the IDL scripts that Giovanni Massaro and Daniel Meyer used."""
     import xarray
     xdata = xarray.open_dataset(file)
     substitutions = [

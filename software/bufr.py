@@ -1,3 +1,17 @@
+"""Parse BUFR files with the help of ecCodes' bufr_dump.
+
+Specialized on radiosounding data. Calls bufr_dump -jf on a bufr file, reads
+the JSON output and uses a crude state machine to convert the contents into
+a pandas dataframe and a dictionary containing additional metadata.
+
+The performance bottleneck is bufr_dump, which for some reason takes quite
+a long time to write JSON to stdout...
+
+ecCodes: https://software.ecmwf.int/wiki/display/ECC/ecCodes+Home
+         Version 0.13.0 was used during development.
+"""
+
+
 import os, subprocess, json, datetime
 from collections import namedtuple, OrderedDict
 
@@ -7,37 +21,47 @@ import pandas as pd
 
 __all__ = ["BUFRReader"]
 
-__doc__ = """Parse BUFR files with the help of eccodes' bufr_dump."""
-
 
 class BUFRReader:
-    """BUFR reader based on eccodes' bufr_dump tool.
-    
-    Uses the flattened form of JSON output from bufr_dump and a crude parser
-    to obtain Profile instances of the contents.
+    """Read BUFR files containing radiosonde data.
 
-    Author's remark:
-    The reader is targeted towards the type of BUFR I've needed to read, this
-    is by no means a general implementation.
+    Calls ecCodes' bufr_dump with subprocess.run, reads the output with json
+    and then rearranges the contents into dataframes and a dictionary
+    containing metadata.
+
+    Supported fields: (see also Sounding class)
+
+    name                    renamed to
+    ----------------------------------
+    timePeriod              time
+    pressure                p
+    geopotentialHeight      z
+    airTemperature          T
+    dewpointTemperature     Td
+    windDirection           dd
+    windSpeed               ff
+
+    Pressure is converted from Pa to hPa.
     """
 
     def __init__(self, bufr_dump="bufr_dump"):
-        """Set up the reader, tell it how to find bufr_dump."""
+        """Set up the reader, tell it how to call bufr_dump."""
         self._bufr_dump = bufr_dump
         assert "eccodes" in self._run_bufr_dump("-V")
 
     def _run_bufr_dump(self, arg):
         """Obtain the output of bufr_dump as text."""
+        # -jf enables flattened JSON output
         proc = subprocess.run([self._bufr_dump, "-jf", arg],
                 stdout=subprocess.PIPE, universal_newlines=True)
         return proc.stdout
 
     def dump(self, path):
-        """Obtain the output of bufr_dump as JSON loaded in Python."""
+        """Obtain the output of bufr_dump as JSON loaded into Python."""
         return json.loads(self._run_bufr_dump(path))
 
     def read(self, path):
-        """Obtain Profile instances for the content of a BUFR file."""
+        """Read the given BUFR file and return dataframes and a metadata dict."""
         dump = self.dump(path)
         metadata, *profiles = parser.parse(dump["messages"])
         out = []
@@ -60,16 +84,18 @@ class BUFRReader:
             if "time" in df: df["time"] = df["time"].astype(int)
             # Convert pressure to hPa
             if "p" in df: df["p"] = df["p"] / 100
-        return df, metadata
+            out.append(df)
+        return out, metadata
 
 
 class MessageStateParser:
     """A parser concept for the output of bufr_dump based on states.
-    
+
     For each message check if it matches a state transition. If so, switch
-    states, else stay in current state and continue to collect information.
+    states else stay in current state and continue to collect information.
     The register method allows to add new state transitions, parse applies
-    the set up parser to a stream of messages.
+    the set up parser to a stream of messages. State transitions are
+    independent of the current state so this is not a typical state machine.
 
     The output of the parse method is determined by the information collected
     in the states that were active during parsing. Each state can return a
@@ -79,10 +105,10 @@ class MessageStateParser:
 
     def __init__(self, nostate=None):
         """Set up the parser.
-        
+
         nostate is the state that is used at the beginning and when no other
-        state is active (i.e. when a state decided to end outside of a
-        transition rule.
+        state is active (i.e. when a state decided to end itself without the
+        application of a transition rule.
         """
         self.transitions = []
         self._transitiontup = namedtuple("Transition", ["test", "state"])
@@ -92,6 +118,16 @@ class MessageStateParser:
         """Add a state transition to the parser.
 
         Test should return True if a message triggers the transition to state.
+        Care has to be taken in the ordering of state registration as state
+        registered earlier have priority when multiple transitions apply.
+
+        state is called during a state transition with the message that
+        triggered the state transition (the state's put method is not called
+        with the transition message after a transition so be sure to handle
+        anything related to that message inside the state's initialization). It
+        should have a put method that accepts new messages and a get method
+        that returns the collected information when the state exits. If a state
+        wants to exit an AssertionError can be raised during put.
         """
         assert callable(test)
         assert callable(state)
@@ -114,6 +150,7 @@ class MessageStateParser:
                 out.append(state.get())
                 state = newstate(msg)
         out.append(state.get())
+        # Remove Ellipsis singletons from output
         return [o for o in out if o is not ...]
 
     def matchstate(self, msg):
@@ -131,7 +168,11 @@ class Trash:
 
 
 class Header:
-    """General Radiosonde Metadata"""
+    """General radiosonde metadata.
+
+    Collects every key-value pair specifies in the select attribute and adds
+    datetime and timestamp attributes.
+    """
 
     select = {
             "cloudAmount": "cloud cover",
@@ -143,14 +184,14 @@ class Header:
             }
 
     def __init__(self, msg):
+        # The initial message contains
         self.content = {}
 
     def put(self, msg):
         key, value = msg["key"], msg["value"]
-        # Discard field if not specified in self.select
         if key not in self.select.keys(): return
-        # Rename field according to self.select
-        key = self.select[key] # keep value
+        # Rename field
+        key = self.select[key]
         self.content[key] = value
 
     def get(self):
@@ -165,7 +206,7 @@ class Header:
 
 
 class Sounding:
-    """Extract colnames, units and data."""
+    """Extract colnames, units and data and arranges them in a dataframe."""
 
     select = {
             "timePeriod": "time",
@@ -231,3 +272,4 @@ parser = (
         .register(_test_sounding, Sounding)
         .register(_test_footer, Trash)
         )
+
