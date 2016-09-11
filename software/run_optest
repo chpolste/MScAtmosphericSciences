@@ -3,7 +3,7 @@
 source /home/chris/local/miniconda3/bin/activate thesis
 
 python run_optest.py full cosmo cosmo &
-#python run_optest.py vband cosmo cosmo &
+python run_optest.py vband cosmo cosmo &
 python run_optest.py zenith cosmo cosmo &
 
 python run_optest.py full regression regression &
@@ -12,3 +12,4 @@ python run_optest.py full regression cosmo &
 python run_optest.py full cosmo regression &
 
 wait
+

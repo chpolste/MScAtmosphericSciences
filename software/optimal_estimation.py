@@ -1,8 +1,8 @@
 """Optimal estimation tools and configuration.
 
 Naming conventions:
-x, μ - state vector
-y - radiometer observation
+x, μ - state vector (temperature on top of total water content)
+y - radiometer observation (brightness temperatures)
 """
 
 import numpy as np
@@ -30,6 +30,10 @@ class Gaussian:
         assert self.mean.shape[0] == self.cov.shape[0] == self.cov.shape[1]
 
     def sample(self, size):
+        """Generate a random sample of numbers based on the distribution.
+        
+        Uses numpy.random.multivariate_normal.
+        """
         return np.random.multivariate_normal(mean=self.mean.flatten(),
                 cov=self.cov, size=size)
 
@@ -42,6 +46,7 @@ class Gaussian:
 
     @classmethod
     def read_csv(cls, mean, cov):
+        """Assemble a Gaussian object based on mean and cov in csv files."""
         from db_tools import read_csv_covariance, read_csv_mean
         cov = read_csv_covariance(cov)
         if mean is None:
@@ -55,6 +60,12 @@ class Gaussian:
 
 
 class OptimalEstimationRetrieval:
+    """Iteration helper for optimal estimation retrievals.
+    
+    Automatically evaluates cost function values (.costs), observation vector
+    distances (.obs_measures) and state vector distances (.state_measures) for
+    determination of convergence.
+    """
 
     def __init__(self, *, model, y, p0, μ0, prior, obs_error):
         """Set up an optimal estimation retrieval.
@@ -88,6 +99,10 @@ class OptimalEstimationRetrieval:
     def iterate(self, γ, only=None):
         """Levenberg-Marquard step with 5.36 from Rodgers (2000).
 
+        This method does not update γ, instead the current γ has to be
+        specified during the method call. The used value of γ is however added
+        to .γs for later reference.
+
         The 'only' parameter is just for test purposes. Use the specialized
         Virtual HATPROs instead.
         """
@@ -117,30 +132,40 @@ class OptimalEstimationRetrieval:
         d = self.Fμs[-2] - self.Fμs[-1]
         self.obs_measures.append(float(d.T @ m @ d))
         # Cost function
-        v1 = self.y - Fμ
-        v2 = self.prior.mean - μ
+        v1 = self.y - Fμ - self.obserr.mean
+        v2 = μ - self.prior.mean
         cost = v1.T @ self.obserr.covi @ v1 + v2.T @ self.prior.covi @ v2
         self.costs.append(float(cost))
 
 
 class VirtualHATPRO:
+    """Optimal estimation wrapper preconfigured for HATPRO."""
 
+    # Absorption model for each channel
     absorptions = faps
 
+    # Cosmic background temperature for each channel
     backgrounds = bgs
 
+    # HATPRO elevation scan angles
     angles = [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8]
 
     def __init__(self, z_retrieval, z_model, error,
             scanning=(10, 11, 12, 13)):
-        """
+        """Set up missing optimal estimation parameters.
 
-        Use only zenith for K band and three most transparent channels of
-        V band but all angles for four most opaque channels of V band.
+        z_retrieval     Retrieval height grid
+        z_model         Internal model height grid
+        error           Observation error distribution
+        scanning        Angles used for elevation scanning. Default: only
+                        zenith for K band and three most transparent channels
+                        of V band but all angles for four most opaque channels
+                        of V band.
         """
         self.z = z_retrieval
         itp = LinearInterpolation(source=z_retrieval, target=z_model)
         state_dims = 0
+        # Create MWRTM instances for each channel and save corresponding angles
         self.mod_ang = []
         for i, (a, bg) in enumerate(zip(self.absorptions, self.backgrounds)):
             angles = self.angles if i in scanning else [0.]
@@ -169,6 +194,7 @@ class VirtualHATPRO:
         """Calculate brightness temperatures and Jacobian."""
         p, T, lnq = self.separate(x, p0)
         fwd, jac = [], []
+        # Run model for each channel
         for model, angles in self.mod_ang:
             if only_forward:
                 result = model.forward(angles=angles, p=p, T=T, lnq=lnq)
@@ -176,22 +202,29 @@ class VirtualHATPRO:
                 result = model(angles=angles, p=p, T=T, lnq=lnq)
                 jac.append(np.hstack([result.dT, result.dlnq]))
             fwd.append(result.fwd)
+        # Combine all channels into a single result
         fwd = np.vstack(fwd)
         jac = np.vstack(jac)
         return fwd if only_forward else (fwd, jac)
 
     def retrieve(self, y, p0, μ0, prior, iterations=0, only=None):
+        """Set up an OptimalEstimationRetrieval object based on this HATPRO.
+        
+        The iteration parameter currently does nothing and is kept only for
+        compatibility.
+        """
         optest = OptimalEstimationRetrieval(
                 model=self.simulate,
                 y=y, p0=p0, μ0=μ0,
                 prior=prior, obs_error=self.error
                 )
-        for i in range(iterations):
-            optest.iterate(only=only)
+        #for i in range(iterations):
+        #    optest.iterate(only=only)
         return optest
 
 
 class VirtualHATPRO_zenith(VirtualHATPRO):
+    """Uses only zenith observations for the retrieval."""
 
     absorptions = faps
     backgrounds = bgs
@@ -202,6 +235,7 @@ class VirtualHATPRO_zenith(VirtualHATPRO):
 
 
 class VirtualHATPRO_Kband(VirtualHATPRO):
+    """Uses only K band channels for the retrieval."""
 
     absorptions = faps[:7]
     backgrounds = bgs[:7]
@@ -212,6 +246,7 @@ class VirtualHATPRO_Kband(VirtualHATPRO):
 
 
 class VirtualHATPRO_Vband(VirtualHATPRO):
+    """Uses only V band channels for the retrieval."""
 
     absorptions = faps[7:]
     backgrounds = bgs[7:]
@@ -222,6 +257,11 @@ class VirtualHATPRO_Vband(VirtualHATPRO):
 
 
 def iterate_to_convergence(ret, γ0=3000, max_iterations=20, debug=False):
+    """Iterate an OptimalEstimationRetrieval object until convergence
+    based on a cost function criterion is achieved, adjusting the iteration
+    parameter also based on the cost function."""
+    # Initialize some helper variables, set initial costs high so that
+    # convergence is never triggered prematurely
     min_cost, min_cost_at = 1.0e50, 0
     last_cost, current_cost = 1.0e50, 1.0e50
     cost_diff_counter = 0
@@ -229,15 +269,17 @@ def iterate_to_convergence(ret, γ0=3000, max_iterations=20, debug=False):
     γ = γ0
 
     if debug: print("Start")
-    while counter < 20:
+    while counter < max_iterations:
+        # Advance retrieval and obtain new value of cost function
         counter += 1
         if debug: print("Next iteration. Counter at {}.".format(counter))
         ret.iterate(γ=γ)
         current_cost = ret.costs[-1]
 
         # Convergence condition: relative cost function change
-        #   If cost function decreases by less than 2 % or increases: increase a counter
-        #   If cost function decreases by more than 2 %: reset the counter
+        # - If cost function decreases by less than 2 % or increases: increase
+        #   a counter
+        # - If cost function decreases by more than 2 %: reset the counter
         # Cost function is always positive, no abs necessary
         relative_cost_diff = (
                 (last_cost - current_cost)

@@ -66,3 +66,4 @@ class LinearRegression:
             return mean, [Φ @ c for c in cs]
         else:
             raise ValueError("Invalid value for argument sample.")
+

@@ -1,3 +1,5 @@
+"""Optimal estimation retrievals for synthetic brightness temperature data."""
+
 import argparse
 import datetime as dt
 
@@ -10,28 +12,37 @@ from optimal_estimation import (VirtualHATPRO, VirtualHATPRO_zenith,
         VirtualHATPRO_Vband, Gaussian, rgrid, mgrid, z_hatpro, z_top,
         iterate_to_convergence)
 
+
 def get_prior(valid):
+    """Get the prior distribution corresponding to a valid datetime."""
     return Gaussian(prior_means.loc[valid,:].values.reshape(-1, 1), prior_cov)
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("kind", type=str)
-parser.add_argument("prior", type=str)
-parser.add_argument("guess", type=str)
+parser.add_argument("kind", type=str, help="""
+        HATPRO configuration: full, vband, zenith
+        """)
+parser.add_argument("prior", type=str, help="""
+        Prior distribution: cosmo, regression
+        """)
+parser.add_argument("guess", type=str, help="""
+        First guess: cosmo, regression
+        """)
 
 if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # The observation covariance matrix is based on MWRTM error covariance
+    # calculated from a comparison with IGMK data
     obs_cov = read_csv_covariance("../data/unified/priors/TB_mwrtm_fap_igmk_cov.csv")
     _, obs_cov_v = split_bands(obs_cov)
     obs_cov_z = get_zenith(obs_cov)
-
     # Add 0.5 K uncorrelated instrument noise (0.5 K std = 0.25 K² cov)
     obs_cov = obs_cov + 0.25*np.eye(obs_cov.shape[0])
     obs_cov_v = obs_cov_v + 0.25*np.eye(obs_cov_v.shape[0])
     obs_cov_z = obs_cov_z + 0.25*np.eye(obs_cov_z.shape[0])
-
+    # Synthetic data: no mean observation error (assumption)
     obs_error = Gaussian(np.zeros(obs_cov.shape[0]), obs_cov)
     obs_error_v = Gaussian(np.zeros(obs_cov_v.shape[0]), obs_cov_v)
     obs_error_z = Gaussian(np.zeros(obs_cov_z.shape[0]), obs_cov_z)
@@ -77,6 +88,8 @@ if __name__ == "__main__":
         name += "_vband"
     else: raise ValueError()
 
+    # Virtual HATPRO is set up, data are loaded, start retrievals for each
+    # available valid time
     i = 1
     valids, convergeds, iterations, states = [], [], [], []
     for valid in prior_means.index:
@@ -102,6 +115,7 @@ if __name__ == "__main__":
 
         #if i > 20: break
 
+    # State vector output
     valids = pd.Series(valids, name="valid")
     pd.DataFrame(np.vstack([convergeds, iterations]).T, columns=["converged", "iterations"],
             index=valids).to_csv("../data/unified/retrievals/convergence" + name + ".csv")

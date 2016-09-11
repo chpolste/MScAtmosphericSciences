@@ -1,3 +1,5 @@
+"""Templates for common plots."""
+
 import numpy as np
 from matplotlib.pyplot import figure
 from matplotlib.gridspec import GridSpec
@@ -13,6 +15,9 @@ def raso(df, *, y="p", ylim=None, title="", size=5, fig=None):
     Additionally, relative humidity and potential temperature are plotted.
     From the given dataframe the p, T, Td and - if selected - z columns
     are used. RH is calculated from T and Td, Tpot is calculated from T and p.
+
+    (This function was originally supposed to be the default plot used in the
+     thesis, but was then never really used after some initial tests.)
     """
     assert y == "p" or y == "z"
     assert ylim is None or len(ylim) == 2
@@ -83,6 +88,7 @@ def get_yticks(ylim):
 
 
 def retrieval_template(figsize, *, ratio=1.5, hum="q", Tlims=None, qlims=None):
+    """4-panel plot of temperature and water content."""
     if hum == "q":
         hum = "specific water content [g/kg]"
     elif hum == "lnq":
@@ -129,3 +135,4 @@ def statistical_eval(ax, reference, *data, labels=None, colors=None, bias=True):
         if bias: ax.plot(diff.mean().values, (rgrid-z_hatpro)/1000, "--", color=clr, linewidth=1.5)
     ax.set_ylabel("height above ground [km]")
     ax.vlines(0, z_top/1000, 0, color="#BBBBBB", zorder=-80)
+

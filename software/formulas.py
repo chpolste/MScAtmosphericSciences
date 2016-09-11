@@ -41,6 +41,8 @@ class ArgNameDispatch:
     
     Current strategy for choosing a method is to pick the first match found.
     Use registry method as a function decorator to add methods.
+
+    Includes special handling of named objects such as pandas Series.
     """
 
     def __init__(self, name):
@@ -48,11 +50,13 @@ class ArgNameDispatch:
         self.registry = OrderedDict()
     
     def register(self, f):
+        """Add a method to the generic function."""
         args_in = frozenset(inspect.signature(f).parameters)
         self.registry[args_in] = f
         return self
 
     def __call__(self, *args, **kwargs):
+        """Find an appropriate method and call it."""
         # Auto-detect names of objects with a name attribute such as pd.Series
         for i, arg in enumerate(args):
             if hasattr(arg, "name"):
@@ -167,7 +171,8 @@ qliq = ArgNameDispatch("qliq")
 def _(T, qcloud): # Hewison (2006), formula 4.7
     return qcloud * np.maximum(0, np.minimum((T-233)/40, 1))
 @qliq.register
-def _(z, p, T, Td): # Adiabatic LWC model by Karstens et al. (1994)
+def _(z, p, T, Td):
+    """Adiabatic LWC model by Karstens et al. (1994)."""
     zindex = z.index if hasattr(z, "index") else None
     ztype = type(z)
     z = np.array(z)

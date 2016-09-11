@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+
+source /home/chris/local/miniconda3/bin/activate thesis
+
+python run_optest_hatpro.py raso no &
+python run_optest_hatpro.py raso yes &
+python run_optest_hatpro.py continuous no &
+
+wait
+

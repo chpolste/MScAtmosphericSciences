@@ -9,17 +9,26 @@ from mwrt.fapgen import (
         )
 
 
+# Considered frequencies in MHz
 νs = ["22240", "23040", "23840", "25440", "26240", "27840", "31400",
       "51260", "52280", "53860", "54940", "56660", "57300", "58000"]
 
+# Polynomial degrees and interaction term degrees for each frequency
 degrees =  [3, 3, 3, 3, 3, 3, 3,  3, 3, 3, 3, 3, 3, 3]
 idegrees = [3, 3, 3, 3, 3, 3, 3,  2, 2, 2, 2, 2, 2, 2]
+# Tests showed that V band frequencies do not need as many interaction terms
+# as K band to be similarly accurate
 
+# Absorption models the FAPs are trained to emulate
 clw_absorp = as_absorption(mwrt.tkc.refractivity_lwc)
 gas_absorp = as_absorption(mwrt.liebe93.refractivity_gaseous)
 
+
 if __name__ == "__main__":
 
+    # Also calculate cosmic background temperatures adjusted to compensate
+    # stratospheric emission in the selected channels. Set up US Standard
+    # Atmosphere temperature profile:
     usatm = USStandardBackground(lower=12612, upper=40000)
 
     first = True
@@ -47,6 +56,7 @@ if __name__ == "__main__":
         fapnames.append("FAP" + ν + "MHz")
         tbnames.append("TB_" + ν + "MHz")
         out.append(generate_code(fapnames[-1], gfap, cfap, with_import=first))
+        # Adjusted cosmic background TB
         print("    background TB...")
         bgs.append(usatm.evaluate(absorp, angle=0., cosmic=2.75))
         first = False
@@ -59,3 +69,4 @@ if __name__ == "__main__":
     with open("faps_hatpro.py", "w") as f:
         f.write("\n".join(out))
     print("done.")
+
