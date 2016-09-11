@@ -8,12 +8,15 @@ import pandas as pd
 
 
 def read_csv_profiles(file):
+    """Read csv file and parse dates."""
     return pd.read_csv(file, parse_dates=["valid"], index_col="valid")
 
 def read_csv_covariance(file):
+    """Read csv file and return covariance as pandas.DataFrame."""
     return pd.read_csv(file, index_col=0)
 
 def read_csv_mean(file):
+    """Read csv file and return first column as pandas.Series."""
     df = pd.read_csv(file, index_col=0)
     return df[df.columns[0]]
 
@@ -21,7 +24,8 @@ def read_csv_mean(file):
 def iter_profiles(pattern, tryvars=("bt", "p", "T", "qvap", "qliq", "lnq")):
     """Iterate over profiles obtained from multiple csv files.
     
-    Assumes that columns and index are identical.
+    Assumes that columns and indices are identical. Very similar to
+    get_csv_profiles in data_unifier.py.
     """
     assert "<VAR>" in pattern
     variables = [var for var in tryvars if os.path.exists(pattern.replace("<VAR>", var))]
@@ -39,6 +43,7 @@ def iter_profiles(pattern, tryvars=("bt", "p", "T", "qvap", "qliq", "lnq")):
 
 
 def split_bands(df):
+    """Split a data frame with brightness temperature into K and V channels"""
     kband, vband = df.copy(), df.copy()
     if df.index.dtype == "O" and any("TB_" in idx for idx in df.index):
         kband = kband.ix[[idx for idx in kband.index if int(idx[3:8]) < 40000]]
@@ -50,6 +55,7 @@ def split_bands(df):
 
 
 def get_zenith(df):
+    """Isolate zenith channels from a data frame of brightness temperatures."""
     out = df.copy()
     if df.index.dtype == "O" and any("TB_" in idx for idx in df.index):
         out = out.ix[[idx for idx in out.index if idx.endswith("_00.0")]]
@@ -59,6 +65,10 @@ def get_zenith(df):
 
 
 class Database:
+    """Minimal apsw wrapper for a database.
+    
+    Mainly used for the as_dataframe method.
+    """
 
     def __init__(self, database):
         self.connection = apsw.Connection(database)
@@ -81,9 +91,10 @@ class Database:
     
         kwargs are given to pd.read_sql_query.
         
-        Catches the ExecutionCompleteError that arises when no rows are selected by
-        the query and pd.read_sql_query cannot access the description attribute of
-        the cursor. See: https://github.com/rogerbinns/apsw/issues/160.
+        Catches the ExecutionCompleteError that arises when no rows are
+        selected by the query and pd.read_sql_query cannot access the
+        description attribute of the cursor. See:
+        https://github.com/rogerbinns/apsw/issues/160.
         """
         try:
             return pd.read_sql_query(query, self.connection)

@@ -1,9 +1,17 @@
-"""Condenses relevant data from the database into a few csv files.
+"""Data pipeline step 2: condense data of interest into a few csv files.
 
-This is horrible and long but it's also one-time use, so... ehhh.
+Reads data from the database created by db_import.py and writes it into
+easier-to-read csv files. Utilizes MWRTM and MonoRTM to calculate brightness
+temperatures. Interpolates profiles to the retrieval grid. Can also combine
+data from previously created csv files (see get_csv_profiles function). Like
+db_import.py this is a one-time use script and rather ugly, long and without
+much optimization. :(
+
+"python data_unifier.py --help" for information on the command line arguments.
+Available values for the data argument:
 
 nordkette
-    Dumps Nordkette data to csv file.
+    Nordkette temperature time series.
 
 cosmo7
     COSMO7 profiles stretched and interpolated to the retrieval grid.
@@ -16,6 +24,7 @@ tb_igmk
     retrieval algorithms).
 
 cloudy_igmk
+    Cloud yes/no based on IGMK-processed data.
 
 tb_monortm
     Simulates zenith BT with MonoRTM. source controls from where to get the
@@ -75,10 +84,14 @@ def tb_dataset(data):
     out = pd.concat(out + [pTqr], axis=1)
     out.index = out.index.map(dt.datetime.utcfromtimestamp)
     out.index.name = "valid"
+    # Database stores 64 bit values, original data were 32 bit, rounding
+    # removes all the ...9999s and ...0001s and reduces the csv file size
     return out.round(10)
 
 
 def get_raso_profiles(db):
+    """Iterate over radiosonde profiles from the database."""
+    # Load all data and use pandas' groupby operation to separate valid times
     raso = db.as_dataframe("""
             SELECT profiles.valid, z, p, T, qvap, qliq
             FROM profiledata
@@ -94,6 +107,7 @@ def get_raso_profiles(db):
                 .drop_duplicates("z", keep="first")
                 )
         zs = df["z"].values
+        # Simple quality control:
         if len(zs) < 50 or zs[0] > z_hatpro or zs[-1] < z_top: continue
         # Interpolate to 612 m level at the bottom
         zs = df["z"].values
@@ -104,10 +118,21 @@ def get_raso_profiles(db):
         # Remove values below surface and add surface
         valid = dt.datetime.utcfromtimestamp(valid)
         out = pd.concat([surface, df.loc[df["z"]>z_hatpro]], axis=0)
+        # Index needs to be reset (still has index from database query)
         yield valid, out.reset_index(drop=True)
 
 
 def get_csv_profiles(filename):
+    """Create dataframes compatible to those of get_raso_profiles by combining
+    data from csv files each containing one of the variables.
+    
+    The filename must have a "<VAR>" substring which is a placeholder for each
+    variable p, T, qvap and qliq. These four files are read and the function
+    generates dataframes.
+
+    /!\ The csv files must have aligned valid datetimes else an AssertionError
+        will occur.
+    """
     assert "<VAR>" in filename
     def reader(var):
         fn = filename.replace("<VAR>", var)
@@ -119,7 +144,9 @@ def get_csv_profiles(filename):
     z = pd.Series(rgrid, name="z")
     for (vp, ps), (vT, Ts), (vv, qvaps), (vl, qliqs) in zip(pdf.iterrows(),
             Tdf.iterrows(), qvapdf.iterrows(), qliqdf.iterrows()):
+        # Check that valid datetimes match
         assert vp == vT == vv == vl
+        # Concatenate each variable into a dataframe, add height grid and yield
         p = pd.Series(ps.values, name="p")
         T = pd.Series(Ts.values, name="T")
         qvap = pd.Series(qvaps.values, name="qvap")
@@ -128,6 +155,11 @@ def get_csv_profiles(filename):
 
 
 def make_lnq(data=None, qvap=None, qliq=None):
+    """lnq maker that handles 0 water content and limits lnq to values > -30.
+    
+    Function either takes a dataframe containing qvap and qliq columns with
+    data argument or these columns separately with the corresponding arguments.
+    """
     if data is not None:
         assert qvap is None and qliq is None
         lnq = pd.Series(np.log(data["qvap"] + data["qliq"]),
@@ -140,6 +172,7 @@ def make_lnq(data=None, qvap=None, qliq=None):
         return out
 
 
+# Exported brightness temperature columns
 tb_columns = ["TB_22240MHz_00.0", "TB_23040MHz_00.0",
         "TB_23840MHz_00.0", "TB_25440MHz_00.0", "TB_26240MHz_00.0",
         "TB_27840MHz_00.0", "TB_31400MHz_00.0", "TB_51260MHz_00.0",
@@ -160,9 +193,18 @@ tb_columns = ["TB_22240MHz_00.0", "TB_23040MHz_00.0",
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--levels", default=3000, type=int)
-parser.add_argument("--source", default=None, type=str)
-parser.add_argument("data")
+parser.add_argument("--levels", default=3000, type=int, help="""
+        Number of levels used for the vertical discretization in the RTM.
+        Ignored if no radiative transfer calculations are performed.
+        """)
+parser.add_argument("--source", default=None, type=str, help="""
+        All input data are taken from the database by default. A set of csv
+        files to be used instead can be specifed with this argument. See
+        get_csv_files function.
+        """)
+parser.add_argument("data", help="""
+        What kind of data are processed and how?
+        """)
 
 if __name__ == "__main__":
 
@@ -180,7 +222,7 @@ if __name__ == "__main__":
 
 
     if args.data == "cosmo7":
-        # COSMO7 profiles interpolated to retrieval grid
+        # Select only lead times up to +30
         cosmo7 = db.as_dataframe("""
                 SELECT profiles.valid, profiles.lead, z, p, T, qvap, qliq
                 FROM profiledata
@@ -188,18 +230,19 @@ if __name__ == "__main__":
                 WHERE profiles.kind = "cosmo7" AND lead <= 108000
                 ORDER BY z ASC;
                 """)
-
+        # Each lead time gets its own set of output files
         gleads = cosmo7.groupby("lead")
         for glead in gleads.groups:
             data = gleads.get_group(glead)
             lead = set(data["lead"]).pop()
             gvalids = data.drop(["lead"], axis=1).groupby("valid")
+            # Temporary containers for data
             valid = []
             out = {"p": [], "T": [], "qvap": [], "qliq": []}
             for gvalid in gvalids.groups:
                 profile = gvalids.get_group(gvalid)
                 valid.append(dt.datetime.utcfromtimestamp(set(profile["valid"]).pop()))
-                # Stretch, then interpolate
+                # Stretch, then interpolate to retrieval grid
                 zs = stretch(profile["z"].values, lower=z_hatpro, power=1)
                 for var in out:
                     out[var].append(interp1d(zs, profile[var].values)(rgrid))
@@ -214,7 +257,7 @@ if __name__ == "__main__":
 
 
     if args.data == "raso":
-        # Radiosoundings interpolated to retrieval grid
+        # Basically the same as cosmo7 but for radiosonde data
         raso = db.as_dataframe("""
                 SELECT profiles.valid, z, p, T, qvap, qliq
                 FROM profiledata
@@ -222,7 +265,6 @@ if __name__ == "__main__":
                 WHERE profiles.kind = "raso" AND z > 500
                 ORDER BY z ASC, valid ASC;
                 """)
-
         valid = []
         out = {"p": [], "T": [], "qvap": [], "qliq": []}
         gvalids = raso.groupby("valid")
@@ -254,7 +296,8 @@ if __name__ == "__main__":
 
 
     if args.data == "tb_hatpro":
-        # IGMK processed brightness temperatures
+        # Dump HATPRO data from the database after filtering out all unwanted
+        # columns and rows
         df = db.as_dataframe("""
                 SELECT * FROM hatpro
                 WHERE kind = "hatpro_blb"
@@ -277,6 +320,7 @@ if __name__ == "__main__":
         import xarray
         from glob import glob
         def read_netcdf(file):
+            """Get cloud information from original NetCDF files of IGMK data."""
             xdata = xarray.open_dataset(file)
             xdata.coords["n_date"] = xdata.data_vars["date"]
             def to_date(d):
@@ -301,6 +345,7 @@ if __name__ == "__main__":
         from monortm.hatpro import config
         from monortm.profiles import from_mwrt_profile
 
+        # Data source switch
         if args.source is None:
             data = get_raso_profiles(db)
             srcname = "_hr"
@@ -356,8 +401,10 @@ if __name__ == "__main__":
         from faps_hatpro import faps, tbs, bgs as bgs_fap, freqs
         from mwrt.fapgen import absorption_model, as_absorption
         from mwrt.background import USStandardBackground
+        # Generate exact Liebe et al. 1993 absorption model
         absmod = absorption_model(liebe93.refractivity_gaseous, tkc.refractivity_lwc)
         absorp_l93 = [partial(absmod, f) for f in freqs]
+        # Absorption model switch
         if args.data.endswith("_fap"):
             absname = "fap"
             absorp = faps
@@ -365,6 +412,7 @@ if __name__ == "__main__":
             absname = "full"
             absorp = absorp_l93
         else: raise ValueError("unknown absorption model")
+        # MWRTM configuration
         angles = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.],
                 [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8],
                 [0., 60., 70.8, 75.6, 78.6, 81.6, 83.4, 84.6, 85.2, 85.8],
@@ -374,6 +422,10 @@ if __name__ == "__main__":
                 for f, angs in zip(tbs, angles)
                 for a in angs] + ["p", "T", "qvap"]
 
+        # Data source switch: create a funciton get_itp_and_bg (= get
+        # interpolator and background) which returns the vertical
+        # discretization interpolator and background brightness temperatures
+        # used in the subsequent MWRTM calculations
         if args.source is None:
             # Full resolution profiles to max height
             data = get_raso_profiles(db)
@@ -381,6 +433,8 @@ if __name__ == "__main__":
             def get_itp_and_bg(z):
                 zmodel = np.logspace(np.log10(z_hatpro), np.log10(z[-1]), args.levels)
                 itp = LinearInterpolation(z, zmodel)
+                # Adapt background to acutal profile height instead of cutting
+                # profile at some height
                 usatm = USStandardBackground(lower=z[-1], upper=40000, n=1000)
                 bgs = [usatm.evaluate(
                         partial(as_absorption(liebe93.refractivity_gaseous), f),

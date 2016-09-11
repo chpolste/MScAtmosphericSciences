@@ -1,4 +1,4 @@
-"""Process data from some source and put it into a sqlite3 database.
+"""Data pipeline step 1: put data from various sources into a sqlite3 database.
 
 A collection of one-time use data import scripts that assemble a unified
 database from multiple data sources. To be used as a command line program from
@@ -123,7 +123,7 @@ def select_files(files):
 
 def filename(path):
     return path.split("/")[-1]
-    # Yeah, yeah I should use os.pathlib... Sorry Windows-people :(
+    # Yeah, yeah I should have used os.pathlib... Sorry Windows-people :(
 
 
 def read_raso_fwf(pid, path):

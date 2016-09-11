@@ -2,14 +2,18 @@
 
 source /home/chris/local/miniconda3/bin/activate thesis
 
+# Create database
 python db_import.py description ../data/amalg.db --create
 
+# Import data that have reasonably fast readers
 python db_import.py nordkette ../data/amalg.db
 python db_import.py igmk ../data/amalg.db
 python db_import.py hatpro ../data/amalg.db
 python db_import.py raso_cosmo7 ../data/amalg.db --pid=1
 python db_import.py raso_fwf ../data/amalg.db --pid=6000
 
+# BUFR reader is very slow: run multiple instances in parallel (set up for an
+# 8-core CPU). Results are put into separate databases to avoid access errors
 python db_import.py raso_bufr ../data/db_parts/raso_bufr01.db --create --pid=10000 --offset=0   --size=80 &
 python db_import.py raso_bufr ../data/db_parts/raso_bufr02.db --create --pid=10080 --offset=80  --size=80 &
 python db_import.py raso_bufr ../data/db_parts/raso_bufr03.db --create --pid=10160 --offset=160 --size=80 &
@@ -23,6 +27,7 @@ python db_import.py raso_bufr ../data/db_parts/raso_bufr10.db --create --pid=108
 
 wait
 
+# Merge each individual database from BUFR reading into amalg.db
 sqlite3 ../data/amalg.db <<< '''
 ATTACH "../data/db_parts/raso_bufr01.db" AS bufr01;
 ATTACH "../data/db_parts/raso_bufr02.db" AS bufr02;
@@ -55,3 +60,4 @@ INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z,
 INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr09.profiledata ORDER BY id ASC;
 INSERT INTO profiledata (profile, p, z, T, Td, qvap, qliq) SELECT profile, p, z, T, Td, qvap, qliq FROM bufr10.profiledata ORDER BY id ASC;
 '''
+

@@ -3,6 +3,7 @@
 source /home/chris/local/miniconda3/bin/activate thesis
 
 echo "Database export"
+# Database dump
 python data_unifier.py nordkette
 python data_unifier.py cosmo7
 python data_unifier.py raso
@@ -11,10 +12,17 @@ python data_unifier.py cloudy_igmk
 python data_unifier.py tb_hatpro
 
 echo "Brightness temperatures"
+# MonoRTM brightness temperatures from high resolution soundings interpolated
+# to 180 vertical levels
 python data_unifier.py --levels 180 tb_monortm > /dev/null &
+# MWRTM high resolution runs: 4000 vertical levels, full Liebe et al. 1993
+# absorption model. This takes a long, long time!
 python data_unifier.py --levels 4000 tb_mwrtm_full &
+# MWRTM runs based on profiles interpolated to retrieval grid:
+# Operational resolution
 python data_unifier.py --levels 2500 --source "../data/unified/<VAR>_raso.csv" tb_mwrtm_fap &
-python data_unifier.py --levels 5000 --source "../data/unified/<VAR>_raso.csv" tb_mwrtm_fap &
+# High resolution
+python data_unifier.py --levels 4000 --source "../data/unified/<VAR>_raso.csv" tb_mwrtm_fap &
 wait
 
 echo "done!"
