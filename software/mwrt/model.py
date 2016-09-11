@@ -35,7 +35,11 @@ class MWRTM:
         """Initialize a radiative transfer model.
         
         The interpolator is used to transform quantities from the input to the
-        model grid.
+            model grid.
+        The absorption model is used to calculate absorption coefficients from
+            pressure, temperature and total water content.
+        The background temperature is used for the value of brightness temperature
+            at infinity.
         """
         self.interpolator = interpolator
         self.absorption = absorption
