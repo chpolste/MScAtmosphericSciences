@@ -4,6 +4,8 @@ Master's thesis in Atmospheric Sciences.
 
 - __Title__: Bayesian Retrieval of Thermodynamic Atmospheric Profiles from Ground-based Microwave Radiometer Data
 - __Submitted__: 2016-08-12 to the faculty of Geo- and Atmospheric Sciences at the University of Innsbruck
+- Thesis pdf available [here](MSc-Polster-Bayesian-Retrieval-Thesis.pdf) or at the [library](https://diglib.uibk.ac.at/ulbtirolhs/content/titleinfo/1471806) of the University of Innsbruck
+- Defense presentation pdf available [here](MSc-Polster-Bayesian-Retrieval-Defense.pdf)
 
 
 ## Abstract
@@ -19,6 +21,6 @@ Also presented in this thesis is a prototype of a numerical radiative transfer m
 
 ## Repository Information
 
-- This is a monorepo for code and TeX source.
-- The code is documented in most places but I did not write automated tests for the software (sadly).
-- ...
+- This repository contains both software and TeX sources, but not the required input data to reproduce the analyses.
+- All files in folder [software](software) are licensed under the terms of the MIT license (see [software/LICENSE](software/LICENSE)).
+

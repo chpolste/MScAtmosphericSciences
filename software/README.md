@@ -2,6 +2,8 @@
 
 Data analysis scripts/notebooks and software that will not be developed into standalone tools.
 
+Licensed unter terms of the MIT license (see [LICENSE](LICENSE)).
+
 ## Retrieval
 
 - `regression.py`: Bayesian linear regression
@@ -38,3 +40,4 @@ Data analysis scripts/notebooks and software that will not be developed into sta
 - `faps_generator.py`: training of FAPs for HATPRO channels and code generation
 - `spectral_line_generator.py`: creates the spectral line database used in `mwrt` from a reference implementation.
 - `ModelEvaluation.ipynb`: performance evaluation of MWRTM components
+
